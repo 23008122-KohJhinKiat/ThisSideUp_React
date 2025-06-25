@@ -1,7 +1,7 @@
 
 import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
-import videoBG from '../icons/anSkim.mp4';
+import videoBG from '../icons/anSkimVignette.mp4';
 import '../index.css';
 
 
