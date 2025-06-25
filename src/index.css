@@ -34,6 +34,12 @@
   font-size: 24;
 }
 
+#buttonSlideshow {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
 #longpara {
   line-height: 25px;
 }
@@ -515,7 +521,7 @@ ul {
   list-style: none;
 }
 
-button {
+/* button {
   font-family: var(--font-main);
   cursor: pointer;
   border: none;
@@ -524,7 +530,7 @@ button {
   background-color: var(--color-primary-purple);
   color: var(--color-text-light);
   transition: background-color 0.2s ease-in-out, transform 0.1s ease;
-}
+} */
 
 button:hover {
     background-color: var(--color-primary-purple-light);

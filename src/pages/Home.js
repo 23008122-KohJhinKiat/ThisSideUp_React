@@ -1,9 +1,10 @@
 
 import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
-
 import videoBG from '../icons/anSkim.mp4';
 import '../index.css';
+import DotIcon from '../icons/icons8-dot.png';
+import DotIconDark from '../icons/icons8-dot-selected.png';
 
 
 const slides = [
@@ -158,7 +159,7 @@ const VideoSection = styled.div`
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const slideInterval = 4000;
+  const slideInterval = 6000;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -167,8 +168,6 @@ const Home = () => {
     return () => clearInterval(interval);
   }, []);
 
-
-  // const backgroundImage = "/bannerHD.jpg";
   const dividerIcon = "/assets/icons/icons8-surfguy.png";
 
   return (
@@ -204,6 +203,12 @@ const Home = () => {
          
         </InfoBox>
       </HeroSection>
+
+      <div style={{alignItems: 'center', display: 'flex', justifyContent: 'center', gap: '.5rem', padding: '5px 0px 5px 0px', backgroundColor: '#222'}}>
+        {slides.map((_, index) => (
+          <button id='buttonSlideshow' onClick={() => setCurrentSlide(index)}></button>
+        ))}
+      </div>
 
 
       <VideoSection>
