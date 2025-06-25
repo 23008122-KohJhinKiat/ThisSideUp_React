@@ -198,14 +198,12 @@ const Home = () => {
             shop offers a simple and convenient way to get
             everything you need for your next beach adventure to the shore.
           </Description>
-
-         
         </InfoBox>
       </HeroSection>
 
-      <div style={{alignItems: 'center', display: 'flex', justifyContent: 'center', gap: '.5rem', padding: '15px 0px 10px 0px', backgroundColor: '#222'}}>
+      <div style={{alignItems: 'center', display: 'flex', justifyContent: 'center', gap: '.75rem', padding: '15px 0px 10px 0px', backgroundColor: '#222'}}>
         {slides.map((_, index) => (
-          <button id='buttonSlideshow' onClick={() => setCurrentSlide(index)}></button>
+          <button style={index === currentSlide ? {backgroundColor: '#7600AD'} : {}} id='buttonSlideshow' onClick={() => setCurrentSlide(index)}></button>
         ))}
       </div>
 
