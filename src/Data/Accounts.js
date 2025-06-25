@@ -20,9 +20,9 @@ export const initialUsers = [
   },
   {
     _id: generateId('user'),
-    name: "Jack",
-    email: "bluewhiteJack@gmail.com",
-    passwordHash: "T123456cc#",
+    name: "Topaz Cifera",
+    email: "TCifera@hotmail.com",
+    passwordHash: "T0pazCifera!",
     role: "customer",
     createdAt: new Date().toISOString(),
   },
