@@ -3,8 +3,7 @@ import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import videoBG from '../icons/anSkim.mp4';
 import '../index.css';
-import DotIcon from '../icons/icons8-dot.png';
-import DotIconDark from '../icons/icons8-dot-selected.png';
+
 
 
 const slides = [
@@ -204,7 +203,7 @@ const Home = () => {
         </InfoBox>
       </HeroSection>
 
-      <div style={{alignItems: 'center', display: 'flex', justifyContent: 'center', gap: '.5rem', padding: '5px 0px 5px 0px', backgroundColor: '#222'}}>
+      <div style={{alignItems: 'center', display: 'flex', justifyContent: 'center', gap: '.5rem', padding: '15px 0px 10px 0px', backgroundColor: '#222'}}>
         {slides.map((_, index) => (
           <button id='buttonSlideshow' onClick={() => setCurrentSlide(index)}></button>
         ))}
