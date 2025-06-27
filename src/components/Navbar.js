@@ -10,7 +10,6 @@ import CartIconImg from '../icons/icons8-cart.png';
 import UserIconImg from '../icons/icons8-user.png';
 import { useAuth } from '../contexts/AuthContext';
 
-// --- Styled Components for Navbar ---
 
 const NavContainer = styled.nav`
   background: #222;
@@ -256,7 +255,7 @@ const SearchBarContainer = styled.div`
     border-radius: 4px;
     border: 1px solid #555;
     background-color: white;
-    color: white;
+    color: black;
     min-width: 150px; /* Base width */
 
     @media (max-width: 480px) {
@@ -277,6 +276,8 @@ const SearchBarContainer = styled.div`
   }
 `;
 
+
+// SEARCH BAR
 function SearchBar() {
   const [isVisible, setIsVisible] = useState(false);
   const [keyword, setKeyword] = useState('');
@@ -295,8 +296,8 @@ function SearchBar() {
   }
 
   return (
-    <SearchBarContainer> {/* Wrap with styled component for easier icon sizing */}
-      <div> {/* Original div for structure */}
+    <SearchBarContainer>
+      <div>
         {isVisible ? (
           <div style={{ position: 'relative', display: 'inline-block' }}>
             <form onSubmit={handleSubmit}>

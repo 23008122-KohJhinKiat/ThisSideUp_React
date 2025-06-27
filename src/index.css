@@ -12,6 +12,14 @@
   font-size: 40px;
 }
 
+#searchHeader {
+  font-family: "Instrument Sans", sans-serif;
+  font-weight: 600;
+  font-size: 30px;
+  text-align: center;
+  color: white;
+}
+
 #font25 {
   font-family: "Instrument Sans", sans-serif;
   font-weight: bold;

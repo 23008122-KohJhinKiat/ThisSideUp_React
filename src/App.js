@@ -22,7 +22,7 @@ const CheckoutPage = lazy(() => import('./pages/Checkout'));
 const SignUpPage = lazy (() => import ('./pages/auth/SignUpPage'));
 const SignInPage = lazy (() => import ('./pages/auth/LoginPage'));
 const UserProfilePage = lazy(() => import('./pages/auth/UserProfile'));
-const Search = lazy(() => import('./pages/SearchResults'));
+const Search = lazy(() => import('./pages/Search'));
 
 function App() {
   return (    
