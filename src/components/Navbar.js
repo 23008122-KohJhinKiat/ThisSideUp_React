@@ -570,12 +570,20 @@ const Navbar = () => {
       <NavRightSection>
         <IconsGroup>
           <SearchBar />
+          { currentUser ? 
           <CartLinkStyled
             to="/shoppingCart"
             onClick={() => isMobileMenuOpen && closeMobileMenuAndNavigate('/shoppingCart')}
           >
             <img src={CartIconImg} alt='Cart icon'/>
+          </CartLinkStyled> :
+          <CartLinkStyled
+            to="/login"
+            onClick={() => isMobileMenuOpen && closeMobileMenuAndNavigate('/shoppingCart')}
+          >
+            <img src={CartIconImg} alt='Cart icon'/>
           </CartLinkStyled>
+        }
           <UserDropdown />
         </IconsGroup>
 
