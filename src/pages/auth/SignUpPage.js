@@ -313,10 +313,10 @@ const SignUpPage = () => {
                 </RoleButton>
                 <RoleButton
                   type="button"
-                  active={formData.role === 'employee'} 
-                  onClick={() => handleRoleChange('employee')}
+                  active={formData.role === 'admin'} 
+                  onClick={() => handleRoleChange('admin')}
                 >
-                  Employee
+                  Admin
                 </RoleButton>
               </div>
             </RoleSelector>
