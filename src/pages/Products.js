@@ -150,7 +150,7 @@ const Products = () => {
     }
   };
     return (
-    <PageContainer>
+    <PageContainer className="products-font">
       <PageWrapper>
         <MainContent> {/* Wrap main content */}
           <PageHeader>
