@@ -7,13 +7,15 @@ import { initialProducts } from '../Data/ProductData';
 const Wrapper = styled.div`
 padding: 2rem;
 background: linear-gradient(135deg, #101010 0%, #670097 100%);
+
 `;
 
 const SearchInput = styled.input`
   padding: 0.5rem;
   margin-bottom: 1rem;
   width: 100%;
-  max-width: 500px; /* Added for better layout */
+  height: 50px;
+  max-width: 500px;
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -24,8 +26,11 @@ const SearchInput = styled.input`
 
 const ProductGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
+  margin-top: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--spacing-l, 24px);
+  max-width: 1200px;
+  margin: 0 auto;
 `;
 
 
