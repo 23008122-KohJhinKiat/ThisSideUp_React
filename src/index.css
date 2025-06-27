@@ -24,6 +24,8 @@
   font-size: 16px;
 }
 
+
+
 #icon {
   margin-left: 8px;
 }
@@ -473,6 +475,7 @@ input {
 .user-profile-page {
   min-height: 100vh;
   background: var(--gradient-primary, linear-gradient(135deg, #101010 0%, #670097 100%));
+  font-family: 'Instrument Sans', sans-serif;
 }
 
 
