@@ -3,6 +3,10 @@ import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import videoBG from '../icons/anSkimVignette.mp4';
 import '../index.css';
+import BG1 from '../icons/bg1.jpg';
+import BG2 from '../icons/bg2.jpg';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 
 
@@ -11,7 +15,6 @@ const slides = [
   '/aizat2.jpeg',
   '/an2.jpeg',
   '/sunset.jpg',
-  '/Banana.jpeg',
 ];
 
 const PageWrapper = styled.div`
@@ -157,8 +160,9 @@ const VideoSection = styled.div`
 
 
 const Home = () => {
+  const { currentUser } = useAuth();
   const [currentSlide, setCurrentSlide] = useState(0);
-  const slideInterval = 6000;
+  const slideInterval = 8000;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -207,10 +211,37 @@ const Home = () => {
         ))}
       </div>
 
+      <div style={{display: 'flex', flexDirection: 'row'}}>
+        <div style={{width: '50%', position: 'relative'}}>
+          <img id='ad' src={BG1} alt="The Bananas skimboard" />
+          <div id='overlay'>
+            <h2 id='overlayHeader'>SKIMBOARDS</h2>
+            
+            <Link to='/products/category/Skimboards'>
+            <button id='overlayButton'>BROWSE</button>
+            </Link>
+          </div>
+        </div>
+        <div style={{width: '50%', position: 'relative'}}>
+          <img id='ad' src={BG2} alt="Skimboard being maintained" />
+          <div id='overlay'>
+            <h2 id='overlayHeader'>CUSTOMISE YOUR BOARD</h2>
+            { currentUser ? 
+            <Link to='/design-skimboard'>
+            <button id='overlayButton'>CUSTOMISE</button>
+            </Link> :
+            <Link to='/login'>
+            <button id='overlayButton'>CUSTOMISE</button>
+            </Link>  
+          }
+          </div>
+        </div>
+      </div>
 
       <VideoSection>
         <video src={videoBG} autoPlay loop muted />
       </VideoSection>
+      
     </PageWrapper>
   );
 };

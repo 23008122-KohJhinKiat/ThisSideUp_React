@@ -7,7 +7,7 @@ import { initialProducts } from '../Data/ProductData';
 const Wrapper = styled.div`
 padding: 2rem;
 background: linear-gradient(135deg, #101010 0%, #670097 100%);
-
+height: 100%;
 `;
 
 const SearchInput = styled.input`
@@ -55,7 +55,7 @@ const Search = () => {
         }}
       />
       {query && filteredProducts.length === 0 && (
-        <p>No products found matching "{query}".</p>
+        <p style={{color: 'white', textAlign:'center', marginTop: '30px'}}>No products found matching "{query}".</p>
       )}
       <ProductGrid>
         {filteredProducts.map(p => (
