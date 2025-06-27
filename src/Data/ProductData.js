@@ -249,7 +249,7 @@ export const initialProducts = [
   name: "Large Waterproof Beach Tote Bag",
   description: "Colorful beach towel bundle featuring soft microfiber fabric. Lightweight and easy to pack for any adventure.",
   imageUrl: "/Product Photos/Large Waterproof Beach Tote Bag.png",
-  category: "Towels",
+  category: "Beach Bags",
   price: 50.00,
   stock: 2543,
   tags: ["microfiber", "quick-dry", "travel-friendly", "beach essentials"],
