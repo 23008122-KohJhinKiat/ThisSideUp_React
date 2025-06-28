@@ -84,14 +84,15 @@ const FormControlBase = styled.select`
   border-radius: var(--border-radius-s, 4px);
   border: 1px solid #35354d;
   background-color: #181824;
-  color: #f5f6fa;
+  color: #fff;
   box-sizing: border-box;
   transition: border-color 0.2s ease, background-color 0.2s ease;
   appearance: none; 
   margin-top: 10px;
 
   &::placeholder { 
-    color: #C86B98;
+    color: #808080;
+    opacity: 1;
   }
 
   &:focus {
