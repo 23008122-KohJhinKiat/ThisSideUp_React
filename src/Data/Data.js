@@ -10,8 +10,8 @@ export const generateId = (prefix = 'id') => {
   // This logic assumes prefixes 'prod', 'user', 'custom', 'order', 'design'
   if (prefix.startsWith('prod')) return productGenerateId(prefix);
   if (prefix.startsWith('user')) return accountGenerateId(prefix);
-  if (prefix.startsWith('custom') || prefix.startsWith('design')) return `dsgn_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`; // Example for design IDs
-  if (prefix.startsWith('order')) return `ord_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`; // Example for order IDs
+  if (prefix.startsWith('custom') || prefix.startsWith('design')) return `dsgn_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+  if (prefix.startsWith('order')) return `ord_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
   // Fallback or more specific logic for other prefixes
   return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
 };
@@ -29,20 +29,20 @@ export const initialCustomDesigns = [
  
 export const initialOrders = [];
  
-// Define product categories (already defined in Navbar, ensure consistency or centralize)
-export const productCategories = [ // This might be redundant if defined elsewhere (e.g. Navbar)
+
+export const productCategories = [
    'All',
    'Skimboards',
    'T-Shirts',
    'Board Shorts',
    'Accessories',  
    'Beach Bags',
-   'Towels',
+   'Jackets',
  ];
  
-// --- Mock API Functions ---
+
  
-// PRODUCTS API Functions
+
 export const fetchProducts = async () => {
   await new Promise(resolve => setTimeout(resolve, 300));
   return [...initialProducts];
@@ -66,7 +66,7 @@ export const searchProductsAPI = async (searchTerm, category, sortBy = 'name_asc
     const term = searchTerm.toLowerCase();
     filteredProducts = filteredProducts.filter(product =>
       product.name.toLowerCase().includes(term) ||
-      (product.description && product.description.toLowerCase().includes(term)) // Added check for product.description
+      (product.description && product.description.toLowerCase().includes(term))
     );
   }
  
