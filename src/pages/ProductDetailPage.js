@@ -386,7 +386,7 @@ const ProductDetailPage = () => {
     };
 
     loadProductDetails();
-  }, [id, getProductById, filteredProducts, currentUser]); // Added currentUser to dependencies
+  }, [id, getProductById, filteredProducts, currentUser]);
 
   const handleIncrementQuantity = () => {
     if (product && quantity < product.stock) {
@@ -402,10 +402,10 @@ const ProductDetailPage = () => {
     if (product) {
       if (cart?.addItemToCart) {
         cart.addItemToCart(product._id, quantity);
-        setCartMessage(`Added ${quantity} of ${product.name} to cart.`);
+        setCartMessage(`Added to cart.`);
         setTimeout(() => setCartMessage(''), 3000);
       } else {
-        setCartMessage('Cart functionality is currently unavailable.');
+        setCartMessage('Cart functionality is currently unavailable');
         setTimeout(() => setCartMessage(''), 3000);
       }
     }
@@ -417,7 +417,7 @@ const ProductDetailPage = () => {
         cart.addItemToCart(product._id, quantity);
         navigate('/checkout');
       } else {
-        setCartMessage('Cart functionality is currently unavailable.');
+        setCartMessage('Cart functionality is currently unavailable');
         setTimeout(() => setCartMessage(''), 3000);
       }
     }
@@ -425,13 +425,13 @@ const ProductDetailPage = () => {
 
   const handleLike = () => {
     if (!currentUser) {
-      setCartMessage("Please log in to like products.");
+      setCartMessage("Please log in to like products");
       setTimeout(() => setCartMessage(''), 3000);
       return;
     }
     if (!product || !product._id) {
-      console.error("Product data or ID is missing for like action.");
-      setCartMessage("Cannot like product at this time.");
+      console.error("Product data or ID is missing for like action");
+      setCartMessage("Cannot like product at this time");
       setTimeout(() => setCartMessage(''), 3000);
       return;
     }
@@ -439,17 +439,15 @@ const ProductDetailPage = () => {
     const localStorageKey = `liked_${currentUser._id}_${product._id}`;
 
     if (isLikedByCurrentUser) {
-      // User is unliking
-      setDisplayLikes(prevLikes => Math.max(0, prevLikes - 1)); // Ensure likes don't go below 0
+      // Unliking
+      setDisplayLikes(prevLikes => Math.max(0, prevLikes - 1));
       setIsLikedByCurrentUser(false);
       localStorage.removeItem(localStorageKey);
-      setCartMessage(`You unliked ${product.name}.`);
     } else {
-      // User is liking
+      // Liking
       setDisplayLikes(prevLikes => prevLikes + 1);
       setIsLikedByCurrentUser(true);
       localStorage.setItem(localStorageKey, 'true');
-      setCartMessage(`Thanks for liking ${product.name}!`);
     }
     setTimeout(() => setCartMessage(''), 2000);
   };
@@ -541,7 +539,7 @@ const ProductDetailPage = () => {
                 }}
               >
                 <FaHeart style={{ color: isLikedByCurrentUser ? 'var(--color-error-red, #D32F2F)' : 'inherit' }} />
-                {isLikedByCurrentUser ? 'Unlike' : 'Like'} ({displayLikes})
+                Favorite ({displayLikes})
               </BaseSocialButton>
             </SocialActions>
           </ImageColumn>

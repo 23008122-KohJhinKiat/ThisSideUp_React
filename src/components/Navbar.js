@@ -47,7 +47,7 @@ const LogoLink = styled(Link)`
   }
 `;
 
-// Desktop Navigation Links
+
 const DesktopNavLinks = styled.div`
   display: flex;
   gap: 2.5rem; /* Adjust gap as needed */
@@ -84,7 +84,7 @@ const StyledNavLink = styled(Link)`
   }
 `;
 
-// Right side of the Navbar (Icons + Mobile Menu Toggle)
+
 const NavRightSection = styled.div`
   display: flex;
   align-items: center;
@@ -473,7 +473,7 @@ const Navbar = () => {
     { name: 'Board Shorts', path: '/products/category/Boardshorts' },
     { name: 'Accessories', path: '/products/category/Accessories' },
     { name: 'Beach Bags', path: '/products/category/Beach Bags' },
-    { name: 'Towels', path: '/products/category/Towels' }
+    { name: 'Jackets', path: '/products/category/Jackets' }
   ];
 
   const toggleMobileMenu = () => {
