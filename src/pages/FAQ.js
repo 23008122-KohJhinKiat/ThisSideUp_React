@@ -6,7 +6,8 @@ import '../index.css';
 
 const FAQPageWrapper = styled.div`
   background-color: var(--color-background-medium-dark, #222); 
-  min-height: 100vh;
+  // min-height: 100vh;
+  height: auto;
 `;
 
 const HeroBanner = styled.div`
@@ -52,7 +53,7 @@ const FAQContentSection = styled.div`
   margin-top: 19px; 
   
   @media (min-width: 768px) {
-    padding: 2rem;
+    padding: 2rem 2rem 0rem 2rem;
   }
 `;
 
@@ -71,30 +72,30 @@ const FAQContainer = styled.div`
   }
 `;
 
-const SearchForm = styled.form`
-  margin-bottom: 2rem;
-`;
+// const SearchForm = styled.form`
+//   margin-bottom: 2rem;
+// `;
 
-const SearchInput = styled.input`
-  width: 100%;
-  padding: 0.75rem 1rem; 
-  font-size: clamp(0.9rem, 2.5vw, 1rem); 
-  border-radius: var(--border-radius-s, 4px);
-  border: 1px solid var(--color-primary-purple-light, #7A5FD3);
-  background-color: rgba(255,255,255,0.1);
-  color: var(--color-text-light, #FFFFFF);
-  box-sizing: border-box;
+// const SearchInput = styled.input`
+//   width: 100%;
+//   padding: 0.75rem 1rem; 
+//   font-size: clamp(0.9rem, 2.5vw, 1rem); 
+//   border-radius: var(--border-radius-s, 4px);
+//   border: 1px solid var(--color-primary-purple-light, #7A5FD3);
+//   background-color: rgba(255,255,255,0.1);
+//   color: var(--color-text-light, #FFFFFF);
+//   box-sizing: border-box;
 
-  &::placeholder {
-    color: var(--color-neutral-gray-light, #BDBDBD);
-  }
+//   &::placeholder {
+//     color: var(--color-neutral-gray-light, #BDBDBD);
+//   }
 
-  &:focus {
-    outline: none;
-    border-color: var(--color-accent-peach, #FE9C7F);
-    background-color: rgba(255,255,255,0.15);
-  }
-`;
+//   &:focus {
+//     outline: none;
+//     border-color: var(--color-accent-peach, #FE9C7F);
+//     background-color: rgba(255,255,255,0.15);
+//   }
+// `;
 
 const AccentHighlight = styled.span`
   color: var(--color-accent-orange, #FE9C7F);
@@ -260,12 +261,12 @@ const FAQ = () => {
 
       <FAQContentSection>
         <FAQContainer>
-          <SearchForm onSubmit={(e) => e.preventDefault()}> 
+          {/* <SearchForm onSubmit={(e) => e.preventDefault()}> 
             <SearchInput 
               type="text"
               placeholder='Type your question'
             />
-          </SearchForm>
+          </SearchForm> */}
           
           {faqData.map(item => (
             <QnOpen key={item.id} question={item.question} ans={item.ans} />
