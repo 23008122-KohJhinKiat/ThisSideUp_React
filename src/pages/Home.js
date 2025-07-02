@@ -46,7 +46,7 @@ const InfoBox = styled.div`
   background-color: rgba(32, 32, 32, 0.85);
   padding: 1.5rem;
   /* CHANGED: Switched from fixed height to min-height for better text wrapping on small screens */
-  min-height: 500px; 
+  min-height: 700px; 
   width: 90%;
   max-width: 560px;
   text-shadow: 2px 2px 5px rgba(0,0,0,0.50);
@@ -163,14 +163,15 @@ const SlideshowControls = styled.div`
 `;
 
 const ControlDot = styled.button`
-  width: 12px;
-  height: 12px;
+  width: 20px;
+  height: 20px;
+  margin-top: 3px;
   border-radius: 50%;
-  border: 1px solid #7600AD;
-  background-color: ${props => props.active ? '#7600AD' : 'transparent'};
+  background-color: ${props => props.active ? '#7600AD' : 'white'};
   cursor: pointer;
   transition: background-color 0.3s ease;
   padding: 0;
+  gap: 10px;
 `;
 
 const PromoSection = styled.section`
@@ -321,16 +322,16 @@ const Home = () => {
         <PromoCard to='/products/category/Skimboards'>
           <img src={BG1} alt="The Bananas skimboard" />
           <PromoOverlayContent>
-            <PromoTitle>SKIMBOARDS</PromoTitle>
-            <PromoButton>BROWSE</PromoButton>
+            <PromoTitle id='overlayHeader'>SKIMBOARDS</PromoTitle>
+            <PromoButton id='overlayButton'>BROWSE</PromoButton>
           </PromoOverlayContent>
         </PromoCard>
 
         <PromoCard to={currentUser ? '/design-skimboard' : '/login'}>
           <img src={BG2} alt="Skimboard being maintained" />
           <PromoOverlayContent>
-            <PromoTitle>CUSTOMISE YOUR BOARD</PromoTitle>
-            <PromoButton>
+            <PromoTitle id='overlayHeader'>CUSTOMISE YOUR BOARD</PromoTitle>
+            <PromoButton id='overlayButton'>
               {currentUser ? 'CUSTOMISE' : 'SIGN IN TO CUSTOMISE'}
             </PromoButton>
           </PromoOverlayContent>
