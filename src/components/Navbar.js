@@ -36,10 +36,9 @@ const LogoLink = styled(Link)`
   align-items: center;
   z-index: 1005; 
   img {
-    /* REMOVED rigid padding-left: 90px; */
     /* Let the NavContainer's padding handle spacing for better responsiveness. */
     padding: 10px 0 0 90px; 
-    height: 85px; 
+    height: 70px; 
     width: auto;
     @media (max-width: 992px) {
       height: 45px;
