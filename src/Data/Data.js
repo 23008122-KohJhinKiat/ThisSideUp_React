@@ -36,7 +36,6 @@ export const productCategories = [
    'T-Shirts',
    'Boardshorts',
    'Accessories',  
-   'Beach Bags',
    'Jackets',
  ];
  

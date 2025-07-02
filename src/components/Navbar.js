@@ -470,9 +470,8 @@ const Navbar = () => {
     { name: 'All Products', path: '/products' },
     { name: 'Skimboards', path: '/products/category/Skimboards' },
     { name: 'T-Shirts', path: '/products/category/T-Shirts' },
-    { name: 'Board Shorts', path: '/products/category/Boardshorts' },
+    { name: 'Boardshorts', path: '/products/category/Boardshorts' },
     { name: 'Accessories', path: '/products/category/Accessories' },
-    { name: 'Beach Bags', path: '/products/category/Beach Bags' },
     { name: 'Jackets', path: '/products/category/Jackets' }
   ];
 
