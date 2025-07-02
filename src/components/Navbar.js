@@ -36,8 +36,10 @@ const LogoLink = styled(Link)`
   align-items: center;
   z-index: 1005; 
   img {
+    /* REMOVED rigid padding-left: 90px; */
+    /* Let the NavContainer's padding handle spacing for better responsiveness. */
     padding: 10px 0; 
-    height: 60px; 
+    height: 85px; 
     width: auto;
     @media (max-width: 992px) {
       height: 45px;
@@ -162,9 +164,10 @@ function UserDropdown() {
   }, [dropdownRef]);
 
   return (
-    // Attach the ref to the container
-    <UserDropdownContainer ref={dropdownRef}>
-      {/* --- FIX: Use onClick for toggle, works on desktop and mobile --- */}
+    <UserDropdownContainer 
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+    >
       <NavIcon onClick={() => setIsOpen(prev => !prev)}>
         <img src={UserIconImg} alt="User icon" />
       </NavIcon>
