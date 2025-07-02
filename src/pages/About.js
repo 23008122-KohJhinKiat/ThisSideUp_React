@@ -1,20 +1,17 @@
-// File: src/pages/About.js
 import React from 'react';
 import styled from 'styled-components';
-import '../index.css'; // Ensure this has your CSS variables and font imports
-// import Footer from '../components/layout/Footer'; // Assuming you might add this back
+import '../index.css';
 
-// --- STYLED COMPONENTS ---
 
 const AboutPageWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Ensure wrapper takes at least full viewport height if Footer is added */
-  background-color: var(--color-background-dark, #121212); /* Fallback background for area outside hero */
+  min-height: 100vh;
+  background-color: var(--color-background-dark, #121212);
 `;
 
 const AboutHeroSection = styled.section`
-  flex-grow: 1; /* Allows this section to take up available space if Footer is present */
+  flex-grow: 1;
   background-image: url(${props => props.bgImage});
   background-size: cover;
   background-repeat: no-repeat;
@@ -22,64 +19,64 @@ const AboutHeroSection = styled.section`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem 1rem; /* Padding for mobile */
-  min-height: 100vh; /* Make hero at least full viewport height by default */
+  padding: 2rem 1rem;
+  min-height: 100vh;
 
   @media (min-width: 768px) {
-    padding: 3rem 2rem; /* More padding for tablets and desktops */
+    padding: 3rem 2rem;
   }
 `;
 
 const TextOverlayBox = styled.div`
-  background-color: rgba(26, 26, 26, 0.88); /* Slightly increased opacity */
+  background-color: rgba(26, 26, 26, 0.88);
   color: var(--color-text-light, #ffffff);
-  padding: 1.5rem; /* Base padding for mobile */
+  padding: 1.5rem;
   border-radius: var(--border-radius-m, 8px);
-  width: 90%; /* Responsive width for mobile */
-  max-width: 850px; /* Max width from original design */
+  width: 90%;
+  max-width: 850px;
   text-align: left;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Keep hover effect */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
-    transform: translateY(-5px); /* Slightly reduced hover effect for subtlety */
+    transform: translateY(-5px);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
   }
 
   @media (min-width: 768px) {
-    padding: 2.5rem; /* More padding for larger screens */
+    padding: 2.5rem;
     width: 80%;
   }
   @media (min-width: 1024px) {
-    padding: 36px; /* Original padding for desktop */
+    padding: 36px;
   }
 `;
 
 const PageTitle = styled.h1`
-  font-family: var(--font-heading, 'Lilita One', cursive); /* Using CSS var */
-  font-size: clamp(2.5rem, 8vw, 3.5rem); /* Responsive: e.g., 40px to 56px */
-  color: var(--color-accent-pink, #FFD9EB); /* Using CSS var */
-  margin-bottom: 1.5rem; /* Responsive margin */
+  font-family: var(--font-heading, 'Lilita One', cursive);
+  font-size: clamp(2.5rem, 8vw, 3.5rem);
+  color: var(--color-accent-pink, #FFD9EB);
+  margin-bottom: 1.5rem;
   text-align: left;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 `;
 
 const AboutText = styled.p`
   font-size: 17px;
-  line-height: 1.7; /* Adjusted for readability */
-  color: var(--color-text-neutral-light, #e0e0e0); /* Using CSS var */
-  margin-bottom: 1.25rem; /* Responsive margin */
+  line-height: 1.7;
+  color: var(--color-text-neutral-light, #e0e0e0);
+  margin-bottom: 1.25rem;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 
   &:first-of-type::first-letter {
     font-family: var(--font-heading, 'Lilita One', cursive);
-    font-size: clamp(3rem, 10vw, 4rem); /* Responsive drop cap: e.g., 48px to 64px */
+    font-size: clamp(3rem, 10vw, 4rem);
     color: var(--color-accent-orange, #FE9C7F);
-    float: left; /* Keep float for drop cap effect */
-    line-height: 0.8; /* Adjust to align better with the text */
-    margin-right: 0.2em; /* Use em for spacing relative to font size */
-    margin-top: 0.1em; /* Adjust vertical alignment */
-    padding-top: 0.1em; /* Fine-tune vertical position */
+    float: left;
+    line-height: 0.8;
+    margin-right: 0.2em;
+    margin-top: 0.1em;
+    padding-top: 0.1em;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   }
 
