@@ -7,7 +7,7 @@ export const initialUsers = [
     name: "Edward Barry Robert",
     email: "Edward_BR@rocketmail.com",
     passwordHash: "E92f47e3",
-    role: "customer",
+    role: "Customer",
     createdAt: new Date().toISOString(),
   },
   {
