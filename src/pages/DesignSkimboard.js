@@ -93,12 +93,13 @@ const PreviewArea = styled.div`
 `;
 
 // --- ENHANCEMENT: Made the board responsive ---
+// Current SkimboardShape
 const SkimboardShape = styled.div`
-  width: 100%; /* Take up available space */
-  max-width: 600px; /* But not more than 600px */
-  aspect-ratio: 2 / 1; /* Maintain a 2:1 width-to-height ratio */
+  width: 100%; 
+  max-width: 600px;
+  aspect-ratio: 2 / 1; 
   
-  border: 2px solid #fff;
+  border: 5px solid #FFFFFF;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -106,16 +107,13 @@ const SkimboardShape = styled.div`
   justify-content: center;
   background: ${props => props.bg};
   
-  /* Make the mask scale with the container */
   mask-image: url('/new-customisable-skimboard.png');
   -webkit-mask-image: url('/new-customisable-skimboard.png');
   mask-size: 100% 100%;
   -webkit-mask-size: 100% 100%;
   mask-repeat: no-repeat;
   
-  box-shadow: 0 0 15px rgba(0,0,0,0.5);
-  
-  /* The media query is no longer needed as aspect-ratio handles the scaling */
+  box-shadow: 0 0 30px rgba(0,0,0,0.9); // This is a simple glow effect
 `;
 
 // --- ENHANCEMENT: More robust centering for text ---
@@ -235,6 +233,7 @@ const ToggleGroup = styled.div` display: flex; gap: 12px; margin-bottom: 15px; `
 const ToggleBtn = styled.button` background: ${props => props.active ? '#FFDAB9' : 'rgba(255,255,255,0.1)'}; color: ${props => props.active ? '#3F2A56' : '#FFDAB9'}; border: 1px solid #FFDAB9; border-radius: 6px; padding: 10px 20px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background 0.2s, color 0.2s; flex-grow: 1; font-family: 'Instrument Sans', sans-serif; `;
 const AddToCartBtn = styled.button` background: #9C27B0; color: #FFFFFF; border: none; border-radius: 8px; font-size: 1.25rem; font-weight: bold; padding: 16px 0; margin-top: 24px; width: 100%; cursor: pointer; transition: background 0.2s; font-family: 'Instrument Sans', sans-serif; &:hover { background: #7B1FA2; } `;
 const ResetButton = styled.button` background: transparent; color: #FFDAB9; border: 2px solid #FFDAB9; border-radius: 8px; font-size: 1.25rem; padding: 14px 0; margin-top: 12px; width: 100%; cursor: pointer; transition: all 0.2s; font-family: 'Instrument Sans', sans-serif; &:hover { background: rgba(255, 218, 185, 0.1); border-color: #FFA07A; color: #FFA07A; } `;
+
 
 
 const DesignSkimboard = () => {
