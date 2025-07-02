@@ -2,17 +2,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Lilita+One&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Lilita+One&display=swap');
 /* Define CSS Custom Properties (Variables) based on the theme */
-.font1 {
+#font1 {
   font-family: "Inria Serif", serif;
   font-weight: bold;
 }
-.font2 {
+#font2 {
   font-family: "Instrument Sans", sans-serif;
   font-weight: bold;
   font-size: 40px;
 }
 
-.searchHeader {
+#searchHeader {
   font-family: "Instrument Sans", sans-serif;
   font-weight: 600;
   font-size: 30px;
@@ -26,7 +26,7 @@
   font-size: 16px;
 }
 
-.fontProduct {
+#fontProduct {
   font-family: "Instrument Sans", sans-serif;
   font-weight:600;
   font-size: 16px;

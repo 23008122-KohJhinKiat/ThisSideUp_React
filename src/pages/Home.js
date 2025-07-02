@@ -14,7 +14,7 @@ const slides = [
   '/bannerHD.jpg',
   '/aizat2.jpeg',
   '/an2.jpeg',
-  '/sunset.jpg',
+  '/manonwakeboard.jpg',
 ];
 
 const PageWrapper = styled.div`
