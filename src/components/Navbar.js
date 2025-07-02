@@ -38,8 +38,8 @@ const LogoLink = styled(Link)`
   img {
     /* REMOVED rigid padding-left: 90px; */
     /* Let the NavContainer's padding handle spacing for better responsiveness. */
-    padding: 10px 0; 
-    height: 85px; 
+    padding: 10px 0 0 90px; 
+    height: 70px; 
     width: auto;
     @media (max-width: 992px) {
       height: 45px;
@@ -101,7 +101,7 @@ const DropdownGridDesktop = styled.div` display: grid; grid-template-columns: 1f
 const CategoryLinkDesktop = styled(Link)` color: #000000; text-decoration: none; padding: 0.6rem 1rem; border-radius: 6px; transition: all 0.2s ease; font-size: 0.9rem; font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif; display: block; &:hover { background: #f0f0f0; color: #333; }`;
 const DropdownTitleDesktop = styled.h3` color: #333; font-size: 0.9rem; margin: 0 0 0.8rem 0; padding: 0 0.5rem 0.5rem; font-weight: 600; font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif; border-bottom: 1px solid #eee; text-transform: uppercase; letter-spacing: 0.5px;`;
 const SearchBarContainer = styled.div` display: flex; align-items: center; position: relative; input { padding: 8px 30px 8px 12px; border-radius: 4px; border: 1px solid #555; background-color: white; color: black; min-width: 150px; @media (max-width: 480px) { min-width: 100px; font-size: 0.9rem; } }`;
-const CloseSearchIcon = styled.img` position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; cursor: pointer;`;
+const CloseSearchIcon = styled.img` position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; cursor: pointer;`;
 
 function SearchBar() {
   const [isVisible, setIsVisible] = useState(false);
@@ -165,8 +165,6 @@ function UserDropdown() {
 
   return (
     <UserDropdownContainer 
-      onMouseEnter={() => setIsOpen(true)}
-      onMouseLeave={() => setIsOpen(false)}
     >
       <NavIcon onClick={() => setIsOpen(prev => !prev)}>
         <img src={UserIconImg} alt="User icon" />
