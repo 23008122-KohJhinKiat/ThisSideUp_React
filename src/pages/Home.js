@@ -231,7 +231,7 @@ const Home = () => {
             <button id='overlayButton'>CUSTOMISE</button>
             </Link> :
             <Link to='/login'>
-            <button id='overlayButton'>CUSTOMISE</button>
+            <button id='overlayButton'>SIGN IN TO CUSTOMISE</button>
             </Link>  
           }
           </div>
