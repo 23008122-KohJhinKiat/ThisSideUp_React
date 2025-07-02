@@ -388,8 +388,6 @@ function UserDropdown() {
 
   return (
     <UserDropdownContainer 
-      onMouseEnter={() => setIsOpen(true)}
-      onMouseLeave={() => setIsOpen(false)}
     >
       <NavIcon onClick={() => setIsOpen(prev => !prev)}>
         <img src={UserIconImg} alt="User icon" />
