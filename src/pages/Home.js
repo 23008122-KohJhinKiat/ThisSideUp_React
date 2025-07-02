@@ -1,15 +1,15 @@
+// src/pages/Home.js
 
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import videoBG from '../icons/anSkimVignette.mp4';
-import '../index.css';
+import '../index.css'; // Keep for global styles like fonts and variables
 import BG1 from '../icons/bg1.jpg';
 import BG2 from '../icons/bg2.jpg';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-
-
+// --- Styled Components (No changes to these) ---
 const slides = [
   '/bannerHD.jpg',
   '/aizat2.jpeg',
@@ -40,50 +40,51 @@ const HeroSection = styled.div`
   @media (min-width: 768px) {
     padding: 2rem;
   }
-  @media (min-width: 1200px) {
-  }
 `;
 
 const InfoBox = styled.div`
   background-color: rgba(32, 32, 32, 0.85);
-  padding: 1.5rem; /* Base padding */
-  height: 750px;
-  width: 90%; /* More responsive width for mobile */
-  max-width: 560px; /* Keep the max-width for desktop */
-  /* min-height: 700px; /* Consider if fixed height is needed or if content should dictate it */
+  padding: 1.5rem;
+  /* CHANGED: Switched from fixed height to min-height for better text wrapping on small screens */
+  min-height: 500px; 
+  width: 90%;
+  max-width: 560px;
   text-shadow: 2px 2px 5px rgba(0,0,0,0.50);
-  border-radius: 8px; /* Optional: add some rounded corners */
-  margin-left: auto; /* Default: center the box on mobile if HeroSection is full width */
+  border-radius: 8px;
+  margin-left: auto;
   margin-right: auto;
   position: relative;
   z-index: 2;
-  color: var(--color-text-light, #FFFFFF); /* Default text color */
+  color: var(--color-text-light, #FFFFFF);
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Better vertical alignment of content */
 
   @media (min-width: 768px) {
     padding: 2rem;
-    margin-left: 5%; /* Push it a bit to the left on tablets */
-    margin-right: auto; /* Keep it from stretching too far right */
+    margin-left: 5%;
+    margin-right: auto;
   }
 
   @media (min-width: 1024px) {
-    padding: 2.5rem 2rem; /* More padding on desktop */
-    margin-left: 80px; /* Recreate the original left offset for desktop */
+    padding: 2.5rem 2rem;
+    margin-left: 80px;
     margin-right: auto;
   }
 `;
 
 const Subtitle = styled.p`
-  font-size: clamp(1.5rem, 4vw, 2.25rem); /* 24px, 36px */
-  color: var(--color-accent-orange, #FE9C7F); /* Using CSS variable from index.css */
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  color: var(--color-accent-orange, #FE9C7F);
   margin-bottom: 0.5em;
   font-family: "Inria Serif", serif;
   font-weight: bold;
 `;
 
 const Title = styled.p`
-  font-size: clamp(2.5rem, 8vw, 4rem); /* 40px, 64px */
+  font-size: clamp(2.5rem, 8vw, 4rem);
   color: var(--color-text-light, #FFFFFF);
-  line-height: 1.1; /* Adjusted line height */
+  line-height: 1.1;
   padding-bottom: 0.5em;
   font-family: "Inria Serif", serif;
   font-weight: bold;
@@ -93,7 +94,7 @@ const Tagline = styled.p`
   font-size: 24px;
   color: var(--color-accent-orange, #FDDDFD);
   line-height: 1.4;
-  margin-bottom: 1.5em; /* Space before divider */
+  margin-bottom: 1.5em;
   font-family: "Inria Serif", serif;
   font-weight: bold;
 `;
@@ -103,27 +104,24 @@ const Description = styled.p`
   color: var(--color-text-light, #FFFFFF);
   line-height: 1.6;
   font-family: "Inria Serif", serif;
-
 `;
 
 const Divider = styled.div`
   display: flex;
   align-items: center;
-  margin: 1.5rem 0; /* Use rem for scalable margins */
-
-  &::before,
-  &::after {
+  margin: 1.5rem 0;
+  &::before, &::after {
     content: '';
-    flex-grow: 1; /* Allow lines to take available space */
+    flex-grow: 1;
     border-bottom: 2px solid var(--color-accent-orange, #FE9C7F);
   }
-
   img {
-    width: clamp(24px, 5vw, 28px); /* Responsive icon size */
+    width: clamp(24px, 5vw, 28px);
     height: auto;
-    margin: 0 clamp(10px, 3vw, 16px); /* Responsive margins */
+    margin: 0 clamp(10px, 3vw, 16px);
   }
-`
+`;
+
 const SlideBackground = styled.div`
   background-image: url(${props => props.bgImage});
   position: absolute;
@@ -133,14 +131,8 @@ const SlideBackground = styled.div`
   width: 100%;
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
   opacity: ${props => (props.active ? 1 : 0)};
   transition: opacity 1s ease-in-out;
-  z-index: 0;
-  pointer-events: none;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   z-index: 0;
 `;
 
@@ -159,6 +151,117 @@ const VideoSection = styled.div`
 `;
 
 
+// --- NEW STYLED COMPONENTS TO REPLACE INLINE & ID STYLES ---
+
+const SlideshowControls = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 15px 0 10px 0;
+  background-color: #222;
+`;
+
+const ControlDot = styled.button`
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid #7600AD;
+  background-color: ${props => props.active ? '#7600AD' : 'transparent'};
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  padding: 0;
+`;
+
+const PromoSection = styled.section`
+  display: flex;
+  flex-direction: row; /* Default for desktop */
+
+  @media (max-width: 768px) {
+    flex-direction: column; /* Stack vertically on tablet/mobile */
+  }
+`;
+
+// Entire card is now a link for better UX
+const PromoCard = styled(Link)`
+  width: 50%; /* On desktop */
+  position: relative;
+  display: block; /* To make the link a container */
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    width: 100%; /* Full width on tablet/mobile */
+  }
+
+  img {
+    width: 100%;
+    display: block; /* Removes bottom space under image */
+    transition: transform 0.3s ease;
+  }
+
+  /* The overlay now lives inside the link */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    transition: background-color 0.3s ease;
+  }
+  
+  &:hover {
+    img {
+      transform: scale(1.05);
+    }
+    &::after {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+  }
+`;
+
+const PromoOverlayContent = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+  padding: 1rem;
+`;
+
+const PromoTitle = styled.h2`
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-family: 'Inria Serif', serif;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+  margin: 0 0 1rem 0;
+`;
+
+const PromoButton = styled.span`
+  background: var(--color-primary-purple, #7600AD);
+  color: white;
+  padding: 12px 32px;
+  border-radius: 6px;
+  border: none;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: var(--color-secondary-peach, #b19cd9);
+  }
+`;
+
+// --- The Component ---
 const Home = () => {
   const { currentUser } = useAuth();
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -198,45 +301,41 @@ const Home = () => {
             This Side Up is an online store for skimboards, beach
             supplies, and custom board designs. This website
             makes it easy for customers to shop for skim-
-            boarding gear and personalise their boards. This
-            shop offers a simple and convenient way to get
-            everything you need for your next beach adventure to the shore.
+            boarding gear and personalise their boards.
           </Description>
         </InfoBox>
       </HeroSection>
 
-      <div style={{alignItems: 'center', display: 'flex', justifyContent: 'center', gap: '.75rem', padding: '15px 0px 10px 0px', backgroundColor: '#222'}}>
+      <SlideshowControls>
         {slides.map((_, index) => (
-          <button style={index === currentSlide ? {backgroundColor: '#7600AD'} : {}} id='buttonSlideshow' onClick={() => setCurrentSlide(index)}></button>
+          <ControlDot
+            key={index}
+            active={index === currentSlide}
+            onClick={() => setCurrentSlide(index)}
+            aria-label={`Go to slide ${index + 1}`}
+          />
         ))}
-      </div>
+      </SlideshowControls>
 
-      <div style={{display: 'flex', flexDirection: 'row'}}>
-        <div style={{width: '50%', position: 'relative'}}>
-          <img id='ad' src={BG1} alt="The Bananas skimboard" />
-          <div id='overlay'>
-            <h2 id='overlayHeader'>SKIMBOARDS</h2>
-            
-            <Link to='/products/category/Skimboards'>
-            <button id='overlayButton'>BROWSE</button>
-            </Link>
-          </div>
-        </div>
-        <div style={{width: '50%', position: 'relative'}}>
-          <img id='ad' src={BG2} alt="Skimboard being maintained" />
-          <div id='overlay'>
-            <h2 id='overlayHeader'>CUSTOMISE YOUR BOARD</h2>
-            { currentUser ? 
-            <Link to='/design-skimboard'>
-            <button id='overlayButton'>CUSTOMISE</button>
-            </Link> :
-            <Link to='/login'>
-            <button id='overlayButton'>SIGN IN TO CUSTOMISE</button>
-            </Link>  
-          }
-          </div>
-        </div>
-      </div>
+      <PromoSection>
+        <PromoCard to='/products/category/Skimboards'>
+          <img src={BG1} alt="The Bananas skimboard" />
+          <PromoOverlayContent>
+            <PromoTitle>SKIMBOARDS</PromoTitle>
+            <PromoButton>BROWSE</PromoButton>
+          </PromoOverlayContent>
+        </PromoCard>
+
+        <PromoCard to={currentUser ? '/design-skimboard' : '/login'}>
+          <img src={BG2} alt="Skimboard being maintained" />
+          <PromoOverlayContent>
+            <PromoTitle>CUSTOMISE YOUR BOARD</PromoTitle>
+            <PromoButton>
+              {currentUser ? 'CUSTOMISE' : 'SIGN IN TO CUSTOMISE'}
+            </PromoButton>
+          </PromoOverlayContent>
+        </PromoCard>
+      </PromoSection>
 
       <VideoSection>
         <video src={videoBG} autoPlay loop muted />
