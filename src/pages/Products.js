@@ -63,7 +63,7 @@ const CategoryDisplayButton = styled.button`
   border: none;
   border-radius: var(--border-radius-m, 6px);
   font-size: var(--font-size-large, 18px);
-  font-family: var(--font-heading);
+
   font-weight: bold;
   cursor: pointer;
   display: flex;
@@ -150,12 +150,12 @@ const Products = () => {
     }
   };
     return (
-    <PageContainer className="products-font">
+    <PageContainer className="font25">
       <PageWrapper>
         <MainContent> {/* Wrap main content */}
           <PageHeader>
             <CategorySelectorWrapper>
-              <CategoryDisplayButton onClick={() => setShowDropdown(!showDropdown)}>
+              <CategoryDisplayButton className="font25" onClick={() => setShowDropdown(!showDropdown)}>
                 {currentCategory === "All" ? "All Products" : currentCategory}
                 <FaChevronDown /> {/* Add icon here */}
               </CategoryDisplayButton>

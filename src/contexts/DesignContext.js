@@ -25,8 +25,8 @@ export const DesignProvider = ({ children }) => {
     customText: {
       text: "Enter text here",
       font: "Arial",
-      color: "#333333",
-      size: 24,
+      color: "#696969",
+      size: 30,
       alignment: 'center',
       style: 'normal',
       weight: 'normal',
@@ -45,7 +45,7 @@ export const DesignProvider = ({ children }) => {
     isDecalEnabled: false,
 
     // Placeholder image for custom designs in cart/checkout
-    imageUrl: "/images/custom-board-placeholder.png", // ADD THIS LINE (ensure you have this image in public/images)
+    imageUrl: "/customisable-skimboard-icon.png", // ADD THIS LINE (ensure you have this image in public/images)
                                                       // Or use a more generic one like: 'https://picsum.photos/seed/customboard/80/80'
 
     price: 300.00, // Base price, can be adjusted by features later

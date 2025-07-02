@@ -10,6 +10,69 @@ import { SketchPicker } from 'react-color';
 import { GradientPicker } from 'react-linear-gradient-picker';
 import 'react-linear-gradient-picker/dist/index.css';
 
+// src/utils/imageUtils.js (or at the top of your component file)
+
+/**
+ * Takes an image source and returns a Promise that resolves with a base64 data URL 
+ * of the image cropped to a square from its center.
+ * @param {string} imageSrc The source of the image to crop (e.g., a data URL).
+ * @returns {Promise<string>} A Promise that resolves with the cropped image's data URL.
+ */
+export const cropImageToSquare = (imageSrc) => {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.src = imageSrc;
+
+    // Set crossOrigin to "anonymous" if loading images from a URL, not strictly necessary for data URLs
+    image.crossOrigin = "Anonymous"; 
+
+    image.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      if (!ctx) {
+        return reject(new Error('Could not get canvas context'));
+      }
+
+      // Determine the size of the square crop
+      const sourceWidth = image.naturalWidth;
+      const sourceHeight = image.naturalHeight;
+      const cropSize = Math.min(sourceWidth, sourceHeight);
+
+      // Determine the top-left corner of the crop area to center it
+      const sourceX = (sourceWidth - cropSize) / 2;
+      const sourceY = (sourceHeight - cropSize) / 2;
+
+      // Set the canvas to the size of the crop
+      canvas.width = cropSize;
+      canvas.height = cropSize;
+
+      // Draw the cropped portion of the image onto the canvas
+      ctx.drawImage(
+        image,
+        sourceX,      // The x-coordinate where to start clipping
+        sourceY,      // The y-coordinate where to start clipping
+        cropSize,     // The width of the clipped image
+        cropSize,     // The height of the clipped image
+        0,            // The x-coordinate where to place the image on the canvas
+        0,            // The y-coordinate where to place the image on the canvas
+        cropSize,     // The width of the image to use (stretch or reduce the image)
+        cropSize      // The height of the image to use (stretch or reduce the image)
+      );
+
+      // Get the cropped image as a data URL
+      const croppedDataUrl = canvas.toDataURL('image/png'); // You can also use 'image/jpeg'
+      resolve(croppedDataUrl);
+    };
+
+    image.onerror = (error) => {
+      reject(error);
+    };
+  });
+};
+
+
+
 const rgbToRgba = (rgb, a = 1) => rgb.replace('rgb(', 'rgba(').replace(')', `, ${a})`);
 
 const WrappedSketchPicker = ({ onSelect, ...rest }) => {
@@ -97,10 +160,13 @@ const PreviewText = styled.div`
   text-align: center;
   pointer-events: none;
   word-wrap: break-word;
+  z-index: 10;
 `;
 
 const PreviewDecal = styled.img`
-  
+  position: absolute;
+  top: 20%;
+  left: 33%;
   max-width: 50%; 
   max-height: 50%; 
   pointer-events: none;
@@ -324,31 +390,43 @@ const DesignSkimboard = () => {
 
   const decalUrl = currentDesign.decal.url;
   const decalName = currentDesign.decal.name;
-  const handleDecalUpload = (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      // Check if the current feature is textAndDecal
-      if (feature === 'textAndDecal') {
-        updateDesign({
-          decal: { ...currentDesign.decal, url: reader.result, name: file.name },
-          isTextAndDecalEnabled: true,
-          isTextEnabled: false,
-          isDecalEnabled: false
-        });
-      } else {
-        updateDesign({
-          decal: { ...currentDesign.decal, url: reader.result, name: file.name },
-          isDecalEnabled: true,
-          isTextEnabled: false,
-          isTextAndDecalEnabled: false
-        });
-      }
-    };
-    reader.readAsDataURL(file);
-  }
-};
+   const handleDecalUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        try {
+          // Get the original image data URL from the file reader
+          const originalDataUrl = reader.result;
+          
+          // Crop the image to a square
+          const croppedDataUrl = await cropImageToSquare(originalDataUrl);
+
+          // Now update the state with the CROPPED image URL
+          const updatePayload = {
+            decal: { ...currentDesign.decal, url: croppedDataUrl, name: file.name },
+            isDecalEnabled: true,
+            isTextEnabled: false,
+            isTextAndDecalEnabled: false,
+          };
+
+          // Handle the textAndDecal feature correctly
+          if (feature === 'textAndDecal') {
+            updatePayload.isTextAndDecalEnabled = true;
+            updatePayload.isDecalEnabled = false; 
+          }
+
+          updateDesign(updatePayload);
+
+        } catch (error) {
+          console.error("Error cropping image:", error);
+          alert("Could not process the image. Please try another one.");
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
 
   function getGradientString(type, angle, stopsArray) {
     const sortedStops = [...stopsArray].sort((a, b) => parseFloat(a.offset) - parseFloat(b.offset));
@@ -505,7 +583,7 @@ const DesignSkimboard = () => {
                   <Inline>
                     <div style={{flex: 1}}>
                       <StyledLabel htmlFor="textSizeInput">Size (px):</StyledLabel>
-                      <input id="textSizeInput" type="number" value={textSize} min={12} max={80} onChange={e => setTextSize(e.target.value)} />
+                      <input id="textSizeInput" type="number" value={textSize} min={10} max={100} onChange={e => setTextSize(e.target.value)} />
                     </div>
                     <div style={{flex: 1}}>
                       <StyledLabel htmlFor="textWeightSelect">Weight:</StyledLabel>
@@ -535,7 +613,7 @@ const DesignSkimboard = () => {
               {(feature === 'decal' ||feature === 'textAndDecal') && (
                 <>
                   <div>
-                    <StyledLabel htmlFor="decalUpload">Upload Image:</StyledLabel>
+                    <StyledLabel htmlFor="decalUpload">Upload Image (Image should be a square):</StyledLabel>
                     <input id="decalUpload" type="file" accept="image/*" onChange={handleDecalUpload} />
                   </div>
                   {decalUrl && <div style={{ color: '#FFDAB9', fontSize: '0.9rem', marginTop: 8 }}>Uploaded: {decalName}</div>}

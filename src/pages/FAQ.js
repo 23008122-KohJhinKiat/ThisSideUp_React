@@ -128,7 +128,7 @@ const QuestionHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: var(--font-body, 'Inrai Serif', sans-serif);
+  font-family: "Instrument Sans", sans-serif;
   font-size: clamp(1rem, 3vw, 1.125rem); 
   color: var(--color-text-light, #FFFFFF);
   font-weight: 500; 
@@ -162,7 +162,7 @@ const AnswerContent = styled.div`
   padding-top: 0;       /* Initially no top/bottom padding */
   padding-bottom: 0;
 
-  font-family: var(--font-body, 'Inrai Serif', sans-serif);
+  font-family: "Instrument Sans", sans-serif;
   font-size: clamp(0.9rem, 2.5vw, 1rem); 
   color: var(--color-text-neutral-light, #E0E0E0);
   line-height: 1.6;
@@ -254,7 +254,7 @@ const FAQ = () => {
     <FAQPageWrapper>
       <HeroBanner bgImage={backgroundImage}>
         <HeroTextBox>
-          <PageTitle id='font1'>Frequently Asked Questions (FAQs)</PageTitle>
+          <PageTitle className='font1'>Frequently Asked Questions (FAQs)</PageTitle>
         </HeroTextBox>
       </HeroBanner>
 

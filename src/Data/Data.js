@@ -34,7 +34,7 @@ export const productCategories = [ // This might be redundant if defined elsewhe
    'All',
    'Skimboards',
    'T-Shirts',
-   'Board Shorts',
+   'Boardshorts',
    'Accessories',  
    'Beach Bags',
    'Towels',
@@ -216,7 +216,7 @@ export const fetchOrdersForUserAPI = async (userId) => {
 };
  
 export const topSearchTerms = [
-    "Skimboards", "Hats", "Towels", "Sandals", "Traction Pads", "Sunscreen", "Beach Bags", "Flip-Flops"
+    "Skimboards", "Hats", "Towels", "Sandals", "Traction Pads", "Sunscreen", "Beach Bags", "Flip-Flops", "Boardshorts"
 ];
  
 export const toggleProductLikeAPI = async (productId, userId) => {

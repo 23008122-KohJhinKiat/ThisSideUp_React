@@ -12,7 +12,7 @@ const UserProfilePage = () => {
 
   return (
      <div className="user-profile-page" style={{ padding: '20px', color: 'white' }}>
-      <h1>My Profile</h1>
+      <h1 className='font2'>My Profile</h1>
       <p><strong>Name:</strong> {currentUser.name}</p>
       <p><strong>Email:</strong> {currentUser.email}</p>
       <p><strong>Role:</strong> {currentUser.role}</p>

@@ -8,8 +8,6 @@ import {
   FaHeart,
   FaShoppingCart,
   FaStar,
-  FaPlus,
-  FaMinus
 } from 'react-icons/fa';
 import { useCart } from '../contexts/CartContext';
 import ProductCard from './ProductCard';
@@ -581,12 +579,11 @@ const ProductDetailPage = () => {
 
             <QuantityControl>
               <InfoLabel>Quantity:</InfoLabel>
-              <QuantityButton onClick={handleDecrementQuantity} disabled={quantity <= 1}>
-                <FaMinus/>
+              <QuantityButton onClick={handleDecrementQuantity} disabled={quantity <= 1}> -
               </QuantityButton>
               <QuantityDisplay>{quantity}</QuantityDisplay>
-              <QuantityButton onClick={handleIncrementQuantity} disabled={product.stock <=0 || quantity >= product.stock}>
-                <FaPlus/>
+              <QuantityButton onClick={handleIncrementQuantity} disabled={product.stock <=0 || quantity >= product.stock}> +
+
               </QuantityButton>
               {product.stock <= 0 && <span style={{color: 'var(--color-error-red)', marginLeft: '10px', fontSize: 'var(--font-size-small)'}}>Out of stock</span>}
               {product.stock > 0 && <span style={{fontSize: 'var(--font-size-small)', marginLeft: '10px', color: 'var(--color-neutral-gray-light)'}}>{product.stock} left</span>}

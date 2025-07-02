@@ -108,6 +108,7 @@ const FormSelect = styled(FormControlBase).attrs({ as: 'select' })`
   background-position: right .7em top 50%;
   background-size: .65em auto;
   padding-right: 2.5em; 
+  margin-bottom: 40px;
 
   option {
     background-color: var(--color-primary-purple, #5D3FD3); 
@@ -313,7 +314,7 @@ const CheckoutPage = () => {
   }, [selectedItems, navigate]);
 
   const [addressLine1, setAddressLine1] = useState('');
-  const [addressLine2, setAddressLine2] = useState(''); // Optional: Address Line 2
+  //const [addressLine2, setAddressLine2] = useState(''); // Optional: Address Line 2
   const [city, setCity] = useState('');
   const [stateProv, setStateProv] = useState(''); 
   const [postalCode, setPostalCode] = useState('');
@@ -349,7 +350,7 @@ const CheckoutPage = () => {
     
     // Construct the fullAddress string
     let constructedAddress = `${addressLine1}`;
-    if (addressLine2) constructedAddress += `, ${addressLine2}`; // Add address line 2 if present
+    //if (addressLine2) constructedAddress += `, ${addressLine2}`; // Add address line 2 if present
     constructedAddress += `, ${city}`;
     if (stateProv) constructedAddress += `, ${stateProv}`;
     constructedAddress += ` ${postalCode}, ${selectedCountryName}`;
@@ -397,20 +398,6 @@ const CheckoutPage = () => {
 
   const currentCartItems = selectedItems; 
 
-  // Add Address Line 2 field in the JSX:
-  // ... (inside <AddressForm>)
-  // <FormRow>
-  //   <FormLabel htmlFor="addressLine2">Address Line 2 (Optional)</FormLabel>
-  //   <FormInput 
-  //     type="text" 
-  //     id="addressLine2" 
-  //     value={addressLine2} 
-  //     onChange={(e) => setAddressLine2(e.target.value)} 
-  //     placeholder="Apartment, suite, unit, building, floor, etc."
-  //   />
-  // </FormRow>
-  // ... (rest of the component) ...
-
 
   if (currentCartItems.length === 0 && !isPlacingOrder) {
     // This check might run before selectedItems is properly populated from context/state
@@ -446,14 +433,20 @@ const CheckoutPage = () => {
             </FormRow>
             {/* ADDED Address Line 2 for completeness */}
             <FormRow>
-              <FormLabel htmlFor="addressLine2">Address Line 2 (Optional)</FormLabel>
-              <FormInput 
-                type="text" 
-                id="addressLine2" 
-                value={addressLine2} 
-                onChange={(e) => setAddressLine2(e.target.value)} 
-                placeholder="Apartment, suite, unit, building, floor, etc."
-              />
+              <FormLabel htmlFor="country">Country*</FormLabel>
+              <FormSelect 
+                id="country" 
+                value={country} 
+                onChange={(e) => setCountry(e.target.value)}
+                required
+              >
+                <option value="" disabled>Select your country</option>
+                {countries.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.name}
+                  </option>
+                ))}
+              </FormSelect>
             </FormRow>
             <FormRow>
               <FormLabel htmlFor="city">City*</FormLabel>
@@ -487,22 +480,7 @@ const CheckoutPage = () => {
                 required 
               />
             </FormRow>
-            <FormRow>
-              <FormLabel htmlFor="country">Country*</FormLabel>
-              <FormSelect 
-                id="country" 
-                value={country} 
-                onChange={(e) => setCountry(e.target.value)}
-                required
-              >
-                <option value="" disabled>Select your country</option>
-                {countries.map((c) => (
-                  <option key={c.code} value={c.code}>
-                    {c.name}
-                  </option>
-                ))}
-              </FormSelect>
-            </FormRow>
+            
           </AddressForm>
         </Section>
 

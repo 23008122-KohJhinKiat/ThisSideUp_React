@@ -12,7 +12,7 @@ export const initialProducts = [
     stock: 3525,
     rating: 4.0,
     numRatings: 12,
-    likes: [], // Array to store user IDs who liked the product
+    likes: 0, // Array to store user IDs who liked the product
   },
   {
     _id: generateId('prod'),
@@ -24,7 +24,7 @@ export const initialProducts = [
     stock: 1324,
     rating: 4.7,
     numRatings: 25,
-    likes: [], // Array to store user IDs who liked the product
+    likes: 0, // Array to store user IDs who liked the product
   },
   {
     _id: generateId('prod'),
@@ -36,7 +36,7 @@ export const initialProducts = [
     stock: 2103,
     rating: 4.2,
     numRatings: 83,
-    likes: [], // Array to store user IDs who liked the product
+    likes: 0, // Array to store user IDs who liked the product
   },
   {
     _id: generateId('prod'),
@@ -48,7 +48,7 @@ export const initialProducts = [
     stock: 1536,
     rating: 4.3,
     numRatings: 18,
-    likes: [], // Array to store user IDs who liked the product
+    likes: 0, // Array to store user IDs who liked the product
   },
   {
     _id: generateId('prod'),
@@ -60,7 +60,7 @@ export const initialProducts = [
     stock: 3274,
     rating: 4.8,
     numRatings: 96,
-    likes: [], // Array to store user IDs who liked the product
+    likes: 0, // Array to store user IDs who liked the product
   },
   {
     _id: generateId('prod'),
@@ -73,7 +73,7 @@ export const initialProducts = [
     tags: ["skimboard", "marble", "fish shape"],
     rating: 4.5,
     numRatings: 1150,
-    likes: [], // Array to store user IDs who liked the product
+    likes: 0, // Array to store user IDs who liked the product
   },
   {
     _id: generateId('prod'),
@@ -86,7 +86,7 @@ export const initialProducts = [
     tags: ["skimboard", "marble design", "premium"],
     rating: 4.2,
     numRatings: 45,
-    likes: [], // Array to store user IDs who liked the product
+    likes: 0, // Array to store user IDs who liked the product
   },
   {
     _id: generateId('prod'),
@@ -99,7 +99,7 @@ export const initialProducts = [
     tags: ["carbon fiber", "purple", "performance"],
     rating: 4.6,
     numRatings: 33,
-    likes: [], // Array to store user IDs who liked the product
+    likes: 0, // Array to store user IDs who liked the product
   },
   {
     _id: generateId('prod'),
@@ -112,7 +112,7 @@ export const initialProducts = [
     tags: ["rasta", "colorful", "freestyle"],
     rating: 4.4,
     numRatings: 19,
-    likes: [], // Array to store user IDs who liked the product
+    likes: 0, // Array to store user IDs who liked the product
   },
   {
     _id: generateId('prod'),
@@ -125,7 +125,7 @@ export const initialProducts = [
     tags: ["samurai", "japanese style", "aggressive design"],
     rating: 4.1,
     numRatings: 77,
-    likes: [], // Array to store user IDs who liked the product
+    likes: 0, // Array to store user IDs who liked the product
   },
   {
     _id: generateId('prod'),
@@ -138,7 +138,7 @@ export const initialProducts = [
     tags: ["sunscreen", "spf50", "mineral", "fragrance-free"],
     rating: 4.1,
     numRatings: 77,
-    likes: [], // Array to store user IDs who liked the product
+    likes: 0, // Array to store user IDs who liked the product
   },
   {
   _id: generateId('prod'),
@@ -151,7 +151,7 @@ export const initialProducts = [
   tags: ["sunscreen", "spf50", "broad spectrum", "water-resistant"],
   rating: 4.1,
   numRatings: 77,
-  likes: [],
+  likes: 0,
 },
 {
   _id: generateId('prod'),
@@ -164,7 +164,7 @@ export const initialProducts = [
   tags: ["beachwear", "tropical", "casual", "summer shirt"],
   rating: 4.1,
   numRatings: 77,
-  likes: [],
+  likes: 0,
 },
 {
   _id: generateId('prod'),
@@ -177,7 +177,7 @@ export const initialProducts = [
   tags: ["boardshorts", "swimwear", "quick-dry", "beach"],
   rating: 4.1,
   numRatings: 77,
-  likes: [],
+  likes: 0,
 },
 {
   _id: generateId('prod'),
@@ -190,7 +190,7 @@ export const initialProducts = [
   tags: ["boardshorts", "surfwear", "modern print", "activewear"],
   rating: 4.1,
   numRatings: 77,
-  likes: [],
+  likes: 0,
 },
 {
   _id: generateId('prod'),
@@ -203,7 +203,7 @@ export const initialProducts = [
   tags: ["classic", "durable", "drawstring", "beachwear"],
   rating: 4.1,
   numRatings: 77,
-  likes: [],
+  likes: 0,
 },
 {
   _id: generateId('prod'),
@@ -216,7 +216,7 @@ export const initialProducts = [
   tags: ["towels", "beach", "absorbent", "vibrant colors"],
   rating: 4.1,
   numRatings: 77,
-  likes: [],
+  likes: 0,
 },
 {
   _id: generateId('prod'),
@@ -229,7 +229,7 @@ export const initialProducts = [
   tags: ["microfiber", "quick-dry", "travel-friendly", "beach essentials"],
   rating: 4.1,
   numRatings: 77,
-  likes: [],
+  likes: 0,
 },
 {
   _id: generateId('prod'),
@@ -242,7 +242,7 @@ export const initialProducts = [
   tags: ["microfiber", "quick-dry", "travel-friendly", "beach essentials"],
   rating: 4.1,
   numRatings: 77,
-  likes: [],
+  likes: 0,
 },
 {
   _id: generateId('prod'),
@@ -255,6 +255,6 @@ export const initialProducts = [
   tags: ["microfiber", "quick-dry", "travel-friendly", "beach essentials"],
   rating: 4.1,
   numRatings: 77,
-  likes: [],
+  likes: 0,
 },
 ];

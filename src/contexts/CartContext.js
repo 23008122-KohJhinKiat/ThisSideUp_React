@@ -19,6 +19,8 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(getInitialCart); // { product: {}, quantity: number, designId?: string } or { customDesign: {}, quantity: number }
   const [loading, setLoading] = useState(false); // For async operations like fetching product details
   const [error, setError] = useState(null);
+  const [numCustom, setNumCustom] = useState(0); // Track number of custom designs in cart
+
 
   useEffect(() => {
     localStorage.setItem('shoppingCart', JSON.stringify(cartItems));
@@ -50,6 +52,8 @@ export const CartProvider = ({ children }) => {
       } else if (itemData && itemData._id && itemData.isCustom) { // Custom Design Object
          // For custom items, assume each unique design is a new cart entry
          // Or, if you want to stack identical custom designs, you'd need a more complex check
+         setNumCustom((prev) => prev + 1); // Increment custom design count
+         itemData.name = `My Custom Skimboard ${numCustom + 1}`; // Ensure name is set 
         newItem = { customDesign: itemData, quantity, type: 'custom', _id: itemData._id }; // Use design _id for keying
         setCartItems((prevItems) => [...prevItems, newItem]);
       } else {
@@ -77,10 +81,14 @@ export const CartProvider = ({ children }) => {
 
   const removeItemFromCart = (itemId) => { // itemId can be product._id or customDesign._id
     setCartItems((prevItems) => prevItems.filter((item) => (item.product?._id || item.customDesign?._id) !== itemId));
+    if (cartItems.length === 1) {
+      setNumCustom(0); // Reset custom count if last custom item is removed
+    }
   };
 
   const clearCart = () => {
     setCartItems([]);
+    setNumCustom(0);
   };
 
   const getCartTotal = () => {
