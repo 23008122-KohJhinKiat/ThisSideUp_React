@@ -194,7 +194,7 @@ const SignUpPage = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'customer' 
+    role: 'Customer' 
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -306,15 +306,15 @@ const SignUpPage = () => {
               <div>
                 <RoleButton
                   type="button"
-                  active={formData.role === 'customer'}
-                  onClick={() => handleRoleChange('customer')}
+                  active={formData.role === 'Customer'}
+                  onClick={() => handleRoleChange('Customer')}
                 >
                   Customer
                 </RoleButton>
                 <RoleButton
                   type="button"
-                  active={formData.role === 'admin'} 
-                  onClick={() => handleRoleChange('admin')}
+                  active={formData.role === 'Admin'} 
+                  onClick={() => handleRoleChange('Admin')}
                 >
                   Admin
                 </RoleButton>
