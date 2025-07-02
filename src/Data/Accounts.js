@@ -15,7 +15,7 @@ export const initialUsers = [
     name: "Keiko Villanueva",
     email: "keikomori@gmail.com",
     passwordHash: "K3ikoMori2025",
-    role: "admin",
+    role: "Admin",
     createdAt: new Date().toISOString(),
   },
   {
@@ -23,7 +23,7 @@ export const initialUsers = [
     name: "Topaz Cifera",
     email: "TCifera@hotmail.com",
     passwordHash: "T0pazCifera!",
-    role: "customer",
+    role: "Customer",
     createdAt: new Date().toISOString(),
   },
   {
@@ -31,7 +31,7 @@ export const initialUsers = [
     name: "Rhys Welder",
     email: "rhys@gmail.com",
     passwordHash: "myhouse45!",
-    role: "customer",
+    role: "Customer",
     createdAt: new Date().toISOString(),
   },
 ];
