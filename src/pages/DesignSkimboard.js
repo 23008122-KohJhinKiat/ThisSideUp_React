@@ -1,29 +1,19 @@
 // File: src/pages/DesignSkimboard.js
-import React, { useState, useEffect } from 'react'; // Added useEffect
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useDesign } from '../contexts/DesignContext';
-import { useCart } from '../contexts/CartContext'; // <<<<<<<<<<< ADD THIS IMPORT
-// Assuming generateId is exported from Data.js and Data.js is in src/
-import { generateId } from '../Data/Data'; // <<<<<<<<<<< ADD THIS IMPORT (adjust path if Data.js is elsewhere)
+import { useCart } from '../contexts/CartContext';
+import { generateId } from '../Data/Data';
 import { SketchPicker } from 'react-color';
 import { GradientPicker } from 'react-linear-gradient-picker';
 import 'react-linear-gradient-picker/dist/index.css';
 
-// src/utils/imageUtils.js (or at the top of your component file)
-
-/**
- * Takes an image source and returns a Promise that resolves with a base64 data URL 
- * of the image cropped to a square from its center.
- * @param {string} imageSrc The source of the image to crop (e.g., a data URL).
- * @returns {Promise<string>} A Promise that resolves with the cropped image's data URL.
- */
+// The cropImageToSquare function remains the same
 export const cropImageToSquare = (imageSrc) => {
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.src = imageSrc;
-
-    // Set crossOrigin to "anonymous" if loading images from a URL, not strictly necessary for data URLs
     image.crossOrigin = "Anonymous"; 
 
     image.onload = () => {
@@ -34,44 +24,24 @@ export const cropImageToSquare = (imageSrc) => {
         return reject(new Error('Could not get canvas context'));
       }
 
-      // Determine the size of the square crop
       const sourceWidth = image.naturalWidth;
       const sourceHeight = image.naturalHeight;
       const cropSize = Math.min(sourceWidth, sourceHeight);
-
-      // Determine the top-left corner of the crop area to center it
       const sourceX = (sourceWidth - cropSize) / 2;
       const sourceY = (sourceHeight - cropSize) / 2;
 
-      // Set the canvas to the size of the crop
       canvas.width = cropSize;
       canvas.height = cropSize;
 
-      // Draw the cropped portion of the image onto the canvas
-      ctx.drawImage(
-        image,
-        sourceX,      // The x-coordinate where to start clipping
-        sourceY,      // The y-coordinate where to start clipping
-        cropSize,     // The width of the clipped image
-        cropSize,     // The height of the clipped image
-        0,            // The x-coordinate where to place the image on the canvas
-        0,            // The y-coordinate where to place the image on the canvas
-        cropSize,     // The width of the image to use (stretch or reduce the image)
-        cropSize      // The height of the image to use (stretch or reduce the image)
-      );
+      ctx.drawImage(image, sourceX, sourceY, cropSize, cropSize, 0, 0, cropSize, cropSize);
 
-      // Get the cropped image as a data URL
-      const croppedDataUrl = canvas.toDataURL('image/png'); // You can also use 'image/jpeg'
+      const croppedDataUrl = canvas.toDataURL('image/png');
       resolve(croppedDataUrl);
     };
 
-    image.onerror = (error) => {
-      reject(error);
-    };
+    image.onerror = (error) => reject(error);
   });
 };
-
-
 
 const rgbToRgba = (rgb, a = 1) => rgb.replace('rgb(', 'rgba(').replace(')', `, ${a})`);
 
@@ -89,7 +59,7 @@ const WrappedSketchPicker = ({ onSelect, ...rest }) => {
   );
 };
 
-// --- STYLED COMPONENTS (Keep your existing styled components) ---
+// --- STYLED COMPONENTS (Enhancements are here) ---
 const PageWrapper = styled.div`
   min-height: 100vh;
   background: #181818;
@@ -105,17 +75,14 @@ const Layout = styled.div`
   margin: 0 auto;
   padding: 0 16px; 
   @media (max-width: 900px) {
-    flex-direction: column;
     gap: 24px;
   }
 `;
 
 const PreviewArea = styled.div`
- 
-  background-image: url('/waves-beach.jpg'); // Ensure this image is in public folder
+  background-image: url('/waves-beach.jpg');
   background-size: cover;
   background-position: center;
-  flex: 1 1 0;
   border-radius: 12px;
   padding: 32px 16px;
   display: flex;
@@ -125,9 +92,11 @@ const PreviewArea = styled.div`
   min-width: 0;
 `;
 
+// --- ENHANCEMENT: Made the board responsive ---
 const SkimboardShape = styled.div`
-  width: 600px;
-  height: 300px;
+  width: 100%; /* Take up available space */
+  max-width: 600px; /* But not more than 600px */
+  aspect-ratio: 2 / 1; /* Maintain a 2:1 width-to-height ratio */
   
   border: 2px solid #fff;
   position: relative;
@@ -136,41 +105,50 @@ const SkimboardShape = styled.div`
   align-items: center;
   justify-content: center;
   background: ${props => props.bg};
+  
+  /* Make the mask scale with the container */
   mask-image: url('/new-customisable-skimboard.png');
+  -webkit-mask-image: url('/new-customisable-skimboard.png');
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
   mask-repeat: no-repeat;
   
-  -webkit-mask-image: url('/new-customisable-skimboard.png');
   box-shadow: 0 0 15px rgba(0,0,0,0.5);
-   @media (max-width: 480px) {
-    width: 300px;
-    height: 150px;
-    border-radius: 150px / 75px;
-  }
+  
+  /* The media query is no longer needed as aspect-ratio handles the scaling */
 `;
 
+// --- ENHANCEMENT: More robust centering for text ---
 const PreviewText = styled.div`
   position: absolute;
   color: ${props => props.color || '#000'};
   font-family: ${props => props.font || 'Arial'};
   font-size: ${props => props.size || 36}px;
   font-weight: ${props => props.weight || 'bold'};
-  width: 100%;
-  left:-5%;
-  top:${props => props.pos || '35%'};
+  width: 90%; /* Give it some breathing room from edges */
   text-align: center;
   pointer-events: none;
   word-wrap: break-word;
   z-index: 10;
+
+  /* Use transform for perfect horizontal centering */
+  left: 50%;
+  transform: translateX(-50%);
+  top:${props => props.pos || '35%'};
 `;
 
+// --- ENHANCEMENT: More robust centering for decal ---
 const PreviewDecal = styled.img`
   position: absolute;
-  top: 20%;
-  left: 33%;
-  max-width: 50%; 
-  max-height: 50%; 
+  max-width: 35%; /* Adjust decal size relative to board */
+  max-height: 70%;
   pointer-events: none;
   object-fit: contain;
+
+  /* Use transform for perfect centering */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 const ControlsParent = styled.div`
@@ -212,6 +190,12 @@ const Controls = styled.div`
     width: 60px; 
     padding: 2px;
     border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  // --- ENHANCEMENT: Removed inline style for angle input ---
+  #gradientAngleInput {
+    max-width: 80px;
   }
 
   input[type="file"] {
@@ -229,240 +213,145 @@ const Controls = styled.div`
   }
 `;
 
-const Section = styled.div`
-  margin-bottom: 16px;
-`;
-
-const SectionTitle = styled.h2`
-  font-size: 1.5rem; 
-  color: #FFDAB9; 
-  margin-bottom: 12px;
-  font-family: 'Inria Serif', serif; 
-`;
-
-const StyledLabel = styled.label`
-  font-size: 1.1rem; 
-  color: #EDE7F6; 
-  display: block; 
-  margin-bottom: 6px; 
-  font-family: 'Instrument Sans', sans-serif; 
-`;
-
-const Inline = styled.div`
+// --- ENHANCEMENT: Wrapper to handle fixed-width gradient picker ---
+const GradientPickerWrapper = styled.div`
   display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
-  flex-wrap: wrap; 
-`;
+  justify-content: center; /* Center the picker */
+  overflow-x: auto; /* Allow scrolling if it's still too wide */
+  padding-bottom: 5px; /* Add some space for scrollbar if it appears */
 
-const ToggleGroup = styled.div`
-  display: flex;
-  gap: 12px;
-  margin-bottom: 15px;
-`;
-
-const ToggleBtn = styled.button`
-  background: ${props => props.active ? '#FFDAB9' : 'rgba(255,255,255,0.1)'};
-  color: ${props => props.active ? '#3F2A56' : '#FFDAB9'};
-  border: 1px solid #FFDAB9;
-  border-radius: 6px; 
-  padding: 10px 20px; 
-  font-size: 1rem; 
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-  flex-grow: 1; 
-  font-family: 'Instrument Sans', sans-serif;
-`;
-
-const AddToCartBtn = styled.button`
-  background: #9C27B0; 
-  color: #FFFFFF;
-  border: none;
-  border-radius: 8px;
-  font-size: 1.25rem; 
-  font-weight: bold;
-  padding: 16px 0; 
-  margin-top: 24px;
-  width: 100%;
-  cursor: pointer;
-  transition: background 0.2s;
-  font-family: 'Instrument Sans', sans-serif;
-  &:hover { background: #7B1FA2; } 
-`;
-
-const ResetButton = styled.button`
-  background: transparent;
-  color: #FFDAB9;
-  border: 2px solid #FFDAB9; 
-  border-radius: 8px;
-  font-size: 1.25rem; 
-  padding: 14px 0; 
-  margin-top: 12px;
-  width: 100%;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: 'Instrument Sans', sans-serif;
-  &:hover {
-    background: rgba(255, 218, 185, 0.1); 
-    border-color: #FFA07A;
-    color: #FFA07A;
+  /* Make the picker itself responsive if possible, or just center it */
+  .react-linear-gradient-picker {
+    max-width: 100%;
   }
 `;
+
+// Other styled components remain the same
+const Section = styled.div` margin-bottom: 16px; `;
+const SectionTitle = styled.h2` font-size: 1.5rem; color: #FFDAB9; margin-bottom: 12px; font-family: 'Inria Serif', serif; `;
+const StyledLabel = styled.label` font-size: 1.1rem; color: #EDE7F6; display: block; margin-bottom: 6px; font-family: 'Instrument Sans', sans-serif; `;
+const Inline = styled.div` display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; `;
+const ToggleGroup = styled.div` display: flex; gap: 12px; margin-bottom: 15px; `;
+const ToggleBtn = styled.button` background: ${props => props.active ? '#FFDAB9' : 'rgba(255,255,255,0.1)'}; color: ${props => props.active ? '#3F2A56' : '#FFDAB9'}; border: 1px solid #FFDAB9; border-radius: 6px; padding: 10px 20px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background 0.2s, color 0.2s; flex-grow: 1; font-family: 'Instrument Sans', sans-serif; `;
+const AddToCartBtn = styled.button` background: #9C27B0; color: #FFFFFF; border: none; border-radius: 8px; font-size: 1.25rem; font-weight: bold; padding: 16px 0; margin-top: 24px; width: 100%; cursor: pointer; transition: background 0.2s; font-family: 'Instrument Sans', sans-serif; &:hover { background: #7B1FA2; } `;
+const ResetButton = styled.button` background: transparent; color: #FFDAB9; border: 2px solid #FFDAB9; border-radius: 8px; font-size: 1.25rem; padding: 14px 0; margin-top: 12px; width: 100%; cursor: pointer; transition: all 0.2s; font-family: 'Instrument Sans', sans-serif; &:hover { background: rgba(255, 218, 185, 0.1); border-color: #FFA07A; color: #FFA07A; } `;
+
 
 const DesignSkimboard = () => {
-  const navigate = useNavigate();
-  const {
-    currentDesign, // This is the object with all design configurations
-    updateDesign,
-    // updateGradientStop2, // We'll use palette from local state to drive this
-    resetDesign: resetContextDesign, // Renamed to avoid conflict
-    initialDesignState // Get initial state for resetting palette
-  } = useDesign();
-  
-  const { addItemToCart } = useCart(); // <<<<<<<<<<< GET addItemToCart from CartContext
-
-  // Local state for the gradient palette, initialized from context or default
-  const [palette, setPalette] = useState(
-    currentDesign.gradientDetails.stops || initialDesignState.gradientDetails.stops
-  );
-
-  // Sync local palette changes back to DesignContext
-  const updatePaletteAndContext = (newPalette) => {
-    setPalette(newPalette);
-    updateDesign({ gradientDetails: { ...currentDesign.gradientDetails, stops: newPalette } });
-  }
-
-  // Ensure an effect updates local palette if currentDesign.gradientDetails.stops changes from elsewhere (e.g., loading a design)
-  useEffect(() => {
-    setPalette(currentDesign.gradientDetails.stops);
-  }, [currentDesign.gradientDetails.stops]);
-
-
-  const colorMode = currentDesign.baseType;
-  const setColorMode = (mode) => updateDesign({ baseType: mode });
-
-  const solidColor = currentDesign.solidColor || '#FFDAB9'; // Fallback just in case
-  const setSolidColor = (color) => updateDesign({ solidColor: color.hex || color }); // react-color might pass object
-
-  const gradientType = currentDesign.gradientDetails.type;
-  const setGradientType = (type) => updateDesign({ gradientDetails: { ...currentDesign.gradientDetails, type } });
-  const gradientAngle = currentDesign.gradientDetails.angle;
-  const setGradientAngle = (angle) => updateDesign({ gradientDetails: { ...currentDesign.gradientDetails, angle: Number(angle) } });
-  // gradientStops are now managed by local `palette` state, synced to context
-
-  let feature = 'none';
-  if (currentDesign.isTextEnabled) feature = 'text';
-  else if (currentDesign.isDecalEnabled) feature = 'decal';
-  else if (currentDesign.isTextAndDecalEnabled) feature = 'textAndDecal';
-
-  const setFeature = (f) => {
-    updateDesign({ 
-      isTextEnabled: f === 'text', 
-      isDecalEnabled: f === 'decal',
-      isTextAndDecalEnabled: f === 'textAndDecal' 
-    });
-  };
-
-  const text = currentDesign.customText.text;
-  const setText = (val) => updateDesign({ customText: { ...currentDesign.customText, text: val } });
-  const textColor = currentDesign.customText.color;
-  const setTextColor = (color) => updateDesign({ customText: { ...currentDesign.customText, color: color.hex || color } });
-  const textFont = currentDesign.customText.font;
-  const setTextFont = (val) => updateDesign({ customText: { ...currentDesign.customText, font: val } });
-  const textSize = currentDesign.customText.size;
-  const setTextSize = (val) => updateDesign({ customText: { ...currentDesign.customText, size: Number(val) } });
-  const textWeight = currentDesign.customText.weight;
-  const setTextWeight = (val) => updateDesign({ customText: { ...currentDesign.customText, weight: val } });
-  const textPosition = currentDesign.customText.position;
-  const setTextPosition = (val) => {
-    var pos = "35%";
-    if(val === 'top') {
-      pos = "10%";
+    // The entire logic of your component remains UNCHANGED.
+    // ... all your hooks, state, and functions ...
+    const navigate = useNavigate();
+    const {
+        currentDesign,
+        updateDesign,
+        resetDesign: resetContextDesign,
+        initialDesignState
+    } = useDesign();
+    const { addItemToCart } = useCart();
+    const [palette, setPalette] = useState(
+        currentDesign.gradientDetails.stops || initialDesignState.gradientDetails.stops
+    );
+    const updatePaletteAndContext = (newPalette) => {
+        setPalette(newPalette);
+        updateDesign({ gradientDetails: { ...currentDesign.gradientDetails, stops: newPalette } });
     }
-    else if(val === 'bottom') {
-      pos = "65%"
-    }
-
-    updateDesign({ customText: { ...currentDesign.customText, position: val, pos:pos } });
-  }
-
-  const decalUrl = currentDesign.decal.url;
-  const decalName = currentDesign.decal.name;
-   const handleDecalUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        try {
-          // Get the original image data URL from the file reader
-          const originalDataUrl = reader.result;
-          
-          // Crop the image to a square
-          const croppedDataUrl = await cropImageToSquare(originalDataUrl);
-
-          // Now update the state with the CROPPED image URL
-          const updatePayload = {
-            decal: { ...currentDesign.decal, url: croppedDataUrl, name: file.name },
-            isDecalEnabled: true,
-            isTextEnabled: false,
-            isTextAndDecalEnabled: false,
-          };
-
-          // Handle the textAndDecal feature correctly
-          if (feature === 'textAndDecal') {
-            updatePayload.isTextAndDecalEnabled = true;
-            updatePayload.isDecalEnabled = false; 
-          }
-
-          updateDesign(updatePayload);
-
-        } catch (error) {
-          console.error("Error cropping image:", error);
-          alert("Could not process the image. Please try another one.");
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-
-  function getGradientString(type, angle, stopsArray) {
-    const sortedStops = [...stopsArray].sort((a, b) => parseFloat(a.offset) - parseFloat(b.offset));
-    const stopsString = sortedStops
-      .map(stop => `${stop.color} ${Math.round(parseFloat(stop.offset) * 100)}%`)
-      .join(', ');
-    return type === 'linear'
-      ? `linear-gradient(${angle}deg, ${stopsString})`
-      : `radial-gradient(circle, ${stopsString})`;
-  }
-  
-  const previewBg = colorMode === 'solid'
-    ? solidColor
-    : getGradientString(gradientType, gradientAngle, palette); // Use local palette for preview
-
-  const handleAddToCart = () => {
-    // Prepare the custom design object to be added to the cart
-    const designToAdd = {
-      ...currentDesign, // Spread all properties of the current design
-      _id: generateId('custom_design'), // Generate a NEW unique ID for this cart item instance
-      name: currentDesign.name || "Custom Skimboard", // Use default or current name
-      // imageUrl is already in currentDesign from DesignContext's initial state
-      // price is already in currentDesign
-      isCustom: true // This flag is important for CartContext
+    useEffect(() => {
+        setPalette(currentDesign.gradientDetails.stops);
+    }, [currentDesign.gradientDetails.stops]);
+    const colorMode = currentDesign.baseType;
+    const setColorMode = (mode) => updateDesign({ baseType: mode });
+    const solidColor = currentDesign.solidColor || '#FFDAB9';
+    const setSolidColor = (color) => updateDesign({ solidColor: color.hex || color });
+    const gradientType = currentDesign.gradientDetails.type;
+    const setGradientType = (type) => updateDesign({ gradientDetails: { ...currentDesign.gradientDetails, type } });
+    const gradientAngle = currentDesign.gradientDetails.angle;
+    const setGradientAngle = (angle) => updateDesign({ gradientDetails: { ...currentDesign.gradientDetails, angle: Number(angle) } });
+    let feature = 'none';
+    if (currentDesign.isTextEnabled) feature = 'text';
+    else if (currentDesign.isDecalEnabled) feature = 'decal';
+    else if (currentDesign.isTextAndDecalEnabled) feature = 'textAndDecal';
+    const setFeature = (f) => {
+        updateDesign({
+            isTextEnabled: f === 'text',
+            isDecalEnabled: f === 'decal',
+            isTextAndDecalEnabled: f === 'textAndDecal'
+        });
     };
-
-    // console.log("Adding custom design to cart:", designToAdd);
-    addItemToCart(designToAdd, 1); // Add one unit of this custom design
-    alert('Custom skimboard added to cart!');
-    navigate('/shoppingCart'); // Navigate to the shopping cart page
-  };
-
-  const handleResetDesign = () => {
-    resetContextDesign(); // Resets the design in the context
-    setPalette(initialDesignState.gradientDetails.stops); // Reset local palette to initial
-  };
+    const text = currentDesign.customText.text;
+    const setText = (val) => updateDesign({ customText: { ...currentDesign.customText, text: val } });
+    const textColor = currentDesign.customText.color;
+    const setTextColor = (color) => updateDesign({ customText: { ...currentDesign.customText, color: color.hex || color } });
+    const textFont = currentDesign.customText.font;
+    const setTextFont = (val) => updateDesign({ customText: { ...currentDesign.customText, font: val } });
+    const textSize = currentDesign.customText.size;
+    const setTextSize = (val) => updateDesign({ customText: { ...currentDesign.customText, size: Number(val) } });
+    const textWeight = currentDesign.customText.weight;
+    const setTextWeight = (val) => updateDesign({ customText: { ...currentDesign.customText, weight: val } });
+    const textPosition = currentDesign.customText.position;
+    const setTextPosition = (val) => {
+        var pos = "35%";
+        if (val === 'top') {
+            pos = "15%"; // Adjusted for better placement
+        }
+        else if (val === 'bottom') {
+            pos = "60%" // Adjusted for better placement
+        }
+        updateDesign({ customText: { ...currentDesign.customText, position: val, pos: pos } });
+    }
+    const decalUrl = currentDesign.decal.url;
+    const decalName = currentDesign.decal.name;
+    const handleDecalUpload = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                try {
+                    const originalDataUrl = reader.result;
+                    const croppedDataUrl = await cropImageToSquare(originalDataUrl);
+                    const updatePayload = {
+                        decal: { ...currentDesign.decal, url: croppedDataUrl, name: file.name },
+                        isDecalEnabled: true,
+                        isTextEnabled: false,
+                        isTextAndDecalEnabled: false,
+                    };
+                    if (feature === 'textAndDecal') {
+                        updatePayload.isTextAndDecalEnabled = true;
+                        updatePayload.isDecalEnabled = false;
+                    }
+                    updateDesign(updatePayload);
+                } catch (error) {
+                    console.error("Error cropping image:", error);
+                    alert("Could not process the image. Please try another one.");
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    function getGradientString(type, angle, stopsArray) {
+        const sortedStops = [...stopsArray].sort((a, b) => parseFloat(a.offset) - parseFloat(b.offset));
+        const stopsString = sortedStops
+            .map(stop => `${stop.color} ${Math.round(parseFloat(stop.offset) * 100)}%`)
+            .join(', ');
+        return type === 'linear'
+            ? `linear-gradient(${angle}deg, ${stopsString})`
+            : `radial-gradient(circle, ${stopsString})`;
+    }
+    const previewBg = colorMode === 'solid' ? solidColor : getGradientString(gradientType, gradientAngle, palette);
+    const handleAddToCart = () => {
+        const designToAdd = {
+            ...currentDesign,
+            _id: generateId('custom_design'),
+            name: currentDesign.name || "Custom Skimboard",
+            isCustom: true
+        };
+        addItemToCart(designToAdd, 1);
+        alert('Custom skimboard added to cart!');
+        navigate('/shoppingCart');
+    };
+    const handleResetDesign = () => {
+        resetContextDesign();
+        setPalette(initialDesignState.gradientDetails.stops);
+    };
 
   return (
     <div className="design-page">
@@ -486,66 +375,69 @@ const DesignSkimboard = () => {
           
           <ControlsParent>
             <Controls>
-            <Section>
-              <SectionTitle>Board Colour</SectionTitle>
-              <ToggleGroup>
-                <ToggleBtn active={colorMode === 'solid'} onClick={() => setColorMode('solid')}>Solid</ToggleBtn>
-                <ToggleBtn active={colorMode === 'gradient'} onClick={() => setColorMode('gradient')}>Gradient</ToggleBtn>
-              </ToggleGroup>
-              {colorMode === 'solid' && (
-                <>
-                  <StyledLabel htmlFor="solidColorPicker">Pick Colour:</StyledLabel>
-                  <SketchPicker 
-                      id="solidColorPicker"
-                      color={solidColor}
-                      onChangeComplete={(color) => setSolidColor(color.hex)} // Use onChangeComplete for less frequent updates
-                      width="100%" // Make picker responsive
-                  />
-                </>
-              )}
-              {colorMode === 'gradient' && (
-                <div>
-                  <Inline style={{ alignItems: 'flex-end', marginBottom: '16px' }}>
-                    <div style={{ flex: 1 }}>
-                      <StyledLabel htmlFor="gradientTypeSelect">Type:</StyledLabel>
-                      <select id="gradientTypeSelect" value={gradientType} onChange={e => setGradientType(e.target.value)}>
-                        <option value="linear">Linear</option>
-                        <option value="radial">Radial</option>
-                      </select>
-                    </div>
-                    {gradientType === 'linear' && (
+              <Section>
+                <SectionTitle>Board Colour</SectionTitle>
+                <ToggleGroup>
+                  <ToggleBtn active={colorMode === 'solid'} onClick={() => setColorMode('solid')}>Solid</ToggleBtn>
+                  <ToggleBtn active={colorMode === 'gradient'} onClick={() => setColorMode('gradient')}>Gradient</ToggleBtn>
+                </ToggleGroup>
+                {colorMode === 'solid' && (
+                  <>
+                    <StyledLabel htmlFor="solidColorPicker">Pick Colour:</StyledLabel>
+                    <SketchPicker 
+                        id="solidColorPicker"
+                        color={solidColor}
+                        onChangeComplete={(color) => setSolidColor(color.hex)}
+                        width="100%"
+                    />
+                  </>
+                )}
+                {colorMode === 'gradient' && (
+                  <div>
+                    <Inline style={{ alignItems: 'flex-end', marginBottom: '16px' }}>
                       <div style={{ flex: 1 }}>
-                        <StyledLabel htmlFor="gradientAngleInput">Angle:</StyledLabel>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <input
-                            id="gradientAngleInput"
-                            type="number"
-                            value={gradientAngle}
-                            min={0}
-                            max={360}
-                            onChange={e => setGradientAngle(e.target.value)}
-                            style={{ width: '80px', marginRight: '5px' }}
-                          />
-                          <span style={{color: '#EDE7F6'}}>deg</span>
-                        </div>
+                        <StyledLabel htmlFor="gradientTypeSelect">Type:</StyledLabel>
+                        <select id="gradientTypeSelect" value={gradientType} onChange={e => setGradientType(e.target.value)}>
+                          <option value="linear">Linear</option>
+                          <option value="radial">Radial</option>
+                        </select>
                       </div>
-                    )}
-                  </Inline>
-                  <StyledLabel>Adjust Gradient:</StyledLabel>
-                  <GradientPicker
-                    width={300} 
-                    paletteHeight={30} 
-                    palette={palette} // Use local palette state
-                    onPaletteChange={updatePaletteAndContext} // Update local state and sync to context
-                  >
-                    <WrappedSketchPicker />
-                  </GradientPicker>
-                </div>
-              )}
-            </Section>
-          </Controls>
+                      {gradientType === 'linear' && (
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                          <StyledLabel htmlFor="gradientAngleInput">Angle:</StyledLabel>
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <input
+                              id="gradientAngleInput"
+                              type="number"
+                              value={gradientAngle}
+                              min={0}
+                              max={360}
+                              onChange={e => setGradientAngle(e.target.value)}
+                              // INLINE STYLE REMOVED
+                            />
+                            <span style={{color: '#EDE7F6', marginLeft: '5px'}}>deg</span>
+                          </div>
+                        </div>
+                      )}
+                    </Inline>
+                    <StyledLabel>Adjust Gradient:</StyledLabel>
+                    <GradientPickerWrapper> {/* WRAPPER ADDED */}
+                      <GradientPicker
+                        width={300} 
+                        paletteHeight={30} 
+                        palette={palette}
+                        onPaletteChange={updatePaletteAndContext}
+                      >
+                        <WrappedSketchPicker />
+                      </GradientPicker>
+                    </GradientPickerWrapper>
+                  </div>
+                )}
+              </Section>
+            </Controls>
 
-          <Controls>
+            <Controls>
+              {/* This whole section remains the same */ }
               <Section>
               <SectionTitle>Add Detail</SectionTitle>
               <ToggleGroup>
@@ -564,7 +456,6 @@ const DesignSkimboard = () => {
                   <Inline>
                     <div style={{flex: 1}}>
                       <StyledLabel htmlFor="textColorPicker">Colour:</StyledLabel>
-                      {/* For text color, a simple input type color might be less intrusive than SketchPicker */}
                       <input id="textColorPicker" type="color" value={textColor} onChange={e => setTextColor(e.target.value)} />
                     </div>
                     <div style={{flex: 2}}>
@@ -613,7 +504,7 @@ const DesignSkimboard = () => {
               {(feature === 'decal' ||feature === 'textAndDecal') && (
                 <>
                   <div>
-                    <StyledLabel htmlFor="decalUpload">Upload Image (Image should be a square):</StyledLabel>
+                    <StyledLabel htmlFor="decalUpload">Upload Image:</StyledLabel>
                     <input id="decalUpload" type="file" accept="image/*" onChange={handleDecalUpload} />
                   </div>
                   {decalUrl && <div style={{ color: '#FFDAB9', fontSize: '0.9rem', marginTop: 8 }}>Uploaded: {decalName}</div>}
@@ -622,7 +513,7 @@ const DesignSkimboard = () => {
             </Section>
             <AddToCartBtn onClick={handleAddToCart}>Add to Cart</AddToCartBtn>
             <ResetButton onClick={handleResetDesign}>Reset Design</ResetButton>
-          </Controls>
+            </Controls>
           </ControlsParent>
         </Layout>
       </PageWrapper>
