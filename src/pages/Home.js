@@ -13,8 +13,10 @@ import { useAuth } from '../contexts/AuthContext';
 const slides = [
   '/bannerHD.jpg',
   '/aizat2.jpeg',
+  '/mansurfingonriver.jpg',
   '/an2.jpeg',
   '/manonwakeboard.jpg',
+  '/surferfeetcloseup.jpg',
 ];
 
 const PageWrapper = styled.div`
