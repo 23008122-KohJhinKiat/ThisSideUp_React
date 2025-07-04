@@ -95,6 +95,8 @@ const PreviewArea = styled.div`
 
 // --- ENHANCEMENT: Made the board responsive ---
 // Current SkimboardShape
+// src/pages/DesignSkimboard.js
+
 const SkimboardShape = styled.div`
   width: 100%; 
   max-width: 600px;
@@ -102,7 +104,7 @@ const SkimboardShape = styled.div`
   
   border: 5px solid #FFFFFF;
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* Keep this if you want to clip content that goes outside the mask */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -113,6 +115,11 @@ const SkimboardShape = styled.div`
   mask-size: 100% 100%;
   -webkit-mask-size: 100% 100%;
   mask-repeat: no-repeat;
+  
+  /* --- REPLACEMENT --- */
+  /* Replaces box-shadow with drop-shadow */
+  filter: drop-shadow(0px 10px 15px rgba(0, 0, 0, 0.5));
+  /*         drop-shadow(x-offset | y-offset | blur-radius | color) */
 `;
 
 // --- ENHANCEMENT: More robust centering for text ---
