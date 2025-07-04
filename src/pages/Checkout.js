@@ -8,13 +8,60 @@ import '../index.css'; // Import the CSS file
 
 // --- SHIPPING CATEGORIES & COSTS ---
 const shippingCostsByCountryCode = {
-  // Category 1
-  "SG": 0.99,
-  // Category 2
-  "MY": 5.99, "ID": 5.99, "TH": 5.99, "VN": 5.99, "AU": 5.99, "PH": 5.99,
-  // Category 3
-  "JP": 7.99, "KR": 7.99, "CN": 7.99, "US": 7.99, "DE": 7.99, "GB": 7.99,
-  // Category 4 (Default for others)
+  // Category 1: Immediate Neighbors ($0.99)
+  "SG": 0.99, // Singapore
+  "MY": 0.99, // Malaysia
+  "TH": 0.99, // Thailand
+  "VN": 0.99, // Viet Nam
+  "KH": 0.99, // Cambodia
+  "LA": 0.99, // Lao
+
+  // Category 2: Nearby Maritime Southeast Asia ($1.99)
+  "ID": 1.99, // Indonesia
+  "PH": 1.99, // Philippines
+  "BN": 1.99, // Brunei
+
+  // Category 3: East Asia & Oceania ($2.99)
+  "AU": 2.99, // Australia
+  "NZ": 2.99, // New Zealand
+  "CN": 2.99, // China
+  "HK": 2.99, // Hong Kong
+  "JP": 2.99, // Japan
+  "KR": 2.99, // Korea (Republic of)
+  "TW": 2.99, // Taiwan
+  "IN": 2.99, // India
+
+  // Category 4: North America & Major Western Europe Hubs ($4.99)
+  "US": 4.99, // United States
+  "CA": 4.99, // Canada
+  "GB": 4.99, // United Kingdom
+  "DE": 4.99, // Germany
+  "FR": 4.99, // France
+  "IT": 4.99, // Italy
+  "ES": 4.99, // Spain
+  "NL": 4.99, // Netherlands
+  "CH": 4.99, // Switzerland
+
+  // Category 5: Rest of Europe, Middle East & Other Long-Haul ($9.99)
+  "IE": 9.99, // Ireland
+  "SE": 9.99, // Sweden
+  "NO": 9.99, // Norway
+  "DK": 9.99, // Denmark
+  "FI": 9.99, // Finland
+  "PT": 9.99, // Portugal
+  "AT": 9.99, // Austria
+  "BE": 9.99, // Belgium
+  "GR": 9.99, // Greece
+  "PL": 9.99, // Poland
+  "RU": 9.99, // Russian Federation
+  "AE": 9.99, // United Arab Emirates
+  "SA": 9.99, // Saudi Arabia
+  "ZA": 9.99, // South Africa
+  "BR": 9.99, // Brazil
+  "AR": 9.99, // Argentina
+  "MX": 9.99, // Mexico
+  
+  // Category 6: Rest of the World (Default: $10.99)
   "DEFAULT": 10.99
 };
 
