@@ -255,7 +255,7 @@ const FAQ = () => {
     <FAQPageWrapper>
       <HeroBanner bgImage={backgroundImage}>
         <HeroTextBox>
-          <PageTitle className='font1'>Frequently Asked Questions (FAQs)</PageTitle>
+          <PageTitle id='font1'>Frequently Asked Questions (FAQs)</PageTitle>
         </HeroTextBox>
       </HeroBanner>
 
