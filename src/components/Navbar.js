@@ -141,7 +141,7 @@ const UserDropdownButton = styled.button` background: none; border: none; color:
 function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const { currentUser, logout } = useAuth();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const dropdownRef = useRef(null); // Ref for the dropdown container
 
   const handleLogout = () => {
