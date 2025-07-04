@@ -356,7 +356,7 @@ const DesignSkimboard = () => {
       <PageWrapper>
         <Layout>
           <PreviewArea >
-            <h1 style={{ textAlign: 'center', color: '#632B6C', fontSize: 36, textShadow: '-2px 2px 2px rgb(0, 0, 0, 35%)' }}>
+            <h1 style={{ textAlign: 'center', color: '#632B6C', fontSize: 36, textShadow: '-2px 2px 2px rgba(0, 0, 0, 0.40)' }}>
               Customise Your Skimboard
             </h1>
             <SkimboardShape bg={previewBg} id='skimboardPreview'>
