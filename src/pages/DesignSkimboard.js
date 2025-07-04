@@ -7,6 +7,7 @@ import { useCart } from '../contexts/CartContext';
 import { generateId } from '../Data/Data';
 import { SketchPicker } from 'react-color';
 import { GradientPicker } from 'react-linear-gradient-picker';
+import '../index.css';
 import 'react-linear-gradient-picker/dist/index.css';
 
 // The cropImageToSquare function remains the same
@@ -112,8 +113,6 @@ const SkimboardShape = styled.div`
   mask-size: 100% 100%;
   -webkit-mask-size: 100% 100%;
   mask-repeat: no-repeat;
-  
-  box-shadow: 0 0 30px rgba(0,0,0,0.9); // This is a simple glow effect
 `;
 
 // --- ENHANCEMENT: More robust centering for text ---
@@ -357,10 +356,10 @@ const DesignSkimboard = () => {
       <PageWrapper>
         <Layout>
           <PreviewArea >
-            <h1 style={{ textAlign: 'center', color: '#632B6C', fontSize: 36 }}>
+            <h1 style={{ textAlign: 'center', color: '#632B6C', fontSize: 36, textShadow: '-2px 2px 2px rgb(0, 0, 0, 35%)' }}>
               Customise Your Skimboard
             </h1>
-            <SkimboardShape bg={previewBg}>
+            <SkimboardShape bg={previewBg} id='skimboardPreview'>
               {(feature === 'text' || feature === 'textAndDecal') && text && (
                 <PreviewText color={textColor} font={textFont} size={textSize} weight={textWeight} pos={currentDesign.customText.pos}>
                   {text || "Enter text here"}
