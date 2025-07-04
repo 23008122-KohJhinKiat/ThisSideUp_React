@@ -10,9 +10,10 @@ export const initialProducts = [
     category: "Skimboards",
     price: 275.63,
     stock: 3525,
+    tags: ["skimboards"],
     rating: 4.0,
     numRatings: 12,
-    likes: 0, // Array to store user IDs who liked the product
+    likes: 0,
   },
   {
     _id: generateId('prod'),
@@ -22,9 +23,10 @@ export const initialProducts = [
     category: "Skimboards",
     price: 568.54,
     stock: 1324,
+    tags: ["skimboards"],
     rating: 4.7,
     numRatings: 25,
-    likes: 0, // Array to store user IDs who liked the product
+    likes: 0,
   },
   {
     _id: generateId('prod'),
@@ -34,9 +36,10 @@ export const initialProducts = [
     category: "T-Shirts",
     price: 16.99,
     stock: 2103,
+    tags: ["skimboards"],
     rating: 4.2,
     numRatings: 83,
-    likes: 0, // Array to store user IDs who liked the product
+    likes: 0,
   },
   {
     _id: generateId('prod'),
@@ -46,9 +49,10 @@ export const initialProducts = [
     category: "Skimboards",
     price: 632.19,
     stock: 1536,
+    tags: ["skimboards"],
     rating: 4.3,
     numRatings: 18,
-    likes: 0, // Array to store user IDs who liked the product
+    likes: 0,
   },
   {
     _id: generateId('prod'),
@@ -58,9 +62,10 @@ export const initialProducts = [
     category: "Skimboards",
     price: 427.68,
     stock: 3274,
+    tags: ["skimboards"],
     rating: 4.8,
     numRatings: 96,
-    likes: 0, // Array to store user IDs who liked the product
+    likes: 0,
   },
   {
     _id: generateId('prod'),
@@ -70,10 +75,10 @@ export const initialProducts = [
     category: "Skimboards",
     price: 195.36,
     stock: 3522,
-    tags: ["skimboard", "marble", "fish shape"],
+    tags: ["marble", "fish shape", "skimboards"],
     rating: 4.5,
     numRatings: 1150,
-    likes: 0, // Array to store user IDs who liked the product
+    likes: 0,
   },
   {
     _id: generateId('prod'),
@@ -83,10 +88,10 @@ export const initialProducts = [
     category: "Skimboards",
     price: 941.25,
     stock: 2901,
-    tags: ["skimboard", "marble design", "premium"],
+    tags: ["marble design", "premium", "skimboards"],
     rating: 4.2,
     numRatings: 45,
-    likes: 0, // Array to store user IDs who liked the product
+    likes: 0,
   },
   {
     _id: generateId('prod'),
@@ -96,10 +101,10 @@ export const initialProducts = [
     category: "Skimboards",
     price: 559.57,
     stock: 1364,
-    tags: ["carbon fiber", "purple", "performance"],
+    tags: ["carbon fiber", "purple", "performance", "skimboards"],
     rating: 4.6,
     numRatings: 33,
-    likes: 0, // Array to store user IDs who liked the product
+    likes: 0,
   },
   {
     _id: generateId('prod'),
@@ -109,10 +114,10 @@ export const initialProducts = [
     category: "Skimboards",
     price: 92.01,
     stock: 1243,
-    tags: ["rasta", "colorful", "freestyle"],
+    tags: ["rasta", "colorful", "freestyle", "skimboards"],
     rating: 4.4,
     numRatings: 19,
-    likes: 0, // Array to store user IDs who liked the product
+    likes: 0,
   },
   {
     _id: generateId('prod'),
@@ -122,10 +127,10 @@ export const initialProducts = [
     category: "Skimboards",
     price: 542.98,
     stock: 837,
-    tags: ["samurai", "japanese style", "aggressive design"],
+    tags: ["samurai", "japanese style", "aggressive design", "skimboards"],
     rating: 4.1,
     numRatings: 77,
-    likes: 0, // Array to store user IDs who liked the product
+    likes: 0,
   },
   {
     _id: generateId('prod'),
@@ -138,7 +143,7 @@ export const initialProducts = [
     tags: ["sunscreen", "spf50", "mineral", "fragrance-free"],
     rating: 4.1,
     numRatings: 77,
-    likes: 0, // Array to store user IDs who liked the product
+    likes: 0,
   },
   {
   _id: generateId('prod'),
@@ -464,6 +469,45 @@ export const initialProducts = [
   tags: ["beach", "protection", "unisex", "glasses", "sunglasses"],
   rating: 4.4,
   numRatings: 58,
+  likes: 0,
+},
+{
+  _id: generateId('prod'),
+  name: "Yellow Beach Tee Shirt",
+  description: "Cool and breezy summer shirt with This Side Up's logo. Lightweight and stylish for beach outings.",
+  imageUrl: "/Product Photos/YellowTShirt.jpg",
+  category: "T-Shirts",
+  tags: ["shirt", "t-shirt", "tee shirt"],
+  price: 14.99,
+  stock: 2103,
+  rating: 4.2,
+  numRatings: 83,
+  likes: 0,
+},
+{
+  _id: generateId('prod'),
+  name: "Blue Beach Necklace",
+  description: "Cool and breezy summer shirt with This Side Up's logo. Lightweight and stylish for beach outings.",
+  imageUrl: "/Product Photos/beachsandnecklace.jpg",
+  category: "Accessories",
+  tags: ["jewelry", "necklace"],
+  price: 55.99,
+  stock: 2103,
+  rating: 4.2,
+  numRatings: 83,
+  likes: 0,
+},
+{
+  _id: generateId('prod'),
+  name: "'My Job Is Beach Tee' Shirt",
+  description: "Cool and breezy summer shirt. Lightweight and stylish for beach outings.",
+  imageUrl: "/Product Photos/myjobisbeach.jpg",
+  category: "T-Shirts",
+  tags: ["shirt", "t-shirt", "tee shirt"],
+  price: 55.99,
+  stock: 2103,
+  rating: 4.2,
+  numRatings: 83,
   likes: 0,
 },
 
