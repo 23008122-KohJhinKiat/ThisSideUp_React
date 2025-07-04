@@ -81,7 +81,7 @@ const Layout = styled.div`
 `;
 
 const PreviewArea = styled.div`
-  background-image: url('/waves-beach.jpg');
+  background-image: url('/sandpattern.jpg');
   background-size: cover;
   background-position: center;
   border-radius: 12px;
@@ -363,7 +363,7 @@ const DesignSkimboard = () => {
       <PageWrapper>
         <Layout>
           <PreviewArea >
-            <h1 style={{ textAlign: 'center', color: '#632B6C', fontSize: 36, textShadow: '-2px 2px 2px rgba(0, 0, 0, 0.40)' }}>
+            <h1 style={{ textAlign: 'center', color: 'rgb(131, 57, 143)', fontSize: 36, textShadow: '-2px 2px 2px rgba(0, 0, 0, 0.30)' }}>
               Customise Your Skimboard
             </h1>
             <SkimboardShape bg={previewBg} id='skimboardPreview'>
