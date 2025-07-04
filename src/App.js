@@ -1,7 +1,6 @@
 // File: src/App.js
 import React, { Suspense, lazy } from 'react';
-// The import statement is correct, we just need to use 'Router'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Added Router
 import { ProductProvider } from './contexts/ProductContext'; 
 import { DesignProvider } from './contexts/DesignContext';
 import { AuthProvider } from './contexts/AuthContext'; 
@@ -27,8 +26,6 @@ const Search = lazy(() => import('./pages/Search'));
 
 function App() {
   return (    
-    // --- FIX: Add the <Router> component to wrap the application ---
-    <Router>
       <AuthProvider> 
         <ProductProvider>
           <CartProvider> 
@@ -59,8 +56,8 @@ function App() {
            </CartProvider> 
          </ProductProvider> 
        </AuthProvider>
-    </Router> // --- FIX: Close the <Router> component ---
   );
 }
+
 
 export default App;
