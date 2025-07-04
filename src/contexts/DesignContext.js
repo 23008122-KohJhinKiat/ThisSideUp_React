@@ -16,9 +16,9 @@ export const DesignProvider = ({ children }) => {
       type: "linear",
       angle: 90,
       stops: [
-        { id: 'stop1', offset: 0, color: "#F2C2CE", opacity: 1 },
-        { id: 'stop2', offset: 0.5, color: "#BDCE62", opacity: 1 },
-        { id: 'stop3', offset: 1, color: "#A0C888", opacity: 1 },
+        { id: 'stop1', offset: 0, color: "#5D091E", opacity: 1 },
+        { id: 'stop2', offset: 0.5, color: "#ACE2E0", opacity: 1 },
+        { id: 'stop3', offset: 1, color: "#245706", opacity: 1 },
       ],
     },
 
