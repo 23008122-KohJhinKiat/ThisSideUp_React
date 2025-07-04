@@ -341,7 +341,7 @@ const Home = () => {
       </PromoSection>
 
       <VideoSection>
-        <video src={videoBG} autoPlay loop muted />
+        <video src={videoBG} style={{cursor:'pointer'}} autoPlay loop muted />
       </VideoSection>
       
     </PageWrapper>

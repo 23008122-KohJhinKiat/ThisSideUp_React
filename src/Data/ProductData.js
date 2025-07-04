@@ -510,5 +510,18 @@ export const initialProducts = [
   numRatings: 83,
   likes: 0,
 },
+{
+  _id: generateId('prod'),
+  name: "Beach Tailored Jacket",
+  description: "Stay stylish and protected with our lightweight beach jacket — perfect for breezy coastal days. Zip it up and head out in comfort and style.",
+  imageUrl: "/Product Photos/myjobisbeach.jpg",
+  category: "Jackets",
+  tags: ["jackets", "beach"],
+  price: 105.99,
+  stock: 2103,
+  rating: 4.2,
+  numRatings: 83,
+  likes: 0,
+},
 
 ];
