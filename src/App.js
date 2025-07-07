@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as /*Router,*/ Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ProductProvider } from './contexts/ProductContext'; 
 import { DesignProvider } from './contexts/DesignContext';
 import { AuthProvider } from './contexts/AuthContext'; 
