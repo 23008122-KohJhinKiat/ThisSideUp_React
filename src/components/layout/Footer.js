@@ -1,8 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-//import { Link } from 'react-router-dom';
 
-// Styled Components
 const FooterSection = styled.footer`
   display: flex;
   flex-wrap: wrap;
@@ -97,12 +95,11 @@ const Footer = () => {
       </FooterColumn>
 
       <FooterColumn>
-        <FooterHeading id='font2'>Useful Links</FooterHeading>
+        <FooterHeading id='font2'>Policies and Info</FooterHeading>
         <FooterDivider />
-        <FooterLink href="#">Your Account</FooterLink>
-        <FooterLink href="#">Become an Affiliate</FooterLink>
-        <FooterLink href="#">Shipping Rates</FooterLink>
-        <FooterLink href="#">Help & Advice</FooterLink>
+        <FooterLink href="/PrivacyPolicy">Privacy Policy</FooterLink>
+        <FooterLink href="/TermsConditions">Terms & Conditions</FooterLink>
+        <FooterText>© 2025 This Side Up. All Rights Reserved.</FooterText>
       </FooterColumn>
 
       <FooterColumn>
