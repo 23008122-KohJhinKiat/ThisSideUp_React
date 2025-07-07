@@ -265,18 +265,84 @@ const FAQ = () => {
           <li>- All orders are subject to product availability and our acceptance.</li>
           <li>- We may refuse or cancel orders for any reason, including suspected fraud or errors.</li>
         </ul>
+        <br></br>
+        <AccentHighlight>3.2 Pricing and Taxes</AccentHighlight>
+        <ul>
+          <li>- Prices are displayed in SGD and are subject to change without notice.  </li>
+          <li>- You are responsible for all applicable sales taxes, customs duties, or import fees.  </li>
+        </ul>
+        <br></br>
+        <AccentHighlight>3.3 Payment Methods</AccentHighlight>
+        <p>We accept:</p>
+        <ul>
+          <li>- Credit/Debit Cards (Visa, Mastercard, American Express)</li>
+          <li>- PayNow</li>
+        </ul>
+        <br></br>
+        <AccentHighlight>3.4 Shipping & Delivery</AccentHighlight>
+        <ul>
+          <li>- Delivery times are estimates only.</li>
+          <li>- Risk of loss passes to you upon delivery.</li>
+        </ul>
+        <br></br>
+        <AccentHighlight>3.5 Returns & Refunds</AccentHighlight>
+        <ul>
+          <li>- Returns must be requested within 5 days of delivery.</li>
+          <li>- Products must be unused and in original packaging.</li>
+          <li>- Refunds will be processed within 5 business days.  </li>
+        </ul>
       </div>
     },
     {
       id: 4,
-      question: <>Do you ship internationally?</>,
-      ans: "🌍 Yes, we ship worldwide! Shipping rates vary by destination."
+      question: <>4. USER CONDUCT & PROHIBITED ACTIVITIES</>,
+      ans: <div>
+        <p>You agree NOT to:</p>
+        <ul>
+          <li>- Use the Site for illegal purposes or in violation of any laws.</li>
+          <li>- Upload viruses, malware, or engage in hacking attempts.</li>
+          <li>- Scrape, data-mine, or reverse-engineer the Site.</li>
+          <li>- Impersonate another person or entity.  </li>
+          <li>- Post false, defamatory, or harmful content.  </li>
+        </ul>
+      </div>
     },
     {
       id: 5,
-      question: <>Do you accept returns/refunds?</>,
-      ans: "✅ Yes, we do! Returns/refunds are accepted within 30 days for unused items. Check our full policy for details."
-    }
+      question: <>5. DISCLAIMERS & LIMITATION OF LIABILITY</>,
+      ans: <div>
+        <AccentHighlight>5.1 Product Use Disclaimer</AccentHighlight>
+        <p>Skimboarding is an inherently risky activity. By purchasing our products, you acknowledge and assume all risks associated with their use. This Side Up is NOT liable for:</p>
+        <ul>
+          <li>- Personal injury or property damage resulting from product misuse. </li>
+          <li>- Improper assembly or failure to follow safety guidelines.  </li>
+        </ul>
+        <br></br>
+        <AccentHighlight>5.2 Site Disclaimer</AccentHighlight>
+        <p>The Site is provided as is without warranties of any kind. We do not guarantee:</p>
+        <ul>
+          <li>- Uninterrupted or error-free operation.</li>
+          <li>- Accuracy of product descriptions or pricing.</li>
+        </ul>
+        <br></br>
+        <AccentHighlight>5.3 Limitation of Liability</AccentHighlight>
+        <p>To the fullest extent permitted by law, This Side Up shall NOT be liable for:</p>
+        <ul>
+          <li>- Indirect, incidental, or consequential damages.</li>
+          <li>- Loss of profits, data, or business opportunities.</li>
+          <li>- Claims exceeding the amount paid for the product(s) in question.</li>
+        </ul>
+        <br></br>
+      </div>
+    },
+    {
+      id: 6,
+      question: <>ACKNOWLEDGMENT</>,
+      ans: <div>
+        <p>By using This Side Up, you confirm that you have read, understood, and agreed to these Terms and Conditions in their entirety.</p>
+      </div>
+    },
+    
   ];
   
   return (
@@ -292,7 +358,7 @@ const FAQ = () => {
           {faqData.map(item => (
             <QnOpen key={item.id} question={item.question} ans={item.ans} />
           ))}
-
+          <h3 id='font2' style={{fontSize: "clamp(0.9rem, 2.5vw, 1rem)", color: "#E0E0E0"}}>Last Updated: 7/7/2025</h3>
         </FAQContainer>
       </FAQContentSection>
     </FAQPageWrapper>
