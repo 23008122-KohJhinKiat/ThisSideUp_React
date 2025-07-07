@@ -22,7 +22,7 @@ const UserProfilePage = lazy(() => import('./pages/auth/UserProfile'));
 const Search = lazy(() => import('./pages/Search'));
 
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicy'));
-const TermsConditionsPage = lazy(() => import('./pages/TermsConditions'));
+const TermsConditionsPage = lazy(() => import('./pages/Terms&Conditions'));
 
 function App() {
   return (    
