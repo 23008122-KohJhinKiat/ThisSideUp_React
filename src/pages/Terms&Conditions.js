@@ -137,8 +137,8 @@ const QuestionHeader = styled.div`
 const QuestionText = styled.p`
   margin: 0;
   flex-grow: 1;
-  font-weight: 700;
-  // letter-spacing: 1.3px;
+  font-weight: 600;
+  // letter-spacing: 1.7px;
 `;
 
 const AnswerDivider = styled.div`
