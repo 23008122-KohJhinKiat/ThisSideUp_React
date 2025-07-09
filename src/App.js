@@ -20,6 +20,8 @@ const SignUpPage = lazy (() => import ('./pages/auth/SignUpPage'));
 const SignInPage = lazy (() => import ('./pages/auth/LoginPage'));
 const UserProfilePage = lazy(() => import('./pages/auth/UserProfile'));
 const Search = lazy(() => import('./pages/Search'));
+const Addproductpage = lazy(() => import('./pages/AddAndEdit/Add'));
+const Editproductpage = lazy(() => import('./pages/AddAndEdit/Edit'));
 
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsConditionsPage = lazy(() => import('./pages/Terms&Conditions'));
@@ -47,6 +49,8 @@ function App() {
                 <Route path="/signin" element={<SignInPage />} />
                 <Route path="/profile" element={<UserProfilePage />} />
                 <Route path="/search" element={<Search />} />
+                <Route path="add" element={<Addproductpage />} />
+                <Route path="/product/:id" element={<Editproductpage />} />
 
                 <Route path="/privacypolicy" element={<PrivacyPolicyPage />} />
                 <Route path="/termsconditions" element={<TermsConditionsPage />} />

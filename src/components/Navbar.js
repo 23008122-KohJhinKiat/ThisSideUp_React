@@ -1,6 +1,6 @@
-// src/components/Navbar.js
+// File: src/components/Navbar.js
 
-import React, { useState, useEffect, useRef } from 'react'; // Added useRef
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { FaBars, FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa';
@@ -12,7 +12,7 @@ import CartIconImg from '../icons/icons8-cart.png';
 import UserIconImg from '../icons/icons8-user.png';
 import { useAuth } from '../contexts/AuthContext';
 
-// --- Styled Components (No changes needed here) ---
+// --- Styled Components (No changes needed) ---
 const NavContainer = styled.nav`
   background: #222;
   color: white;
@@ -30,27 +30,18 @@ const NavContainer = styled.nav`
     padding: 0 1rem;
   }
 `;
-
 const LogoLink = styled(Link)`
   display: flex;
   align-items: center;
   z-index: 1005; 
   img {
-    /* REMOVED rigid padding-left: 90px; */
-    /* Let the NavContainer's padding handle spacing for better responsiveness. */
     padding: 10px 0 0 90px; 
     height: 70px; 
     width: auto;
-    @media (max-width: 992px) {
-      height: 45px;
-    }
-    @media (max-width: 480px) {
-      height: 40px;
-      padding-left: 5px; /* Reduced padding for smaller screens */
-    }
+    @media (max-width: 992px) { height: 45px; }
+    @media (max-width: 480px) { height: 40px; padding-left: 5px; }
   }
 `;
-
 const NavIcon = styled.div`
   width: 40px;
   height: 40px;
@@ -58,19 +49,9 @@ const NavIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
-
-  @media (max-width: 768px) {
-    width: 26px;
-    height: 26px;
-  }
+  img { width: 100%; height: 100%; object-fit: contain; }
+  @media (max-width: 768px) { width: 26px; height: 26px; }
 `;
-
 const DesktopNavLinks = styled.div`
   display: flex;
   gap: 2.5rem;
@@ -79,13 +60,8 @@ const DesktopNavLinks = styled.div`
   top: 50%;
   transform: translate(-50%, -50%);
   align-items: center;
-
-  @media (max-width: 1024px) {
-    display: none;
-  }
+  @media (max-width: 1024px) { display: none; }
 `;
-
-// ... other styled components are unchanged ...
 const NavItemDesktop = styled.div` position: relative; `;
 const StyledNavLink = styled(Link)` color: white; text-decoration: none; font-size: 26px; font-weight: bold; transition: color 0.3s ease; padding: 0.5rem 0.8rem; &:hover, &.active { color: #b19cd9; }`;
 const NavRightSection = styled.div` display: flex; align-items: center; gap: 1.5rem; @media (max-width: 768px) { gap: 1rem; }`;
@@ -103,6 +79,10 @@ const CategoryLinkDesktop = styled(Link)` color: #000000; text-decoration: none;
 const DropdownTitleDesktop = styled.h3` color: #333; font-size: 0.9rem; margin: 0 0 0.8rem 0; padding: 0 0.5rem 0.5rem; font-weight: 600; font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif; border-bottom: 1px solid #eee; text-transform: uppercase; letter-spacing: 0.5px;`;
 const SearchBarContainer = styled.div` display: flex; align-items: center; position: relative; input { padding: 8px 30px 8px 12px; border-radius: 4px; border: 1px solid #555; background-color: white; color: black; min-width: 150px; @media (max-width: 480px) { min-width: 100px; font-size: 0.9rem; } }`;
 const CloseSearchIcon = styled.img` position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; cursor: pointer;`;
+const UserDropdownContainer = styled.div` position: relative; `;
+const UserDropdownMenuStyled = styled.div` position: absolute; top: calc(100% + 20px); right: 0; background-color: #222222; box-shadow: 0 4px 12px rgba(0,0,0,0.2); width: 220px; border-radius: 8px; overflow: hidden; z-index: 1010; display: flex; flex-direction: column; border: 1px solid #333;`;
+const UserDropdownLink = styled(Link)` color: white; text-decoration: none; padding: 12px 20px; display: block; transition: background-color 0.2s ease, color 0.2s ease; font-size: 0.9rem; &:hover { background-color: #333333; color: #b19cd9; }`;
+const UserDropdownButton = styled.button` background: none; border: none; color: white; text-decoration: none; padding: 12px 20px; display: block; transition: background-color 0.2s ease, color 0.2s ease; font-size: 0.9rem; width: 100%; text-align: left; cursor: pointer; font-family: inherit; &:hover { background-color: #333333; color: #b19cd9; }`;
 
 function SearchBar() {
   const [isVisible, setIsVisible] = useState(false);
@@ -133,25 +113,16 @@ function SearchBar() {
   );
 }
 
-// User Dropdown (Major Fixes Here)
-const UserDropdownContainer = styled.div` position: relative; `;
-const UserDropdownMenuStyled = styled.div` position: absolute; top: calc(100% + 20px); right: 0; background-color: #222222; box-shadow: 0 4px 12px rgba(0,0,0,0.2); width: 220px; border-radius: 8px; overflow: hidden; z-index: 1010; display: flex; flex-direction: column; border: 1px solid #333;`;
-const UserDropdownLink = styled(Link)` color: white; text-decoration: none; padding: 12px 20px; display: block; transition: background-color 0.2s ease, color 0.2s ease; font-size: 0.9rem; &:hover { background-color: #333333; color: #b19cd9; }`;
-const UserDropdownButton = styled.button` background: none; border: none; color: white; text-decoration: none; padding: 12px 20px; display: block; transition: background-color 0.2s ease, color 0.2s ease; font-size: 0.9rem; width: 100%; text-align: left; cursor: pointer; font-family: inherit; &:hover { background-color: #333333; color: #b19cd9; }`;
-
 function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const { currentUser, logout } = useAuth();
-  //const navigate = useNavigate();
-  const dropdownRef = useRef(null); // Ref for the dropdown container
+  const dropdownRef = useRef(null); 
 
   const handleLogout = () => {
     logout();
     setIsOpen(false);
-    // navigate('/'); // Auth context listener will handle redirect
   };
 
-  // --- FIX: Click outside to close dropdown ---
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -159,14 +130,11 @@ function UserDropdown() {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [dropdownRef]);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
-    <UserDropdownContainer 
-    >
+    <UserDropdownContainer ref={dropdownRef}>
       <NavIcon onClick={() => setIsOpen(prev => !prev)}>
         <img src={UserIconImg} alt="User icon" />
       </NavIcon>
@@ -175,10 +143,17 @@ function UserDropdown() {
         <UserDropdownMenuStyled>
           {currentUser ? (
             <>
-              {/* --- FIX: Add onClick to close menu on navigation --- */}
               <UserDropdownLink to="/profile" onClick={() => setIsOpen(false)}>
                 My Profile
               </UserDropdownLink>
+              
+              {/* --- FIX: Conditional Admin Link in Dropdown --- */}
+              {currentUser.role === 'Admin' && (
+                <UserDropdownLink to="/add" onClick={() => setIsOpen(false)}>
+                  Add Product
+                </UserDropdownLink>
+              )}
+
               <UserDropdownButton onClick={handleLogout}>Logout</UserDropdownButton>
             </>
           ) : (
@@ -212,11 +187,10 @@ const Navbar = () => {
     { name: 'T-Shirts', path: '/products/category/T-Shirts' },
     { name: 'Board Shorts', path: '/products/category/Boardshorts' },
     { name: 'Accessories', path: '/products/category/Accessories' },
-    { name: 'Beach Bags', path: '/products/category/Beach Bags' },
     { name: 'Jackets', path: '/products/category/Jackets' }
+    // NOTE: Removed "Beach Bags" as it was likely a typo and not in your other files.
   ];
 
-  // This function is now used by all mobile menu links
   const closeMobileMenuAndNavigate = (path) => {
     setIsMobileMenuOpen(false);
     setShowMobileProductCategories(false);
@@ -224,14 +198,10 @@ const Navbar = () => {
   };
  
   useEffect(() => {
-    // Prevent body scroll when mobile menu is open
     document.body.style.overflow = isMobileMenuOpen ? 'hidden' : 'unset';
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
+    return () => { document.body.style.overflow = 'unset'; };
   }, [isMobileMenuOpen]);
 
-  // Close mobile menu automatically on route change (as a fallback)
   useEffect(() => {
     setIsMobileMenuOpen(false);
     setShowMobileProductCategories(false);
@@ -263,10 +233,21 @@ const Navbar = () => {
           </ProductsDropdownDesktop>
         </NavItemDesktop>
         
-        {currentUser && (
+        {/* --- FIX: Role-based navigation for Desktop --- */}
+        {/* Show 'Customise' only to Customers */}
+        {currentUser && currentUser.role === 'Customer' && (
           <NavItemDesktop>
             <StyledNavLink to="/design-skimboard" className={location.pathname === '/design-skimboard' ? 'active' : ''}>
               Customise
+            </StyledNavLink>
+          </NavItemDesktop>
+        )}
+        
+        {/* Show 'Add Product' only to Admins */}
+        {currentUser && currentUser.role === 'Admin' && (
+          <NavItemDesktop>
+            <StyledNavLink to="/add" className={location.pathname === '/add' ? 'active' : ''}>
+              Add Product
             </StyledNavLink>
           </NavItemDesktop>
         )}
@@ -311,7 +292,6 @@ const Navbar = () => {
             {showMobileProductCategories && (
               <MobileSubMenu>
                 {productCategories.map((category) => (
-                  // --- FIX: Using closeMobileMenuAndNavigate ---
                   <StyledNavLink
                     key={category.name}
                     to={category.path}
@@ -325,7 +305,9 @@ const Navbar = () => {
             )}
           </MobileNavItem>
 
-          {currentUser && (
+          {/* --- FIX: Role-based navigation for Mobile --- */}
+          {/* Show 'Customise' only to Customers */}
+          {currentUser && currentUser.role === 'Customer' && (
             <MobileNavItem>
               <MobileStyledNavLink 
                 to="/design-skimboard" 
@@ -333,6 +315,19 @@ const Navbar = () => {
                 onClick={(e) => { e.preventDefault(); closeMobileMenuAndNavigate('/design-skimboard'); }}
               >
                 Customise
+              </MobileStyledNavLink>
+            </MobileNavItem>
+          )}
+          
+          {/* Show 'Add Product' only to Admins */}
+          {currentUser && currentUser.role === 'Admin' && (
+            <MobileNavItem>
+              <MobileStyledNavLink 
+                to="/add" 
+                className={location.pathname === '/add' ? 'active' : ''}
+                onClick={(e) => { e.preventDefault(); closeMobileMenuAndNavigate('/add'); }}
+              >
+                Add Product
               </MobileStyledNavLink>
             </MobileNavItem>
           )}

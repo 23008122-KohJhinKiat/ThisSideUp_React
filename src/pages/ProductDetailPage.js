@@ -21,7 +21,7 @@ const PageWrapper = styled.div`
   color: var(--color-text-light, #FFFFFF);
   min-height: 100vh;
   padding: var(--spacing-m, 16px) var(--spacing-l, 24px) var(--spacing-xl, 32px);
-  font-family: var(--font-body, 'Arial', sans-serif);
+  font-family: var(--font-body, 'instrument sans', sans-serif);
 `;
 
 // BackButton: Styles the back arrow button for navigation.
@@ -421,6 +421,10 @@ const ProductDetailPage = () => {
     }
   };
 
+  const handleEdit = () => {
+    navigate(`/AddAndEdit/Edit/${product._id}`);
+   };
+
   const handleLike = () => {
     if (!currentUser) {
       setCartMessage("Please log in to like products");
@@ -593,6 +597,9 @@ const ProductDetailPage = () => {
               </AddToCartButton>
               <BuyNowButton onClick={handleBuyNow} disabled={product.stock <= 0}>
                 Buy Now
+              </BuyNowButton>
+              <BuyNowButton onClick={handleEdit}>
+                Edit Product
               </BuyNowButton>
             </ActionButtonsContainer>
             {cartMessage && (

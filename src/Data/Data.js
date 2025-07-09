@@ -15,6 +15,42 @@ export const generateId = (prefix = 'id') => {
   // Fallback or more specific logic for other prefixes
   return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
 };
+
+// Add this new function or replace the old one in src/Data/Data.js
+
+// ... (keep the other imports and functions like initialProducts, loginAPI, etc.)
+// Make sure to import generateId from the correct source
+
+export const addProductAPI = async (productData) => {
+  await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+
+  // Basic validation
+  if (!productData.name || !productData.price || !productData.category) {
+    throw new Error("Product name, price, and category are required.");
+  }
+
+  const newProduct = {
+    _id: generateId('prod'), // Use the specific generator from ProductData
+    ...productData,
+    // Ensure numeric fields are correctly typed
+    price: parseFloat(productData.price) || 0,
+    stock: parseInt(productData.stock, 10) || 0,
+    rating: parseFloat(productData.rating) || 0,
+    numRatings: parseInt(productData.numRatings, 10) || 0,
+    // Default likes to 0 as requested
+    likes: 0,
+    // Convert comma-separated tags string into an array
+    tags: productData.tags ? productData.tags.split(',').map(tag => tag.trim()) : [],
+    createdAt: new Date().toISOString(),
+  };
+
+  initialProducts.unshift(newProduct); // Add to the beginning of the array
+  console.log("Product added:", newProduct);
+  console.log("Current product database:", initialProducts);
+  return newProduct;
+};
+
+// ... (the rest of your Data.js file)
  
  
 export const initialCustomDesigns = [
