@@ -78,6 +78,25 @@ export const updateProductAPI = async (productId, updatedData) => {
   console.log("Product updated:", newProductData);
   return newProductData;
 };
+
+export const deleteProductAPI = async (productId) => {
+  await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+
+  const productIndex = initialProducts.findIndex(p => p._id === productId);
+
+  if (productIndex === -1) {
+    throw new Error("Product not found and could not be deleted.");
+  }
+
+  // Remove the product from the array
+  initialProducts.splice(productIndex, 1);
+  
+  console.log(`Product with ID ${productId} deleted.`);
+  console.log("Current product database:", initialProducts);
+  
+  return { success: true, deletedId: productId };
+};
+
  
  
 export const initialCustomDesigns = [
