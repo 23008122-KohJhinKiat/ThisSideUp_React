@@ -21,6 +21,7 @@ export const generateId = (prefix = 'id') => {
 // ... (keep the other imports and functions like initialProducts, loginAPI, etc.)
 // Make sure to import generateId from the correct source
 
+// add product
 export const addProductAPI = async (productData) => {
   await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
 
@@ -50,7 +51,33 @@ export const addProductAPI = async (productData) => {
   return newProduct;
 };
 
-// ... (the rest of your Data.js file)
+// edit product
+export const updateProductAPI = async (productId, updatedData) => {
+  await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+
+  const productIndex = initialProducts.findIndex(p => p._id === productId);
+
+  if (productIndex === -1) {
+    throw new Error("Product not found and could not be updated.");
+  }
+
+  const originalProduct = initialProducts[productIndex];
+
+  // Create the updated product object, ensuring types are correct
+  const newProductData = {
+    ...originalProduct, // Keep original data like _id and createdAt
+    ...updatedData,     // Overwrite with new form data
+    price: parseFloat(updatedData.price) || 0,
+    stock: parseInt(updatedData.stock, 10) || 0,
+    rating: parseFloat(updatedData.rating) || 0,
+    numRatings: parseInt(updatedData.numRatings, 10) || 0,
+    tags: updatedData.tags ? updatedData.tags.split(',').map(tag => tag.trim()) : [],
+  };
+
+  initialProducts[productIndex] = newProductData; // Replace the old product with the new one
+  console.log("Product updated:", newProductData);
+  return newProductData;
+};
  
  
 export const initialCustomDesigns = [
