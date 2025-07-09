@@ -46,6 +46,7 @@ const LogoLink = styled(Link)`
     }
     @media (max-width: 480px) {
       height: 40px;
+      padding-left: 5px; /* Reduced padding for smaller screens */
     }
   }
 `;
@@ -79,7 +80,7 @@ const DesktopNavLinks = styled.div`
   transform: translate(-50%, -50%);
   align-items: center;
 
-  @media (max-width: 992px) {
+  @media (max-width: 1024px) {
     display: none;
   }
 `;
@@ -89,7 +90,7 @@ const NavItemDesktop = styled.div` position: relative; `;
 const StyledNavLink = styled(Link)` color: white; text-decoration: none; font-size: 26px; font-weight: bold; transition: color 0.3s ease; padding: 0.5rem 0.8rem; &:hover, &.active { color: #b19cd9; }`;
 const NavRightSection = styled.div` display: flex; align-items: center; gap: 1.5rem; @media (max-width: 768px) { gap: 1rem; }`;
 const IconsGroup = styled.div` display: flex; align-items: center; gap: 40px; @media (max-width: 768px) { gap: 1.25rem; }`;
-const MobileMenuIcon = styled.div` display: none; font-size: 1.8rem; cursor: pointer; color: white; z-index: 1005; @media (max-width: 992px) { display: block; }`;
+const MobileMenuIcon = styled.div` display: none; font-size: 1.8rem; cursor: pointer; color: white; z-index: 1005; @media (max-width: 1024px) { display: block; }`;
 const MobileNavMenu = styled.div` display: flex; flex-direction: column; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-color: #1e1e1e; padding-top: 70px;  z-index: 1001; transform: ${props => props.isOpen ? 'translateX(0)' : 'translateX(-100%)'}; transition: transform 0.3s ease-in-out; overflow-y: auto; box-shadow: 2px 0 10px rgba(0,0,0,0.2);`;
 const MobileNavItem = styled.div` width: 100%; border-bottom: 1px solid #333; &:last-child { border-bottom: none; }`;
 const commonMobileLinkStyles = css` display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 1rem 1.5rem; color: white; text-decoration: none; font-size: 1.1rem; transition: background-color 0.2s ease, color 0.2s ease; &:hover, &.active { background-color: #333; color: #b19cd9; }`;

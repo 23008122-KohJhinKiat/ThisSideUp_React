@@ -89,8 +89,10 @@ const PreviewArea = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: top;
   min-width: 0;
+  min-height: 400px; 
+
 `;
 
 // --- ENHANCEMENT: Made the board responsive ---
@@ -98,16 +100,11 @@ const PreviewArea = styled.div`
 // src/pages/DesignSkimboard.js
 
 const SkimboardShape = styled.div`
-  width: 100%; 
+  width: 80%; 
   max-width: 600px;
   aspect-ratio: 2 / 1; 
-  
-  border: 5px solid #FFFFFF;
-  position: relative;
-  overflow: hidden; /* Keep this if you want to clip content that goes outside the mask */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin: 30px 10%; 
+  position: absolute;
   background: ${props => props.bg};
   
   mask-image: url('/new-customisable-skimboard.png');
@@ -115,12 +112,28 @@ const SkimboardShape = styled.div`
   mask-size: 100% 100%;
   -webkit-mask-size: 100% 100%;
   mask-repeat: no-repeat;
-  
-  /* --- REPLACEMENT --- */
-  /* Replaces box-shadow with drop-shadow */
-  filter: drop-shadow(0px 10px 15px rgba(0, 0, 0, 0.5));
-  /*         drop-shadow(x-offset | y-offset | blur-radius | color) */
+  @media (max-width: 426px) {
+    margin-top: 100px;
+  }
+ 
 `;
+
+const SkimboardShadow = styled.div`
+  width: 80%; 
+  max-width: 600px;
+  aspect-ratio: 2 / 1; 
+  margin: 30px 10%; 
+  position: absolute;
+  overflow: hidden; /* Keep this if you want to clip content that goes outside the mask */
+  background-image: url('/new-customisable-skimboard clone.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  @media (max-width: 426px) {
+    margin-top: 100px;
+  }
+`;
+
+
 
 // --- ENHANCEMENT: More robust centering for text ---
 const PreviewText = styled.div`
@@ -366,6 +379,7 @@ const DesignSkimboard = () => {
             <h1 style={{ textAlign: 'center', color: 'rgb(131, 57, 143)', fontSize: 36, textShadow: '-2px 2px 2px rgba(0, 0, 0, 0.30)' }}>
               Customise Your Skimboard
             </h1>
+            <SkimboardShadow></SkimboardShadow>
             <SkimboardShape bg={previewBg} id='skimboardPreview'>
               {(feature === 'text' || feature === 'textAndDecal') && text && (
                 <PreviewText color={textColor} font={textFont} size={textSize} weight={textWeight} pos={currentDesign.customText.pos}>
@@ -376,6 +390,7 @@ const DesignSkimboard = () => {
                 <PreviewDecal src={decalUrl} alt="Decal Preview" />
               )}
             </SkimboardShape>
+            
           </PreviewArea>
           
           <ControlsParent>
