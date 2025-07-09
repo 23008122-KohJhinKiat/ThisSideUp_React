@@ -93,8 +93,6 @@ const SubmitButton = styled.button`
   &:hover { background-color: var(--color-secondary-peach-dark); transform: translateY(-2px); }
   &:disabled { background-color: #ccc; cursor: not-allowed; }
 `;
-
-// --- NEW DELETE BUTTON STYLE ---
 const DeleteButton = styled.button`
   background-color: var(--color-error-red, #D32F2F);
   color: white;
@@ -110,7 +108,6 @@ const DeleteButton = styled.button`
   &:hover { background-color: #B71C1C; transform: translateY(-2px); }
   &:disabled { background-color: #ccc; cursor: not-allowed; }
 `;
-
 const ErrorMessage = styled.p`
   color: var(--color-error, #FF6B6B);
   background-color: rgba(0,0,0,0.2);
@@ -177,14 +174,15 @@ const EditProductPage = () => {
         }
     };
 
-    // --- NEW DELETE HANDLER ---
     const handleDelete = async () => {
-        if (window.confirm('Are you sure you want to permanently delete this product? This action cannot be undone.')) {
+        if (window.confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
             setError('');
             try {
                 await deleteProduct(id);
                 alert('Product deleted successfully!');
-                navigate('/products'); // Navigate to the main products page after deletion
+                // --- THIS IS THE KEY LINE ---
+                // It navigates to the main product list page, which is the desired behavior.
+                navigate('/products');
             } catch (err) {
                 setError(err.message || 'Failed to delete product.');
             }
@@ -244,7 +242,6 @@ const EditProductPage = () => {
                             {loading ? 'Saving Changes...' : 'Save Changes'}
                         </SubmitButton>
                         
-                        {/* --- ADDED THE DELETE BUTTON --- */}
                         <DeleteButton type="button" disabled={loading} onClick={handleDelete}>
                             <FaTrash />
                             {loading ? 'Deleting...' : 'Delete Product'}
