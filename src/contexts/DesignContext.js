@@ -3,6 +3,9 @@ import React, { createContext, useState, useContext } from 'react';
 
 const DesignContext = createContext(null);
 
+//quantiy of skimboard should be limited
+// default quantity is 1000
+
 export const DesignProvider = ({ children }) => {
   const initialDesignState = {
     _id: null, // Will be generated when added to cart for a specific instance
