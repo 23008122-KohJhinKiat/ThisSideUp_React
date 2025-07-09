@@ -598,10 +598,13 @@ const ProductDetailPage = () => {
               <BuyNowButton onClick={handleBuyNow} disabled={product.stock <= 0}>
                 Buy Now
               </BuyNowButton>
-              <BuyNowButton onClick={handleEdit}>
-                Edit Product
-              </BuyNowButton>
-            </ActionButtonsContainer>
+              {/* --- ADD THIS CONDITIONAL BUTTON --- */}
+                    {currentUser && currentUser.role === 'Admin' && (
+                        <BuyNowButton onClick={() => navigate(`/edit/${product._id}`)}>
+                            Edit Product
+                        </BuyNowButton>
+                    )}
+                </ActionButtonsContainer>
             {cartMessage && (
               <div style={{
                 color: 'var(--color-secondary-peach, #FFDAB9)',

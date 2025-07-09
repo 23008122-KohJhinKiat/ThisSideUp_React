@@ -2,7 +2,7 @@ import ProductCard from './ProductCard';
 import styled from 'styled-components';
 import { useSearchParams } from 'react-router-dom';
 import '../index.css';
-import { initialProducts } from '../Data/ProductData';
+import { initialProducts } from '../DataPack/ProductData';
 
 const Wrapper = styled.div`
 padding: 2rem;

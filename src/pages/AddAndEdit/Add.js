@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaArrowLeft, FaUpload } from 'react-icons/fa';
-import { addProductAPI, productCategories } from '../../Data/Data';
+import { addProductAPI, productCategories } from '../../DataPack/Data';
 
 // --- STYLED COMPONENTS ---
 

@@ -1,150 +1,117 @@
-// File: src/pages/admin/AddProductPage.js
+// File: src/pages/AddAndEdit/Edit.js
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaArrowLeft, FaUpload } from 'react-icons/fa';
-import { addProductAPI, productCategories } from '../../Data/Data';
+// --- FIX: Correct the import path and the function names ---
+import { updateProductAPI, fetchProductById, productCategories } from '../../DataPack/Data'; 
 
-// --- STYLED COMPONENTS ---
-
+// --- STYLED COMPONENTS (Copied from Add.js for consistency) ---
 const PageWrapper = styled.div`
   background-color: var(--color-background-dark, #121212);
   color: var(--color-text-light, #FFFFFF);
   min-height: 100vh;
   padding: var(--spacing-m, 16px) var(--spacing-l, 24px) var(--spacing-xl, 32px);
-  font-family: var(--font-body, "Inria Serif", serif);
+  font-family: var(--font-body, 'Arial', sans-serif);
 `;
-
 const BackButton = styled.button`
   background: none; border: none; color: white;
-  font-size: 24px; cursor: pointer; 
-  margin-top: 10px; 
+  font-size: 24px; cursor: pointer; margin-bottom: 20px;
   display: flex; align-items: center;
   &:hover { color: var(--color-secondary-peach, #FFDAB9); }
 `;
-
 const ProductContentWrapper = styled.div`
   background-color: var(--color-primary-purple, #5D3FD3);
   padding: 32px; border-radius: 12px; display: flex; gap: 32px;
   @media (max-width: 768px) { flex-direction: column; padding: 24px; }
-  margin-top: 10px; 
 `;
-
 const ImageColumn = styled.div`
-  flex: 0 0 40%; display: flex; flex-direction: column; align-items: center; 
-  margin-top: 10px; 
+  flex: 0 0 40%; display: flex; flex-direction: column; align-items: center; gap: 20px;
 `;
-
 const MainProductImage = styled.img`
   width: 100%; max-width: 350px; height: auto; object-fit: contain;
   background-color: white; border-radius: 8px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   aspect-ratio: 1 / 1;
-  margin-top: 10px; 
 `;
-
 const UploadButton = styled.button`
     background-color: #ffffff;
-    color: #5D3FD3;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    margin-top: 20px;
+    color: var(--color-primary-purple-dark);
+    padding: 10px 20px; border: none; border-radius: 8px;
+    font-size: 1rem; font-weight: bold; cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
     transition: background-color 0.2s ease, transform 0.1s ease;
-
-    &:hover {
-        background-color: #f0f0f0;
-        transform: translateY(-2px);
-    }
+    &:hover { background-color: #f0f0f0; transform: translateY(-2px); }
 `;
-
 const HiddenFileInput = styled.input`
     display: none;
 `;
-
 const DetailsColumn = styled.div`
   flex: 1; color: white; display: flex; flex-direction: column;
 `;
-
 const Form = styled.form`
-    display: flex;
-    flex-direction: column;
-    margin-top: 10px; 
+    display: flex; flex-direction: column; gap: 20px;
 `;
-
 const Label = styled.label`
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-top: 10px; 
+    font-size: 0.9rem; font-weight: 600; margin-bottom: -8px;
     color: var(--color-neutral-gray-light);
 `;
-
 const Input = styled.input`
     background-color: white; color: #333;
     border: 1px solid #ccc; border-radius: 6px;
     padding: 10px; font-size: 1rem; width: 100%; box-sizing: border-box;
     &:focus { outline: 2px solid var(--color-secondary-peach); }
-    margin-top: 10px; 
 `;
-
 const TextArea = styled.textarea`
     background-color: white; color: #333;
     border: 1px solid #ccc; border-radius: 6px;
     padding: 10px; font-size: 1rem; width: 100%; box-sizing: border-box;
     min-height: 80px; resize: vertical; font-family: inherit;
     &:focus { outline: 2px solid var(--color-secondary-peach); }
-    margin-top: 10px; 
 `;
-
 const Select = styled.select`
     background-color: white; color: #333;
     border: 1px solid #ccc; border-radius: 6px;
     padding: 10px; font-size: 1rem; width: 100%; box-sizing: border-box;
     &:focus { outline: 2px solid var(--color-secondary-peach); }
-    margin-top: 10px; 
 `;
-
 const SubmitButton = styled.button`
   background-color: var(--color-secondary-peach);
-  color: #181824
+  color: var(--color-primary-purple-dark);
   padding: 14px; border: none; border-radius: 8px;
-  font-size: 1.1rem; font-weight: bold; cursor: pointer;
-  margin-top: 10px;
+  font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 20px;
   transition: background-color 0.2s ease, transform 0.1s ease;
   &:hover { background-color: var(--color-secondary-peach-dark); transform: translateY(-2px); }
   &:disabled { background-color: #ccc; cursor: not-allowed; }
 `;
-
 const ErrorMessage = styled.p`
   color: var(--color-error, #FF6B6B);
   background-color: rgba(0,0,0,0.2);
-  padding: 8px;
-  border-radius: 4px;
-  text-align: center;
+  padding: 8px; border-radius: 4px; text-align: center;
 `;
 
-// --- The Add Product Page Component ---
+// --- The Edit Product Page Component ---
 const EditProductPage = () => {
+    const { id } = useParams(); // Get product ID from URL
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        name: '',
-        description: '',
-        imageUrl: '',
-        category: '',
-        price: '',
-        stock: '',
-        tags: '',
-        rating: '',
-        numRatings: ''
-    });
+    const [formData, setFormData] = useState(null); // Start as null
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    // Fetch existing product data when component mounts
+    useEffect(() => {
+        const fetchProductData = async () => {
+            try {
+                // --- FIX: Use the correctly imported function name ---
+                const productData = await fetchProductById(id);
+                setFormData({ ...productData, tags: productData.tags.join(', ') });
+            } catch (err) {
+                setError("Could not fetch product data.");
+            }
+        };
+        fetchProductData();
+    }, [id]);
 
     const categoriesForForm = productCategories.filter(cat => cat !== 'All');
 
@@ -167,49 +134,40 @@ const EditProductPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-
         if (!formData.imageUrl) {
-            setError('Please upload a product image.');
+            setError('Please ensure there is a product image.');
             return;
         }
-
         setLoading(true);
         try {
-            const newProduct = await addProductAPI(formData);
-            alert('Product added successfully!');
-            navigate(`/product/${newProduct._id}`);
+            await updateProductAPI(id, formData);
+            alert('Product updated successfully!');
+            navigate(`/product/${id}`); // Navigate back to the product's detail page
         } catch (err) {
-            setError(err.message || 'Failed to add product.');
+            setError(err.message || 'Failed to update product.');
         } finally {
             setLoading(false);
         }
     };
+
+    // Show loading state until form data is fetched
+    if (!formData) {
+        return <PageWrapper><div>Loading product data...</div></PageWrapper>;
+    }
 
     return (
         <PageWrapper>
             <BackButton onClick={() => navigate(-1)}>
                 <FaArrowLeft />
             </BackButton>
-
             <ProductContentWrapper>
                 <ImageColumn>
-                    <MainProductImage 
-                        src={formData.imageUrl || '/placeholder.png'} 
-                        alt="Product image preview" 
-                    />
-                    
+                    <MainProductImage src={formData.imageUrl || '/placeholder.png'} alt="Product image preview" />
                     <UploadButton type="button" onClick={() => document.getElementById('imageUpload').click()}>
-                        <FaUpload /> Upload Image
+                        <FaUpload /> Change Image
                     </UploadButton>
-                    <HiddenFileInput 
-                        id="imageUpload"
-                        type="file"
-                        accept="image/png, image/jpeg, image/webp"
-                        onChange={handleImageUpload}
-                    />
-
+                    <HiddenFileInput id="imageUpload" type="file" accept="image/png, image/jpeg, image/webp" onChange={handleImageUpload} />
                 </ImageColumn>
-
                 <DetailsColumn>
                     <Form onSubmit={handleSubmit}>
                         <Label htmlFor="name">Product Name</Label>
@@ -220,7 +178,6 @@ const EditProductPage = () => {
                         
                         <Label htmlFor="category">Category</Label>
                         <Select name="category" id="category" value={formData.category} onChange={handleChange} required>
-                            <option value="" disabled>Select a category...</option>
                             {categoriesForForm.map(cat => (
                                 <option key={cat} value={cat}>{cat}</option>
                             ))}
@@ -235,16 +192,16 @@ const EditProductPage = () => {
                         <Label htmlFor="tags">Tags (comma-separated)</Label>
                         <Input type="text" name="tags" id="tags" value={formData.tags} onChange={handleChange} placeholder="e.g., skimboard, pro, carbon" />
                         
-                        <Label htmlFor="rating">Initial Rating (0-5)</Label>
+                        <Label htmlFor="rating">Rating (0-5)</Label>
                         <Input type="number" name="rating" id="rating" value={formData.rating} onChange={handleChange} step="0.1" min="0" max="5" />
                         
-                        <Label htmlFor="numRatings">Initial Number of Ratings</Label>
+                        <Label htmlFor="numRatings">Number of Ratings</Label>
                         <Input type="number" name="numRatings" id="numRatings" value={formData.numRatings} onChange={handleChange} min="0" />
 
                         {error && <ErrorMessage>{error}</ErrorMessage>}
 
                         <SubmitButton type="submit" disabled={loading}>
-                            {loading ? 'Adding Product...' : 'Add Product to Database'}
+                            {loading ? 'Saving Changes...' : 'Save Changes'}
                         </SubmitButton>
                     </Form>
                 </DetailsColumn>

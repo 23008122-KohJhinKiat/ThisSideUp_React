@@ -5,7 +5,7 @@ import {
     searchProductsAPI, 
     fetchProductById,
     productCategories
-} from '../Data/Data';
+} from '../DataPack/Data';
 
 const ProductContext = createContext(null);
 

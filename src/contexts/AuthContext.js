@@ -1,6 +1,6 @@
 // File: src/contexts/AuthContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { loginAPI, signupAPI } from '../Data/Data'; // Mock API
+import { loginAPI, signupAPI } from '../DataPack/Data'; // Mock API
 
 const AuthContext = createContext(null);
 

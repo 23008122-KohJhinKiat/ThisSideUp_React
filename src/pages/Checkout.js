@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
-import { countries } from '../Data/CountryData';
+import { countries } from '../DataPack/CountryData';
 import '../index.css'; // Import the CSS file
 
 // --- SHIPPING CATEGORIES & COSTS ---

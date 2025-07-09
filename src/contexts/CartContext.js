@@ -1,6 +1,6 @@
 // File: src/contexts/CartContext.js
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
-import { fetchProductById } from '../Data/Data';
+import { fetchProductById } from '../DataPack/Data';
 
 const CartContext = createContext(null);
 
