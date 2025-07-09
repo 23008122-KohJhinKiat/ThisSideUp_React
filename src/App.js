@@ -1,7 +1,6 @@
 // File: src/App.js
 
 import React, { Suspense, lazy } from 'react';
-// REMOVED Router from this import as it's no longer used here
 import { Routes, Route } from 'react-router-dom';
 import { ProductProvider } from './contexts/ProductContext'; 
 import { DesignProvider } from './contexts/DesignContext';
@@ -10,7 +9,7 @@ import { CartProvider } from './contexts/CartContext';
 
 import Navbar from './components/Navbar'; 
 import Footer from './components/layout/Footer'; 
-import ProtectedRoute from './components/ProtectedRoute.js';
+import ProtectedRoute from './components/ProtectedRoute.js'; // Ensure this path is correct
 
 const HomePage = lazy(() => import('./pages/Home'));
 const ProductsPage = lazy(() => import('./pages/Products'));
@@ -31,7 +30,6 @@ const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsConditionsPage = lazy(() => import('./pages/Terms&Conditions'));
 
 function App() {
-  // REMOVED the opening <Router> tag from here
   return (    
     <AuthProvider> 
       <ProductProvider>
@@ -53,18 +51,52 @@ function App() {
                 <Route path="/privacypolicy" element={<PrivacyPolicyPage />} />
                 <Route path="/termsconditions" element={<TermsConditionsPage />} />
 
-                {/* User / Customer Routes */}
-                <Route path="/profile" element={<ProtectedRoute><UserProfilePage /></ProtectedRoute>} />
-                <Route path="/shoppingCart" element={<ProtectedRoute><ActualShoppingCartPage /></ProtectedRoute>} /> 
-                <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
-                <Route path="/design-skimboard" element={<ProtectedRoute><DesignSkimboardPage /></ProtectedRoute>} />
+                {/* --- CUSTOMER-ONLY ROUTE --- */}
+                <Route 
+                  path="/design-skimboard" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Customer']}>
+                      <DesignSkimboardPage />
+                    </ProtectedRoute>
+                  } 
+                />
+
+                {/* --- ROUTES FOR ANY LOGGED-IN USER (Admin or Customer) --- */}
+                <Route 
+                  path="/profile" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Admin', 'Customer']}>
+                      <UserProfilePage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/shoppingCart" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Admin', 'Customer']}>
+                      <ActualShoppingCartPage />
+                    </ProtectedRoute>
+                  } 
+                /> 
+                <Route 
+                  path="/checkout" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Admin', 'Customer']}>
+                      <CheckoutPage />
+                    </ProtectedRoute>
+                  } 
+                />
 
                 {/* --- ADMIN-ONLY ROUTES --- */}
                 <Route path="/add" element={
-                    <ProtectedRoute adminOnly={true}><AddProductPage /></ProtectedRoute>
+                    <ProtectedRoute allowedRoles={['Admin']}>
+                      <AddProductPage />
+                    </ProtectedRoute>
                 } />
                 <Route path="/edit/:id" element={
-                    <ProtectedRoute adminOnly={true}><EditProductPage /></ProtectedRoute>
+                    <ProtectedRoute allowedRoles={['Admin']}>
+                      <EditProductPage />
+                    </ProtectedRoute>
                 } />
 
                 {/* Catch-all 404 Route */}
@@ -77,7 +109,6 @@ function App() {
       </ProductProvider> 
     </AuthProvider>
   );
-  // REMOVED the closing </Router> tag from here
 }
 
 export default App;

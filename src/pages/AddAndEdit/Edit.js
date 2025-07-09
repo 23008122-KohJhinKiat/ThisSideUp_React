@@ -4,10 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaArrowLeft, FaUpload } from 'react-icons/fa';
-// --- FIX: Correct the import path and the function names ---
-import { updateProductAPI, fetchProductById, productCategories } from '../../DataPack/Data'; 
+import { useProducts } from '../../contexts/ProductContext'; // <-- Import useProducts
+import { productCategories } from '../../DataPack/Data';
 
-// --- STYLED COMPONENTS (Copied from Add.js for consistency) ---
+// --- STYLED COMPONENTS (No changes needed here) ---
 const PageWrapper = styled.div`
   background-color: var(--color-background-dark, #121212);
   color: var(--color-text-light, #FFFFFF);
@@ -91,27 +91,34 @@ const ErrorMessage = styled.p`
   padding: 8px; border-radius: 4px; text-align: center;
 `;
 
+
 // --- The Edit Product Page Component ---
 const EditProductPage = () => {
-    const { id } = useParams(); // Get product ID from URL
+    const { id } = useParams();
     const navigate = useNavigate();
-    const [formData, setFormData] = useState(null); // Start as null
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
+    // --- CHANGE: Use the context hooks ---
+    const { getProductById, updateProduct, loading } = useProducts();
 
-    // Fetch existing product data when component mounts
+    const [formData, setFormData] = useState(null);
+    const [error, setError] = useState('');
+    // Use the context's loading state instead of a local one for submission
+    // const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         const fetchProductData = async () => {
             try {
-                // --- FIX: Use the correctly imported function name ---
-                const productData = await fetchProductById(id);
-                setFormData({ ...productData, tags: productData.tags.join(', ') });
+                const productData = await getProductById(id);
+                if (productData) {
+                    setFormData({ ...productData, tags: productData.tags.join(', ') });
+                } else {
+                    setError("Product not found.");
+                }
             } catch (err) {
                 setError("Could not fetch product data.");
             }
         };
         fetchProductData();
-    }, [id]);
+    }, [id, getProductById]);
 
     const categoriesForForm = productCategories.filter(cat => cat !== 'All');
 
@@ -138,19 +145,17 @@ const EditProductPage = () => {
             setError('Please ensure there is a product image.');
             return;
         }
-        setLoading(true);
+        
         try {
-            await updateProductAPI(id, formData);
+            // --- CHANGE: Call the context function ---
+            await updateProduct(id, formData);
             alert('Product updated successfully!');
-            navigate(`/product/${id}`); // Navigate back to the product's detail page
+            navigate(`/product/${id}`);
         } catch (err) {
             setError(err.message || 'Failed to update product.');
-        } finally {
-            setLoading(false);
         }
     };
 
-    // Show loading state until form data is fetched
     if (!formData) {
         return <PageWrapper><div>Loading product data...</div></PageWrapper>;
     }

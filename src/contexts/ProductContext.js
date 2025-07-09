@@ -3,31 +3,29 @@ import React, { createContext, useState, useContext, useEffect, useCallback } fr
 import { 
     fetchProducts, 
     searchProductsAPI, 
-    fetchProductById,
+    fetchProductById as fetchProductByIdAPI, // Rename to avoid conflict
+    updateProductAPI, // <-- Import the update function
     productCategories
-} from '../DataPack/Data';
+} from '../DataPack/Data'; // Ensure correct path to your Data.js
 
 const ProductContext = createContext(null);
 
 export const ProductProvider = ({ children }) => {
-  const [products, setProducts] = useState([]); // Stores all products once fetched
-  const [filteredProducts, setFilteredProducts] = useState([]); // Products for display
-  const [loading, setLoading] = useState(true); // Still useful to know if data is being fetched
+  const [products, setProducts] = useState([]); // Master list of all products
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
   const [currentCategory, setCurrentCategory] = useState('All');
-  const [sortBy, setSortBy] = useState('name_asc'); // Default sort, e.g., name A-Z
+  const [sortBy, setSortBy] = useState('name_asc');
 
-  // Initial load of all products
   const loadAllProducts = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const data = await fetchProducts();
       setProducts(data);
-      // Apply initial filter (all products, default sort)
-      // Pass empty search term for initial load of a category
-      const initialFiltered = await searchProductsAPI('', currentCategory, sortBy); 
+      const initialFiltered = await searchProductsAPI('', 'All', 'name_asc'); 
       setFilteredProducts(initialFiltered);
     } catch (err) {
       setError(err.message || "Failed to fetch products.");
@@ -36,18 +34,17 @@ export const ProductProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [currentCategory, sortBy]); // Include currentCategory and sortBy for initial filter logic
+  }, []);
 
   useEffect(() => {
     loadAllProducts();
-  }, [loadAllProducts]); // Load products on initial mount
+  }, [loadAllProducts]);
 
-  // Function to filter/sort products based on category and sort preference
   const filterAndSortProducts = useCallback(async (category = currentCategory, newSortBy = sortBy, term = '') => {
     setLoading(true);
     setError(null);
-    setCurrentCategory(category); // Update current category state
-    setSortBy(newSortBy);       // Update current sort state
+    setCurrentCategory(category);
+    setSortBy(newSortBy);
     try {
       const results = await searchProductsAPI(term, category, newSortBy);
       setFilteredProducts(results);
@@ -57,43 +54,60 @@ export const ProductProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [currentCategory, sortBy]); // These dependencies are for the default values if not provided
+  }, [currentCategory, sortBy]);
 
   const getProductById = useCallback(async (id) => {
-    setLoading(true); // Indicate loading when fetching a single product
-    setError(null);
+    // First, try to find the product in our already loaded state
     const productFromState = products.find(p => p._id === id);
     if (productFromState) {
-      setLoading(false);
       return productFromState;
     }
+    // If not found (e.g., direct navigation), fetch from API
     try {
-      const fetchedProduct = await fetchProductById(id); // From Data.js
-      setLoading(false);
-      if (!fetchedProduct) {
-        setError(`Product with ID ${id} not found.`);
-      }
-      return fetchedProduct;
+      return await fetchProductByIdAPI(id);
     } catch (err) {
-      console.error(`Error fetching product by ID (${id}):`, err);
-      setLoading(false);
-      setError(err.message || `Failed to fetch product ${id}.`);
+      setError(err.message);
       return null;
     }
-  }, [products]); // Depends on 'products' state to check cache first
+  }, [products]);
+
+  // --- NEW FUNCTION TO HANDLE UPDATES ---
+  const updateProduct = async (productId, updatedData) => {
+    setLoading(true);
+    try {
+      const returnedProduct = await updateProductAPI(productId, updatedData);
+      
+      // Update the master list
+      setProducts(prevProducts => 
+        prevProducts.map(p => (p._id === productId ? returnedProduct : p))
+      );
+
+      // Also update the currently visible filtered list
+      setFilteredProducts(prevFiltered => 
+        prevFiltered.map(p => (p._id === productId ? returnedProduct : p))
+      );
+      
+      setLoading(false);
+      return returnedProduct; // Return the updated product for confirmation
+    } catch (err) {
+      setError(err.message || "Failed to update product.");
+      setLoading(false);
+      throw err;
+    }
+  };
 
   const value = {
-    // products,             // All products (can be removed if not directly used by consumers)
-    filteredProducts,     // Products to display
-    loading,              // Boolean indicating data fetch state
-    error,                // Error message string or null
+    filteredProducts,
+    loading,
+    error,
     currentCategory,
-    setCurrentCategory,   // Allow pages to set this directly before calling filterAndSortProducts
+    setCurrentCategory,
     sortBy,
-    setSortBy,            // Allow pages to set this directly
-    categories: productCategories, // From Data.js
-    filterAndSortProducts, // Main function to trigger filtering/sorting
+    setSortBy,
+    categories: productCategories,
+    filterAndSortProducts,
     getProductById,
+    updateProduct, // <-- Expose the new function
   };
 
   return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;
@@ -101,7 +115,7 @@ export const ProductProvider = ({ children }) => {
 
 export const useProducts = () => {
   const context = useContext(ProductContext);
-  if (context === undefined || context === null) { // Check for null as well
+  if (!context) {
     throw new Error('useProducts must be used within a ProductProvider');
   }
   return context;

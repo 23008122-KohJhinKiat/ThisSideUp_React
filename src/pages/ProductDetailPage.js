@@ -12,9 +12,10 @@ import {
 import { useCart } from '../contexts/CartContext';
 import ProductCard from './ProductCard';
 import { useProducts } from '../contexts/ProductContext';
-import { useAuth } from '../contexts/AuthContext'; // Import useAuth
+import { useAuth } from '../contexts/AuthContext';
+// import Products from './Products'; // <-- This import is no longer needed
 
-// --- STYLED COMPONENTS ---
+// --- STYLED COMPONENTS (No changes needed here) ---
 
 const PageWrapper = styled.div`
   background-color: var(--color-background-dark, #121212); /* Very dark background */
@@ -24,7 +25,6 @@ const PageWrapper = styled.div`
   font-family: var(--font-body, 'instrument sans', sans-serif);
 `;
 
-// BackButton: Styles the back arrow button for navigation.
 const BackButton = styled.button`
   background: none;
   border: none;
@@ -40,10 +40,7 @@ const BackButton = styled.button`
   }
 `;
 
-
-
-// ProductContentWrapper: A container for the main product information (image and details).
-// It uses a purple background and flexbox for a two-column layout.
+// ... (The rest of the styled components are unchanged)
 const ProductContentWrapper = styled.div`
   background-color: var(--color-primary-purple, #5D3FD3); /* Purple background */
   padding: var(--spacing-xl, 32px);
@@ -58,7 +55,6 @@ const ProductContentWrapper = styled.div`
   }
 `;
 
-// ImageColumn: The left column containing the product image and social action buttons.
 const ImageColumn = styled.div`
   flex: 0 0 40%; /* Takes up 40% of the width, doesn't grow or shrink excessively */
   display: flex;
@@ -70,7 +66,6 @@ const ImageColumn = styled.div`
   }
 `;
 
-// Rename ProductImage to MainProductImage since that's what we use in the component
 const MainProductImage = styled.img`
   width: 100%;
   max-width: 350px; /* Max width for the image */
@@ -82,7 +77,6 @@ const MainProductImage = styled.img`
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 `;
 
-// SocialActions: Container for the "Share" and "Likes" buttons.
 const SocialActions = styled.div`
   display: flex;
   justify-content: space-around; /* Spreads out Share and Likes */
@@ -91,7 +85,6 @@ const SocialActions = styled.div`
   margin-top: var(--spacing-m, 16px);
 `;
 
-// BaseSocialButton: A common base for Share and Like buttons.
 const BaseSocialButton = styled.button`
   background-color: var(--color-secondary-peach, #FFDAB9);
   color: var(--color-primary-purple-dark, #4B0082); /* Dark text for contrast */
@@ -116,7 +109,6 @@ const BaseSocialButton = styled.button`
   }
 `;
 
-// DetailsColumn: The right column containing product name, price, description, etc.
 const DetailsColumn = styled.div`
   flex: 1; /* Takes remaining space */
   color: var(--color-text-light, #FFFFFF);
@@ -125,7 +117,6 @@ const DetailsColumn = styled.div`
   gap: var(--spacing-s, 10px); /* Spacing between detail items */
 `;
 
-// ProductName: Styles the product's name.
 const ProductName = styled.h1`
   color: var(--color-text-light, #FFFFFF);
   font-size: var(--font-size-xxlarge, 28px);
@@ -134,7 +125,6 @@ const ProductName = styled.h1`
   font-family: var(--font-heading, 'Georgia', serif);
 `;
 
-// ProductPrice: Styles the product's price.
 const ProductPrice = styled.p`
   font-size: var(--font-size-xlarge, 22px);
   color: var(--color-secondary-peach, #FFDAB9); /* Peach color for price */
@@ -142,7 +132,6 @@ const ProductPrice = styled.p`
   margin-bottom: var(--spacing-s, 8px);
 `;
 
-// RatingContainer: Holds the star icons and rating text.
 const RatingContainer = styled.div`
   display: flex;
   align-items: center;
@@ -155,7 +144,6 @@ const RatingContainer = styled.div`
   }
 `;
 
-// ProductDescription: Styles the product description text.
 const ProductDescription = styled.p`
   font-size: var(--font-size-small, 14px);
   line-height: 1.6;
@@ -163,7 +151,6 @@ const ProductDescription = styled.p`
   margin-bottom: var(--spacing-m, 16px);
 `;
 
-// InfoRow: A row for displaying structured info like "Bundle Deals", "Shipping".
 const InfoRow = styled.div`
   display: flex;
   align-items: flex-start; /* Align items to the start if text wraps */
@@ -172,14 +159,12 @@ const InfoRow = styled.div`
   font-size: var(--font-size-medium, 16px);
 `;
 
-// InfoLabel: Styles the label part (e.g., "Shipping:").
 const InfoLabel = styled.span`
   font-weight: 600;
   color: var(--color-text-light, #FFFFFF);
   min-width: 130px; /* Ensures alignment */
 `;
 
-// InfoValue: Styles the value part (e.g., "Within 1 Week...").
 const InfoValue = styled.span`
   color: var(--color-neutral-gray-light, #E0E0E0);
   .highlight { /* For highlighting parts like shipping fee */
@@ -188,7 +173,6 @@ const InfoValue = styled.span`
   }
 `;
 
-// QuantityControl: Container for the quantity adjuster.
 const QuantityControl = styled.div`
   display: flex;
   align-items: center;
@@ -196,7 +180,6 @@ const QuantityControl = styled.div`
   margin: var(--spacing-m, 16px) 0;
 `;
 
-// QuantityButton: Styles the "+" and "-" buttons for quantity.
 const QuantityButton = styled.button`
   background-color: rgba(255, 255, 255, 0.2);
   color: var(--color-text-light, #FFFFFF);
@@ -225,7 +208,6 @@ const QuantityButton = styled.button`
   }
 `;
 
-// QuantityDisplay: Shows the current quantity number.
 const QuantityDisplay = styled.span`
   font-size: var(--font-size-large, 18px);
   font-weight: 600;
@@ -233,7 +215,6 @@ const QuantityDisplay = styled.span`
   text-align: center;
 `;
 
-// ActionButtonsContainer: Holds "Add to cart" and "Buy Now" buttons.
 const ActionButtonsContainer = styled.div`
   display: flex;
   gap: var(--spacing-m, 16px);
@@ -244,7 +225,6 @@ const ActionButtonsContainer = styled.div`
   }
 `;
 
-// BaseActionButton: Common styles for action buttons.
 const BaseActionButton = styled.button`
   flex-grow: 1; /* Buttons share space equally */
   padding: var(--spacing-m, 14px);
@@ -267,7 +247,6 @@ const BaseActionButton = styled.button`
   }
 `;
 
-// AddToCartButton: Specific style for the "Add to cart" button.
 const AddToCartButton = styled(BaseActionButton)`
   background-color: var(--color-primary-purple-dark, #4B0082); /* Darker purple */
   color: var(--color-text-light, #FFFFFF);
@@ -277,7 +256,6 @@ const AddToCartButton = styled(BaseActionButton)`
   }
 `;
 
-// BuyNowButton: Specific style for the "Buy Now" button.
 const BuyNowButton = styled(BaseActionButton)`
   background-color: var(--color-neutral-gray-light, #E0E0E0);
   color: var(--color-primary-purple-dark, #4B0082); /* Dark text for contrast */
@@ -287,13 +265,11 @@ const BuyNowButton = styled(BaseActionButton)`
   }
 `;
 
-// SimilarProductsSection: Container for the "Similar Products" area.
 const SimilarProductsSection = styled.section`
   margin-top: var(--spacing-xxl, 48px);
   padding: var(--spacing-l, 24px) 0; /* Padding only top/bottom */
 `;
 
-// SimilarProductsTitle: Title for the "Similar Products" section.
 const SimilarProductsTitle = styled.h2`
   font-size: var(--font-size-xlarge, 24px);
   font-weight: 600;
@@ -302,7 +278,6 @@ const SimilarProductsTitle = styled.h2`
   font-family: var(--font-heading, 'Georgia', serif);
 `;
 
-// SimilarProductsGrid: A scrollable grid for similar product cards.
 const SimilarProductsGrid = styled.div`
   display: flex;
   gap: var(--spacing-l, 24px);
@@ -317,15 +292,16 @@ const SimilarProductsGrid = styled.div`
   scrollbar-width: none;  /* Firefox */
 `;
 
-
 // --- REACT COMPONENT ---
+
 const ProductDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const cart = useCart();
   const { getProductById, filteredProducts, loading: contextLoading, error: contextError } = useProducts();
-  const { currentUser } = useAuth(); // Get current user
+  const { currentUser } = useAuth();
 
+  // ... (All other state and useEffect code is unchanged)
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [similarProducts, setSimilarProducts] = useState([]);
@@ -333,7 +309,6 @@ const ProductDetailPage = () => {
   const [error, setError] = useState(null);
   const [cartMessage, setCartMessage] = useState('');
 
-  // States for Likes functionality
   const [displayLikes, setDisplayLikes] = useState(0);
   const [isLikedByCurrentUser, setIsLikedByCurrentUser] = useState(false);
 
@@ -421,9 +396,7 @@ const ProductDetailPage = () => {
     }
   };
 
-  const handleEdit = () => {
-    navigate(`/AddAndEdit/Edit/${product._id}`);
-   };
+  
 
   const handleLike = () => {
     if (!currentUser) {
@@ -512,17 +485,17 @@ const ProductDetailPage = () => {
     return <PageWrapper><p>Product not found.</p></PageWrapper>;
   }
 
-  // Prepare shipping info with highlight
   const highlightedShippingInfo = product.shippingInfo?.replace(
-    /\$(\d+\.\d{2})/g, // Regex to find dollar amounts like $0.20
-    '<span class="highlight">$$$1</span>' // $$ for literal $, $1 for captured group
+    /\$(\d+\.\d{2})/g,
+    '<span class="highlight">$$$1</span>'
   ) || 'Standard shipping available';
 
 
   return (
-    <div className="product-detail-page"> {/* This class is for global page-specific background from index.css */}
+    <div className="product-detail-page">
       <PageWrapper>
-        <BackButton onClick={() => navigate(-1)}>
+        {/* --- THIS IS THE LINE TO CHANGE --- */}
+        <BackButton onClick={() => navigate('/products')}>
           <FaArrowLeft />
         </BackButton>
 
@@ -551,7 +524,6 @@ const ProductDetailPage = () => {
             <ProductPrice>${product.price ? product.price.toFixed(2) : 'N/A'}</ProductPrice>
             <RatingContainer>
               {renderStars(product.rating)}
-              {/* Corrected to use numRatings as per Data.js */}
               <span>{product.numRatings || 0} Ratings</span>
             </RatingContainer>
             <ProductDescription>{product.description}</ProductDescription>
@@ -562,12 +534,11 @@ const ProductDetailPage = () => {
             </InfoRow>
             <InfoRow>
               <InfoLabel>Shipping:</InfoLabel>
-              {/* Using dangerouslySetInnerHTML for the highlight. Ensure shippingInfo is safe. */}
               <InfoValue dangerouslySetInnerHTML={createMarkup(highlightedShippingInfo)}>
               </InfoValue>
             </InfoRow>
             <InfoRow>
-              <InfoLabel></InfoLabel> {/* Empty label for alignment with the line below */}
+              <InfoLabel></InfoLabel>
               <InfoValue>
                 <span style={{fontSize: 'var(--font-size-small, 12px)', color: 'var(--color-neutral-gray, #BDBDBD)'}}>
                   {product.shippingVoucher || 'Check for shipping vouchers at checkout.'}
@@ -575,7 +546,7 @@ const ProductDetailPage = () => {
               </InfoValue>
             </InfoRow>
             <InfoRow>
-              <InfoLabel>Guarantee:</InfoLabel> {/* Changed from Shopping Guarantee for brevity */}
+              <InfoLabel>Guarantee:</InfoLabel>
               <InfoValue>{product.shoppingGuarantee || 'Standard buyer protection.'}</InfoValue>
             </InfoRow>
 
@@ -585,12 +556,11 @@ const ProductDetailPage = () => {
               </QuantityButton>
               <QuantityDisplay>{quantity}</QuantityDisplay>
               <QuantityButton onClick={handleIncrementQuantity} disabled={product.stock <=0 || quantity >= product.stock}> +
-
               </QuantityButton>
               {product.stock <= 0 && <span style={{color: 'var(--color-error-red)', marginLeft: '10px', fontSize: 'var(--font-size-small)'}}>Out of stock</span>}
               {product.stock > 0 && <span style={{fontSize: 'var(--font-size-small)', marginLeft: '10px', color: 'var(--color-neutral-gray-light)'}}>{product.stock} left</span>}
-
             </QuantityControl>
+            
             <ActionButtonsContainer>
               <AddToCartButton onClick={handleAddToCart} disabled={product.stock <= 0}>
                 <FaShoppingCart /> Add to cart
@@ -598,13 +568,13 @@ const ProductDetailPage = () => {
               <BuyNowButton onClick={handleBuyNow} disabled={product.stock <= 0}>
                 Buy Now
               </BuyNowButton>
-              {/* --- ADD THIS CONDITIONAL BUTTON --- */}
-                    {currentUser && currentUser.role === 'Admin' && (
-                        <BuyNowButton onClick={() => navigate(`/edit/${product._id}`)}>
-                            Edit Product
-                        </BuyNowButton>
-                    )}
-                </ActionButtonsContainer>
+              {currentUser && currentUser.role === 'Admin' && (
+                  <BuyNowButton onClick={() => navigate(`/edit/${product._id}`)}>
+                      Edit Product
+                  </BuyNowButton>
+              )}
+            </ActionButtonsContainer>
+            
             {cartMessage && (
               <div style={{
                 color: 'var(--color-secondary-peach, #FFDAB9)',
