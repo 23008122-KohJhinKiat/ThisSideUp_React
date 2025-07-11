@@ -341,7 +341,7 @@ const ProductDetailPage = () => {
             setIsLikedByCurrentUser(false); // No user or product ID, so cannot be liked by current user
           }
           
-          if (filteredProducts && filteredProducts.length > 0) {
+          if (Array.isArray(filteredProducts) && filteredProducts.length > 0) {
             const related = filteredProducts
               .filter(p => p.category === fetchedProduct.category && p._id !== fetchedProduct._id)
               .slice(0, 5);

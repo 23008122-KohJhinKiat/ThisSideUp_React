@@ -1,186 +1,117 @@
 // File: src/contexts/CartContext.js
+
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
-import { fetchProductById } from '../DataPack/Data';
+// --- BUG FIX: Import useProducts to get access to product data and functions ---
 import { useProducts } from './ProductContext';
 
 const CartContext = createContext(null);
 
-const getInitialCart = () => {
-  try {
-    const storedCart = localStorage.getItem('shoppingCart');
-    return storedCart ? JSON.parse(storedCart) : [];
-  } catch (error) {
-    console.error("Error parsing cart from localStorage:", error);
-    return [];
-  }
-};
+export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState(getInitialCart);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  // 1. Get products from context. Use fallback `{}` to prevent crash on initial render.
-  const { products, loading: productsLoading } = useProducts() || {};
-
-  // 2. This useEffect synchronizes the cart with the master product list.
-  useEffect(() => {
-    // Check that products have loaded and is an array to prevent errors.
-    if (!productsLoading && Array.isArray(products)) {
-      const validProductIds = new Set(products.map(p => p._id));
-
-      const sanitizedCart = cartItems.filter(item => {
-        // Always keep custom designs, they don't exist in the master product list.
-        if (item.type === 'custom') {
-          return true;
+    // --- BUG FIX: Get getProductById from the ProductContext ---
+    const { getProductById } = useProducts();
+    
+    // Stores the raw cart items, e.g., [{ productId: 'abc', quantity: 2 }]
+    const [cartItems, setCartItems] = useState(() => {
+        try {
+            const localData = localStorage.getItem('cart');
+            return localData ? JSON.parse(localData) : [];
+        } catch (error) {
+            console.error("Error parsing cart from localStorage:", error);
+            return [];
         }
-        // For standard products, check if their ID still exists in the valid product list.
-        const itemId = item.product?._id;
-        return itemId && validProductIds.has(itemId);
-      });
+    });
 
-      // If the cart was sanitized, update the state.
-      if (sanitizedCart.length < cartItems.length) {
-        console.log("Cart synchronized: Removed products that no longer exist.");
-        setCartItems(sanitizedCart);
-      }
-    }
-  }, [products, productsLoading, cartItems]); // Reruns when the master product list changes.
+    // Stores the "hydrated" items with full product details
+    const [hydratedCart, setHydratedCart] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-  // This useEffect saves the cart to localStorage whenever it's updated.
-  useEffect(() => {
-    localStorage.setItem('shoppingCart', JSON.stringify(cartItems));
-  }, [cartItems]);
+    // Persist raw cart items to localStorage whenever they change
+    useEffect(() => {
+        localStorage.setItem('cart', JSON.stringify(cartItems));
+    }, [cartItems]);
 
-  const addItemToCart = useCallback(async (itemData, quantity = 1) => {
-    setLoading(true);
-    setError(null);
-    try {
-      if (typeof itemData === 'string') {
-        // --- This part for standard products remains the same ---
-        setCartItems(prevItems => {
-            const existingItemIndex = prevItems.findIndex(
-                (item) => item.product && item.product._id === itemData && !item.customDesign
-            );
+    // This is the key "self-healing" and "hydrating" effect
+    useEffect(() => {
+        const hydrateAndValidateCart = async () => {
+            setLoading(true);
+            const detailedCart = [];
+            const validItems = [];
 
-            if (existingItemIndex > -1) {
-                const updatedItems = [...prevItems];
-                updatedItems[existingItemIndex].quantity += quantity;
-                return updatedItems;
-            } else {
-                return prevItems;
+            // The getProductById function is now available here
+            if (typeof getProductById !== 'function') {
+                setLoading(false);
+                return; // Exit if the function isn't ready
             }
-        });
 
-        const currentCart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-        if (!currentCart.some(item => item.product?._id === itemData)) {
-            const productDetails = await fetchProductById(itemData);
-            if (!productDetails) throw new Error("Product not found");
-            const newItem = { product: productDetails, quantity, type: 'standard' };
-            setCartItems((prevItems) => [...prevItems, newItem]);
-        }
-
-      } else if (itemData && itemData._id && itemData.isCustom) {
-        setCartItems((prevItems) => {
-          
-          // 1. Find the highest number used in existing custom skimboard names.
-          let maxNumber = 0;
-          prevItems
-            .filter(item => item.type === 'custom' && item.customDesign?.name)
-            .forEach(item => {
-              // Use a regular expression to find the number at the end of the name.
-              const match = item.customDesign.name.match(/\d+$/);
-              if (match) {
-                const number = parseInt(match[0], 10);
-                if (number > maxNumber) {
-                  maxNumber = number;
+            for (const item of cartItems) {
+                // Ensure we only process items with a productId
+                if (item.productId) {
+                    const product = await getProductById(item.productId);
+                    if (product) {
+                        // Product exists, add full details
+                        detailedCart.push({ ...item, product, isAvailable: true });
+                        validItems.push(item);
+                    } else {
+                        // Product does NOT exist (was deleted), add a placeholder
+                        detailedCart.push({ ...item, product: null, isAvailable: false });
+                        // Do NOT add it to validItems
+                    }
                 }
-              }
-            });
+            }
+            
+            setHydratedCart(detailedCart);
 
-          // 2. The new board's number is the highest found number + 1.
-          const newNumber = maxNumber + 1;
-          const newName = `My Custom Skimboard ${newNumber}`;
-          
-          // 3. Create the new item with the correct name.
-          const newItem = {
-            customDesign: { ...itemData, name: newName },
-            quantity,
-            type: 'custom',
-            _id: itemData._id
-          };
-          
-          // 4. Return the new state array.
-          return [...prevItems, newItem];
+            // Self-healing: If the number of valid items is less than the original cart,
+            // it means some products were deleted. Silently update the cart state.
+            if (validItems.length < cartItems.length) {
+                console.log("Cart self-healed: Removed unavailable products.");
+                setCartItems(validItems);
+            }
+            setLoading(false);
+        };
+
+        hydrateAndValidateCart();
+    }, [cartItems, getProductById]); // Re-run when cart or product data changes
+
+    // --- CHANGE: Wrapped function in useCallback ---
+    // This memoizes the function so it doesn't get recreated on every render.
+    // The dependency array is empty because `setCartItems` is a stable function from useState.
+    const addItemToCart = useCallback((productId, quantity = 1) => {
+        setCartItems(prevItems => {
+            const existingItem = prevItems.find(item => item.productId === productId);
+            if (existingItem) {
+                // Update quantity if item already in cart
+                return prevItems.map(item =>
+                    item.productId === productId
+                        ? { ...item, quantity: item.quantity + quantity }
+                        : item
+                );
+            }
+            // Add new item
+            return [...prevItems, { productId, quantity }];
         });
+    }, []);
+    
+    // --- CHANGE: Wrapped function in useCallback ---
+    const removeItemFromCart = useCallback((productId) => {
+        setCartItems(prevItems => prevItems.filter(item => item.productId !== productId));
+    }, []);
+    
+    // --- CHANGE: Wrapped function in useCallback ---
+    const clearCart = useCallback(() => {
+        setCartItems([]);
+    }, []);
 
-      } else {
-        throw new Error("Invalid item data provided to cart.");
-      }
-    } catch (err) {
-      setError(err.message || "Failed to add item to cart.");
-      console.error("Cart Error:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    const value = {
+        cartItems: hydratedCart, // Components will use the hydrated cart
+        addItemToCart,
+        removeItemFromCart,
+        clearCart,
+        loading,
+        cartCount: cartItems.reduce((acc, item) => acc + item.quantity, 0),
+    };
 
-  const updateItemQuantity = (itemId, newQuantity) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) => {
-        const currentItemId = item.product?._id || item.customDesign?._id;
-        if (currentItemId === itemId) {
-          return { ...item, quantity: Math.max(0, newQuantity) };
-        }
-        return item;
-      }).filter(item => item.quantity > 0)
-    );
-  };
-
-  const removeItemFromCart = (itemId) => {
-    setCartItems((prevItems) => prevItems.filter((item) => (item.product?._id || item.customDesign?._id) !== itemId));
-  };
-
-   const removeItemsByIds = (itemIdsToRemove) => {
-    const idSet = new Set(itemIdsToRemove);
-    setCartItems(prevItems =>
-      prevItems.filter(item => {
-        const currentItemId = item.product?._id || item.customDesign?._id;
-        return !idSet.has(currentItemId);
-      })
-    );
-  };
-  
-  const clearCart = () => {
-    setCartItems([]);
-  };
-
-  const getCartTotal = () => {
-    return cartItems.reduce((total, item) => {
-        const price = item.product ? item.product.price : item.customDesign.price;
-        return total + price * item.quantity;
-    }, 0);
-  };
-
-  const getTotalItems = () => {
-    return cartItems.reduce((count, item) => count + item.quantity, 0);
-  };
-
-  const value = {
-    cartItems,
-    loading,
-    error,
-    addItemToCart,
-    updateItemQuantity,
-    removeItemFromCart,
-    removeItemsByIds,
-    clearCart,
-    getCartTotal,
-    getTotalItems,
-    itemCount: getTotalItems(),
-  };
-
-  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+    return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
-
-export const useCart = () => useContext(CartContext);

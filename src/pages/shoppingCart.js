@@ -147,6 +147,8 @@ const ActualShoppingCartPage = () => {
         });
     };
 
+    
+
     return (
         <div className="shopping-cart-page">
             <div className="shopping-cart-page-container">
