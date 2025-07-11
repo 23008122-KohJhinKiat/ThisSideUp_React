@@ -1,13 +1,13 @@
-// File: src/pages/admin/AddProductPage.js
+// File: src/pages/AddAndEdit/Add.js
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaArrowLeft, FaUpload } from 'react-icons/fa';
-import { addProductAPI, productCategories } from '../../DataPack/Data';
+import { useProducts } from '../../contexts/ProductContext'; // <-- Use the context
+import { productCategories } from '../../DataPack/Data';
 
-// --- STYLED COMPONENTS ---
-
+// --- STYLED COMPONENTS (Unchanged) ---
 const PageWrapper = styled.div`
   background-color: var(--color-background-dark, #121212);
   color: var(--color-text-light, #FFFFFF);
@@ -15,7 +15,6 @@ const PageWrapper = styled.div`
   padding: var(--spacing-m, 16px) var(--spacing-l, 24px) var(--spacing-xl, 32px);
   font-family: var(--font-body, "Inria Serif", serif);
 `;
-
 const BackButton = styled.button`
   background: none; border: none; color: white;
   font-size: 24px; cursor: pointer; 
@@ -23,19 +22,16 @@ const BackButton = styled.button`
   display: flex; align-items: center;
   &:hover { color: var(--color-secondary-peach, #FFDAB9); }
 `;
-
 const ProductContentWrapper = styled.div`
   background-color: var(--color-primary-purple, #5D3FD3);
   padding: 32px; border-radius: 12px; display: flex; gap: 32px;
   @media (max-width: 768px) { flex-direction: column; padding: 24px; }
   margin-top: 10px; 
 `;
-
 const ImageColumn = styled.div`
   flex: 0 0 40%; display: flex; flex-direction: column; align-items: center; 
   margin-top: 10px; 
 `;
-
 const MainProductImage = styled.img`
   width: 100%; max-width: 350px; height: auto; object-fit: contain;
   background-color: white; border-radius: 8px;
@@ -43,7 +39,6 @@ const MainProductImage = styled.img`
   aspect-ratio: 1 / 1;
   margin-top: 10px; 
 `;
-
 const UploadButton = styled.button`
     background-color: #ffffff;
     color: #5D3FD3;
@@ -57,34 +52,25 @@ const UploadButton = styled.button`
     align-items: center;
     margin-top: 20px;
     transition: background-color 0.2s ease, transform 0.1s ease;
-
-    &:hover {
-        background-color: #f0f0f0;
-        transform: translateY(-2px);
-    }
+    &:hover { background-color: #f0f0f0; transform: translateY(-2px); }
 `;
-
 const HiddenFileInput = styled.input`
     display: none;
 `;
-
 const DetailsColumn = styled.div`
   flex: 1; color: white; display: flex; flex-direction: column;
 `;
-
 const Form = styled.form`
     display: flex;
     flex-direction: column;
     margin-top: 10px; 
 `;
-
 const Label = styled.label`
     font-size: 0.9rem;
     font-weight: 600;
     margin-top: 10px; 
     color: var(--color-neutral-gray-light);
 `;
-
 const Input = styled.input`
     background-color: white; color: #333;
     border: 1px solid #ccc; border-radius: 6px;
@@ -92,7 +78,6 @@ const Input = styled.input`
     &:focus { outline: 2px solid var(--color-secondary-peach); }
     margin-top: 10px; 
 `;
-
 const TextArea = styled.textarea`
     background-color: white; color: #333;
     border: 1px solid #ccc; border-radius: 6px;
@@ -101,7 +86,6 @@ const TextArea = styled.textarea`
     &:focus { outline: 2px solid var(--color-secondary-peach); }
     margin-top: 10px; 
 `;
-
 const Select = styled.select`
     background-color: white; color: #333;
     border: 1px solid #ccc; border-radius: 6px;
@@ -109,18 +93,16 @@ const Select = styled.select`
     &:focus { outline: 2px solid var(--color-secondary-peach); }
     margin-top: 10px; 
 `;
-
 const SubmitButton = styled.button`
   background-color: var(--color-secondary-peach);
-  color: #181824
+  color: #181824;
   padding: 14px; border: none; border-radius: 8px;
   font-size: 1.1rem; font-weight: bold; cursor: pointer;
-  margin-top: 10px;
+  margin-top: 20px; /* Adjusted margin */
   transition: background-color 0.2s ease, transform 0.1s ease;
   &:hover { background-color: var(--color-secondary-peach-dark); transform: translateY(-2px); }
   &:disabled { background-color: #ccc; cursor: not-allowed; }
 `;
-
 const ErrorMessage = styled.p`
   color: var(--color-error, #FF6B6B);
   background-color: rgba(0,0,0,0.2);
@@ -129,22 +111,23 @@ const ErrorMessage = styled.p`
   text-align: center;
 `;
 
-// --- The Add Product Page Component ---
 const AddProductPage = () => {
     const navigate = useNavigate();
+    // --- CHANGE: Use the context hook ---
+    const { addProduct, loading } = useProducts();
+
     const [formData, setFormData] = useState({
         name: '',
         description: '',
         imageUrl: '',
-        category: '',
+        category: '', // Start with an empty category
         price: '',
         stock: '',
         tags: '',
-        rating: '',
-        numRatings: ''
+        // --- REMOVED: rating and numRatings from initial state ---
     });
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
+    // const [loading, setLoading] = useState(false); // Now using context's loading
 
     const categoriesForForm = productCategories.filter(cat => cat !== 'All');
 
@@ -173,15 +156,13 @@ const AddProductPage = () => {
             return;
         }
 
-        setLoading(true);
         try {
-            const newProduct = await addProductAPI(formData);
+            // --- CHANGE: Call the context function ---
+            const newProduct = await addProduct(formData);
             alert('Product added successfully!');
             navigate(`/product/${newProduct._id}`);
         } catch (err) {
             setError(err.message || 'Failed to add product.');
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -207,7 +188,6 @@ const AddProductPage = () => {
                         accept="image/png, image/jpeg, image/webp"
                         onChange={handleImageUpload}
                     />
-
                 </ImageColumn>
 
                 <DetailsColumn>
@@ -235,12 +215,8 @@ const AddProductPage = () => {
                         <Label htmlFor="tags">Tags (comma-separated)</Label>
                         <Input type="text" name="tags" id="tags" value={formData.tags} onChange={handleChange} placeholder="e.g., skimboard, pro, carbon" />
                         
-                        <Label htmlFor="rating">Initial Rating (0-5)</Label>
-                        <Input type="number" name="rating" id="rating" value={formData.rating} onChange={handleChange} step="0.1" min="0" max="5" />
-                        
-                        <Label htmlFor="numRatings">Initial Number of Ratings</Label>
-                        <Input type="number" name="numRatings" id="numRatings" value={formData.numRatings} onChange={handleChange} min="0" />
-
+                        {/* --- REMOVED: Rating and NumRatings inputs --- */}
+                       
                         {error && <ErrorMessage>{error}</ErrorMessage>}
 
                         <SubmitButton type="submit" disabled={loading}>

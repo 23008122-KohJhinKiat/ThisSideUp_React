@@ -31,13 +31,16 @@ export const addProductAPI = async (productData) => {
   }
 
   const newProduct = {
-    _id: generateId('prod'), // Use the specific generator from ProductData
+    _id: generateId('prod'),
     ...productData,
     // Ensure numeric fields are correctly typed
     price: parseFloat(productData.price) || 0,
     stock: parseInt(productData.stock, 10) || 0,
-    rating: parseFloat(productData.rating) || 0,
-    numRatings: parseInt(productData.numRatings, 10) || 0,
+    
+    // --- CHANGE: Enforce default values for rating and numRatings ---
+    rating: 0,
+    numRatings: 0,
+    
     // Default likes to 0 as requested
     likes: 0,
     // Convert comma-separated tags string into an array
@@ -47,7 +50,6 @@ export const addProductAPI = async (productData) => {
 
   initialProducts.unshift(newProduct); // Add to the beginning of the array
   console.log("Product added:", newProduct);
-  console.log("Current product database:", initialProducts);
   return newProduct;
 };
 

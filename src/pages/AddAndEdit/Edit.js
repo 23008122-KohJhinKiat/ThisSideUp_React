@@ -174,15 +174,16 @@ const EditProductPage = () => {
         }
     };
 
+     // --- CORRECT DELETE HANDLER WITH NAVIGATION ---
     const handleDelete = async () => {
-        if (window.confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+        // Show a confirmation dialog to prevent accidental deletion
+        if (window.confirm('Are you sure you want to permanently delete this product? This action cannot be undone.')) {
             setError('');
             try {
                 await deleteProduct(id);
                 alert('Product deleted successfully!');
-                // --- THIS IS THE KEY LINE ---
-                // It navigates to the main product list page, which is the desired behavior.
-                navigate('/products');
+                // Navigate to the main products page after deletion
+                navigate('/products'); 
             } catch (err) {
                 setError(err.message || 'Failed to delete product.');
             }
@@ -229,12 +230,7 @@ const EditProductPage = () => {
 
                         <Label htmlFor="tags">Tags (comma-separated)</Label>
                         <Input type="text" name="tags" id="tags" value={formData.tags} onChange={handleChange} placeholder="e.g., skimboard, pro, carbon" />
-                        
-                        <Label htmlFor="rating">Rating (0-5)</Label>
-                        <Input type="number" name="rating" id="rating" value={formData.rating} onChange={handleChange} step="0.1" min="0" max="5" />
-                        
-                        <Label htmlFor="numRatings">Number of Ratings</Label>
-                        <Input type="number" name="numRatings" id="numRatings" value={formData.numRatings} onChange={handleChange} min="0" />
+                                             
 
                         {error && <ErrorMessage>{error}</ErrorMessage>}
 
@@ -242,6 +238,7 @@ const EditProductPage = () => {
                             {loading ? 'Saving Changes...' : 'Save Changes'}
                         </SubmitButton>
                         
+                         {/* --- CORRECTED DELETE BUTTON --- */}
                         <DeleteButton type="button" disabled={loading} onClick={handleDelete}>
                             <FaTrash />
                             {loading ? 'Deleting...' : 'Delete Product'}

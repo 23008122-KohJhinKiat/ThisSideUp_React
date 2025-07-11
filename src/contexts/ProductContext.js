@@ -5,6 +5,7 @@ import {
     fetchProducts, 
     searchProductsAPI, 
     fetchProductById as fetchProductByIdAPI,
+    addProductAPI,
     updateProductAPI,
     deleteProductAPI, // <-- Import the new delete function
     productCategories
@@ -66,6 +67,23 @@ export const ProductProvider = ({ children }) => {
     }
   }, [products]);
 
+  // --- NEW FUNCTION TO HANDLE ADDING PRODUCTS ---
+  const addProduct = async (productData) => {
+    setLoading(true);
+    try {
+        const newProduct = await addProductAPI(productData);
+        // Add the new product to the top of the lists to make it visible immediately
+        setProducts(prev => [newProduct, ...prev]);
+        setFilteredProducts(prev => [newProduct, ...prev]);
+        setLoading(false);
+        return newProduct; // Return for navigation
+    } catch (err) {
+        setError(err.message || "Failed to add product.");
+        setLoading(false);
+        throw err;
+    }
+  };
+
   const updateProduct = async (productId, updatedData) => {
     setLoading(true);
     try {
@@ -105,6 +123,7 @@ export const ProductProvider = ({ children }) => {
     categories: productCategories,
     filterAndSortProducts,
     getProductById,
+    addProduct,
     updateProduct,
     deleteProduct, // <-- Expose the new delete function
   };
