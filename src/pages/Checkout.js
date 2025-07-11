@@ -338,8 +338,11 @@ const PaymentMethodSelector = styled.div`
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { clearCart, cartItems } = useCart(); // Assuming cartItems might be needed if location.state fails
+  const { cartItems } = useCart(); // Assuming cartItems might be needed if location.state fails
+  const { removeItemsByIds } = useCart();
+
   
+
   // Get selected items from navigation state or cart context as fallback
   const itemsFromState = location.state?.itemsForCheckout;
   const totalFromState = location.state?.total;
@@ -433,11 +436,11 @@ const CheckoutPage = () => {
       console.log("Placing order with data:", orderData); // Log the data being "sent"
       await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API delay
 
-      // In a real app, this would be an actual API call:
-      // const response = await createOrderAPI(orderData); 
-      // console.log("Order created:", response);
+      const purchasedItemIds = selectedItems.map(item => item.product?._id || item.customDesign?._id);
+      
+      // Call the new function to remove only the purchased items from the cart
+      removeItemsByIds(purchasedItemIds);
 
-      clearCart(selectedItems.map(item => item.customDesign?._id || item.product?._id)); // Pass IDs of items to clear
 
       alert("Thank you for your order! You will receive a confirmation email shortly.");
       navigate('/');

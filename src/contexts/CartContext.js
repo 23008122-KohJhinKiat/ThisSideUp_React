@@ -1,6 +1,7 @@
 // File: src/contexts/CartContext.js
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { fetchProductById } from '../DataPack/Data';
+import { useProducts } from './ProductContext';
 
 const CartContext = createContext(null);
 
@@ -19,6 +20,34 @@ export const CartProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // 1. Get products from context. Use fallback `{}` to prevent crash on initial render.
+  const { products, loading: productsLoading } = useProducts() || {};
+
+  // 2. This useEffect synchronizes the cart with the master product list.
+  useEffect(() => {
+    // Check that products have loaded and is an array to prevent errors.
+    if (!productsLoading && Array.isArray(products)) {
+      const validProductIds = new Set(products.map(p => p._id));
+
+      const sanitizedCart = cartItems.filter(item => {
+        // Always keep custom designs, they don't exist in the master product list.
+        if (item.type === 'custom') {
+          return true;
+        }
+        // For standard products, check if their ID still exists in the valid product list.
+        const itemId = item.product?._id;
+        return itemId && validProductIds.has(itemId);
+      });
+
+      // If the cart was sanitized, update the state.
+      if (sanitizedCart.length < cartItems.length) {
+        console.log("Cart synchronized: Removed products that no longer exist.");
+        setCartItems(sanitizedCart);
+      }
+    }
+  }, [products, productsLoading, cartItems]); // Reruns when the master product list changes.
+
+  // This useEffect saves the cart to localStorage whenever it's updated.
   useEffect(() => {
     localStorage.setItem('shoppingCart', JSON.stringify(cartItems));
   }, [cartItems]);
@@ -52,9 +81,6 @@ export const CartProvider = ({ children }) => {
         }
 
       } else if (itemData && itemData._id && itemData.isCustom) {
-        // =================================================================
-        // --- THIS IS THE CORRECTED LOGIC FOR NAMING CUSTOM SKIMBOARDS ---
-        // =================================================================
         setCartItems((prevItems) => {
           
           // 1. Find the highest number used in existing custom skimboard names.
@@ -87,9 +113,7 @@ export const CartProvider = ({ children }) => {
           // 4. Return the new state array.
           return [...prevItems, newItem];
         });
-        // =================================================================
-        // --- END OF CORRECTED LOGIC ---
-        // =================================================================
+
       } else {
         throw new Error("Invalid item data provided to cart.");
       }
@@ -117,6 +141,16 @@ export const CartProvider = ({ children }) => {
     setCartItems((prevItems) => prevItems.filter((item) => (item.product?._id || item.customDesign?._id) !== itemId));
   };
 
+   const removeItemsByIds = (itemIdsToRemove) => {
+    const idSet = new Set(itemIdsToRemove);
+    setCartItems(prevItems =>
+      prevItems.filter(item => {
+        const currentItemId = item.product?._id || item.customDesign?._id;
+        return !idSet.has(currentItemId);
+      })
+    );
+  };
+  
   const clearCart = () => {
     setCartItems([]);
   };
@@ -139,6 +173,7 @@ export const CartProvider = ({ children }) => {
     addItemToCart,
     updateItemQuantity,
     removeItemFromCart,
+    removeItemsByIds,
     clearCart,
     getCartTotal,
     getTotalItems,
