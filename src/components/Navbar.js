@@ -5,7 +5,9 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { FaBars, FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
+
 import TSULogo from '../icons/this-side-up-logo_white.png';
+import TSULogoAdmin from '../icons/this-side-up-admin-logo.png';
 import SearchPNG from '../icons/icons8-search.png';
 import CloseIcon from '../icons/icons8-close.png';
 import CartIconImg from '../icons/icons8-cart.png';
@@ -210,7 +212,8 @@ const Navbar = () => {
   return (
     <NavContainer>
       <LogoLink to="/">
-        <img src={TSULogo} alt="This Side Up logo" />
+        {/* <img src={TSULogo} alt="This Side Up logo" /> */}
+        {currentUser ? <img src={TSULogoAdmin} alt="This Side Up logo" /> : <img src={TSULogo} alt="This Side Up logo" />}
       </LogoLink>
 
       <DesktopNavLinks>
