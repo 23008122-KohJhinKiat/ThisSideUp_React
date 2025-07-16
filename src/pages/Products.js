@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaChevronDown } from 'react-icons/fa';
-import { useProducts } from '../contexts/ProductContext'; 
 import ProductCard from './ProductCard'; 
 import '../index.css';
 
@@ -124,44 +123,62 @@ const MessageText = styled.p`
 
 
 
-const Products = () => {
 
+
+const Products = () => {
   const [allProducts, setAllProducts] = useState([]);
-  
-  const fetchInfo = async()=>{
-  await fetch('http://localhost:4000/allproducts').then((res)=>res.json()).then((data)=>{setAllProducts(data)});
-  }
-  useEffect(()=>{
-    fetchInfo();
-  },[])
+  const [categories, setCategories] = useState(['All']);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const { categoryName } = useParams();
   const navigate = useNavigate();
-  const { 
-    filteredProducts, 
-    loading, 
-    error, 
-    categories, 
-    currentCategory, 
-    filterAndSortProducts 
-  } = useProducts();
 
-  const [showDropdown, setShowDropdown] = useState(false);
+  // Fetch all products
+  const fetchInfo = async () => {
+    try {
+      const res = await fetch('http://localhost:4000/allproducts');
+      const data = await res.json();
+      setAllProducts(data);
+
+      // Extract unique categories
+      const uniqueCategories = Array.from(new Set(data.map(p => p.category))).sort().reverse();
+      setCategories(['All', ...uniqueCategories]);
+      setLoading(false);
+    } catch (err) {
+      setError('Failed to fetch products.');
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const targetCategory = categoryName || 'All';
-    filterAndSortProducts(targetCategory); 
-  }, [categoryName, filterAndSortProducts]);
+    fetchInfo();
+  }, []);
+
+  // Filter products by categoryName param
+  useEffect(() => {
+    if (categoryName && categoryName !== 'All') {
+      const filtered = allProducts.filter(p => p.category === categoryName);
+      setFilteredProducts(filtered);
+    } else {
+      setFilteredProducts(allProducts);
+    }
+  }, [categoryName, allProducts]);
 
   const handleCategorySelect = (category) => {
     setShowDropdown(false);
-    if (category === "All") {
+    if (category === 'All') {
       navigate('/products');
     } else {
       navigate(`/products/category/${encodeURIComponent(category)}`);
     }
   };
-    return (
+
+  const currentCategory = categoryName || 'All';
+
+  return (
     <PageContainer className="font25">
       <PageWrapper>
         <MainContent>
@@ -184,26 +201,22 @@ const Products = () => {
                 </CategoryDropdownList>
               )}
             </CategorySelectorWrapper>
-
           </PageHeader>
 
           {loading && <MessageText>Loading products...</MessageText>}
           {error && <MessageText>Error: {error}</MessageText>}
-          
           {!loading && !error && filteredProducts.length === 0 && (
             <MessageText>No products found in this category.</MessageText>
           )}
 
           {!loading && !error && filteredProducts.length > 0 && (
             <ProductGrid>
-              {/* {filteredProducts.map((product) => (
-                <ProductCard key={product._id} product={product} />
-              ))} */}
-              {allProducts.map((product, index)=>{
-                return <ProductCard key={index} product={product} />
-              })}
+              {filteredProducts.map((product, index) => (
+                <ProductCard key={index} product={product} />
+              ))}
             </ProductGrid>
-          )}        </MainContent>
+          )}
+        </MainContent>
       </PageWrapper>
     </PageContainer>
   );
