@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../index.css'; 
@@ -73,6 +72,7 @@ const ActualShoppingCartPage = () => {
         cartItems,
         updateItemQuantity,
         removeItemFromCart,
+        clearCart, // <-- 1. Get the clearCart function from the context
     } = useCart();
 
     const [selectedItemsMap, setSelectedItemsMap] = useState(() => {
@@ -93,7 +93,8 @@ const ActualShoppingCartPage = () => {
         cartItems.forEach(cartEntry => {
             const itemId = cartEntry.product?._id || cartEntry.customDesign?._id;
             if (itemId) {
-                newSelectionMap[itemId] = selectedItemsMap.hasOwnProperty(itemId) ? selectedItemsMap[itemId] : false;
+                // Keep existing selection state, or default to true for new items
+                newSelectionMap[itemId] = selectedItemsMap.hasOwnProperty(itemId) ? selectedItemsMap[itemId] : true;
             }
         });
         setSelectedItemsMap(newSelectionMap);
@@ -118,7 +119,9 @@ const ActualShoppingCartPage = () => {
             ...prevMap,
             [itemIdToToggle]: !prevMap[itemIdToToggle],
         }));
-    };    const handleActualCheckout = () => {
+    };    
+    
+    const handleActualCheckout = () => {
         const itemsToPassToCheckout = cartItems.filter(cartEntry => {
             const itemId = cartEntry.product?._id || cartEntry.customDesign?._id;
             return itemId && selectedItemsMap[itemId] === true;
@@ -129,7 +132,6 @@ const ActualShoppingCartPage = () => {
             return;
         }
         
-
         navigate('/checkout', {
             state: { 
                 itemsForCheckout: itemsToPassToCheckout,
@@ -147,7 +149,13 @@ const ActualShoppingCartPage = () => {
         });
     };
 
-    
+    // --- 2. Create a handler function for the "Clear Cart" button ---
+    const handleClearCart = () => {
+        // Add a confirmation dialog for better User Experience
+        if (window.confirm("Are you sure you want to remove all items from your cart?")) {
+            clearCart();
+        }
+    };
 
     return (
         <div className="shopping-cart-page">
@@ -182,7 +190,15 @@ const ActualShoppingCartPage = () => {
                         </p>
                     )}
 
-                    <div className="checkout-button-container">
+                    {/* --- 3. Replace the old button container with a new one for centering --- */}
+                    <div className="checkout-actions-container">
+                        <button
+                            className="clear-cart-button"
+                            onClick={handleClearCart}
+                            disabled={cartItems.length === 0}
+                        >
+                            Clear Cart
+                        </button>
                         <button
                             className="checkout-button"
                             onClick={handleActualCheckout}

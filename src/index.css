@@ -537,8 +537,7 @@ body {
   margin: 0;
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  /* Alternative ocean-themed gradient: */
-  /* background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%); */
+
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -573,16 +572,51 @@ ul {
   list-style: none;
 }
 
-/* button {
-  font-family: var(--font-main);
+/* NEW: Styles for the container holding the action buttons */
+/* This will center both buttons as requested. */
+.checkout-actions-container {
+  display: flex;
+  justify-content: center; /* Center the buttons horizontally */
+  align-items: center;
+  gap: 1.5rem; /* Space between the two buttons */
+  margin-top: 40px; /* Same margin-top as the old container */
+  flex-wrap: wrap; /* Allows buttons to stack on very small screens */
+}
+
+/* NEW: Styles for the "Clear Cart" button */
+.clear-cart-button {
+  background-color: transparent; /* Make it a "ghost" button */
+  color: #FFA07A; /* Use a color that fits the theme for text */
+  border: 2px solid #FFA07A; /* Matching border */
+  padding: 14px 48px; /* Slightly less vertical padding than main button */
+  font-size: 1.125rem; /* 18px, same as checkout button */
+  font-weight: bold;
+  font-family: 'Instrument Sans', sans-serif;
+  border-radius: 30px; /* Pill shape to match checkout button */
   cursor: pointer;
-  border: none;
-  padding: var(--spacing-s) var(--spacing-m);
-  border-radius: var(--border-radius);
-  background-color: var(--color-primary-purple);
-  color: var(--color-text-light);
-  transition: background-color 0.2s ease-in-out, transform 0.1s ease;
-} */
+  transition: all 0.2s ease;
+}
+
+.clear-cart-button:hover:not(:disabled) {
+  background-color: #FFA07A; /* Fill with color on hover */
+  color: #000000; /* Use black text to match checkout button's active state */
+  transform: translateY(-1px);
+}
+
+.clear-cart-button:disabled {
+  border-color: #585858;
+  color: #888888;
+  background-color: transparent;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* This rule for the old container is no longer needed for layout here, */
+/* but we can leave it in case it's used elsewhere. */
+.checkout-button-container {
+  text-align: center; 
+  margin-top: 40px; 
+}
 
 button:hover {
     background-color: var(--color-primary-purple-light);
