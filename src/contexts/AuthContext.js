@@ -18,21 +18,21 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = async (email, password) => {
-    setError(null);
-    setLoading(true);
-    try {
-      const userData = await loginAPI(email, password);
-      setCurrentUser(userData);
-      localStorage.setItem('currentUser', JSON.stringify(userData));
-      setLoading(false);
-      return userData;
-    } catch (err) {
-      setError(err.message || "Failed to login.");
-      setLoading(false);
-      throw err;
-    }
-  };
+  // const login = async (email, password) => {
+  //   setError(null);
+  //   setLoading(true);
+  //   try {
+  //     const userData = await loginAPI(email, password);
+  //     setCurrentUser(userData);
+  //     localStorage.setItem('currentUser', JSON.stringify(userData));
+  //     setLoading(false);
+  //     return userData;
+  //   } catch (err) {
+  //     setError(err.message || "Failed to login.");
+  //     setLoading(false);
+  //     throw err;
+  //   }
+  // };
 
   const signup = async (userData) => {
     setError(null);
@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }) => {
     currentUser,
     loading,
     error,
-    login,
+    // login,
     signup,
     logout,
     isAuthenticated: !!currentUser,
