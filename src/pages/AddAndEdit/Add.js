@@ -1,13 +1,13 @@
-// File: src/pages/AddAndEdit/Add.js
+
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaArrowLeft, FaUpload } from 'react-icons/fa';
-import { useProducts } from '../../contexts/ProductContext'; // <-- Use the context
+import { useProducts } from '../../contexts/ProductContext';
 import { productCategories } from '../../DataPack/Data';
 
-// --- STYLED COMPONENTS (Unchanged) ---
+
 const PageWrapper = styled.div`
   background-color: var(--color-background-dark, #121212);
   color: var(--color-text-light, #FFFFFF);
@@ -113,57 +113,71 @@ const ErrorMessage = styled.p`
 
 const AddProductPage = () => {
     const navigate = useNavigate();
-    // --- CHANGE: Use the context hook ---
+
     const { addProduct, loading } = useProducts();
 
-    const [formData, setFormData] = useState({
+    const [image, setImage] = useState(false);
+    const imageHandler = (e) => {
+        setImage(e.target.files[0]);
+    }
+
+    const [productDetails, setProductDetails] = useState({
         name: '',
         description: '',
-        imageUrl: '',
-        category: '', // Start with an empty category
+        image: '',
+        category: '',
         price: '',
         stock: '',
         tags: '',
-        // --- REMOVED: rating and numRatings from initial state ---
     });
     const [error, setError] = useState('');
-    // const [loading, setLoading] = useState(false); // Now using context's loading
 
     const categoriesForForm = productCategories.filter(cat => cat !== 'All');
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setProductDetails({...productDetails, [e.target.name]:e.target.value});
     };
 
-    const handleImageUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setFormData(prev => ({ ...prev, imageUrl: reader.result }));
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+    // const handleImageUpload = (e) => {
+    //     const file = e.target.files[0];
+    //     if (file) {
+    //         const reader = new FileReader();
+    //         reader.onloadend = () => {
+    //             setProductDetails(prev => ({ ...prev, image: reader.result }));
+    //         };
+    //         reader.readAsDataURL(file);
+    //     }
+    // };
     
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
+        console.log(productDetails);
+        let responseData;
+        let product = productDetails;
+        let formData = new FormData();
+        formData.append('product', image);
+        await fetch('http://localhost:4000/upload', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+            },
+            body: formData,
+        }).then((resp)=> resp.json()).then((data)=>{responseData=data});
 
-        if (!formData.imageUrl) {
-            setError('Please upload a product image.');
-            return;
+        if(responseData.success){
+            product.image = responseData.image_url;
+            console.log(product);
+            await fetch('http://localhost:4000/addproduct',{
+                method:'POST',
+                headers:{Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body:JSON.stringify(product),
+            }).then((resp)=>resp.json()).then((data)=>{
+                data.success?alert("Product Added"):alert("Failed")
+            })
         }
-
-        try {
-            // --- CHANGE: Call the context function ---
-            const newProduct = await addProduct(formData);
-            alert('Product added successfully!');
-            navigate(`/product/${newProduct._id}`);
-        } catch (err) {
-            setError(err.message || 'Failed to add product.');
-        }
+        window.location.replace("/products");
     };
 
     return (
@@ -175,7 +189,7 @@ const AddProductPage = () => {
             <ProductContentWrapper>
                 <ImageColumn>
                     <MainProductImage 
-                        src={formData.imageUrl || '/placeholder.png'} 
+                        src={image ? URL.createObjectURL(image) : '/placeholder.png'} 
                         alt="Product image preview" 
                     />
                     
@@ -185,21 +199,20 @@ const AddProductPage = () => {
                     <HiddenFileInput 
                         id="imageUpload"
                         type="file"
-                        accept="image/png, image/jpeg, image/webp"
-                        onChange={handleImageUpload}
+                        onChange={imageHandler}
                     />
                 </ImageColumn>
 
                 <DetailsColumn>
-                    <Form onSubmit={handleSubmit}>
+                    <Form>
                         <Label htmlFor="name">Product Name</Label>
-                        <Input type="text" name="name" id="name" value={formData.name} onChange={handleChange} required />
+                        <Input type="text" name="name" id="name" value={productDetails.name} placeholder="Enter product name..." onChange={handleChange} required />
                         
                         <Label htmlFor="description">Description</Label>
-                        <TextArea name="description" id="description" value={formData.description} onChange={handleChange} required />
+                        <TextArea name="description" id="description" value={productDetails.description} placeholder="Enter product description..." onChange={handleChange} required />
                         
                         <Label htmlFor="category">Category</Label>
-                        <Select name="category" id="category" value={formData.category} onChange={handleChange} required>
+                        <Select name="category" id="category" value={productDetails.category} onChange={handleChange} required>
                             <option value="" disabled>Select a category...</option>
                             {categoriesForForm.map(cat => (
                                 <option key={cat} value={cat}>{cat}</option>
@@ -207,20 +220,20 @@ const AddProductPage = () => {
                         </Select>
                         
                         <Label htmlFor="price">Price</Label>
-                        <Input type="number" name="price" id="price" value={formData.price} onChange={handleChange} step="0.01" min="0" required />
+                        <Input type="number" name="price" id="price" value={productDetails.price} placeholder="Enter price" onChange={handleChange} step="0.01" min="0" required />
                         
                         <Label htmlFor="stock">Stock Quantity</Label>
-                        <Input type="number" name="stock" id="stock" value={formData.stock} onChange={handleChange} min="0" required />
+                        <Input type="number" name="stock" id="stock" value={productDetails.stock} placeholder="Enter stock" onChange={handleChange} min="0" required />
 
                         <Label htmlFor="tags">Tags (comma-separated)</Label>
-                        <Input type="text" name="tags" id="tags" value={formData.tags} onChange={handleChange} placeholder="e.g., skimboard, pro, carbon" />
+                        <Input type="text" name="tags" id="tags" value={productDetails.tags} onChange={handleChange} placeholder="e.g., skimboard, pro, carbon" />
                         
                         {/* --- REMOVED: Rating and NumRatings inputs --- */}
                        
                         {error && <ErrorMessage>{error}</ErrorMessage>}
 
-                        <SubmitButton type="submit" disabled={loading}>
-                            {loading ? 'Adding Product...' : 'Add Product to Database'}
+                        <SubmitButton onClick={handleSubmit}  disabled={loading}>
+                            {loading ? 'Adding Product...' : 'Add Product'}
                         </SubmitButton>
                     </Form>
                 </DetailsColumn>
