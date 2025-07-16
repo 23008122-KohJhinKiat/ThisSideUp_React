@@ -202,7 +202,7 @@ const LoginPage = () => {
     }).then((response)=> response.json()).then((data)=>responseData=data)
     if(responseData.success){
       localStorage.setItem('auth-token', responseData.token);
-      localStorage.setItem('currentUser', JSON.stringify(formData));
+      localStorage.setItem('currentUser', JSON.stringify(responseData.user));
       window.location.replace("/");
     }
     else {
