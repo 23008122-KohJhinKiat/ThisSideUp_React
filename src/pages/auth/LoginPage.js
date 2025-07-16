@@ -168,12 +168,16 @@ const SignUpLinkButton = styled(Link)`
 const LoginPage = () => {
   const navigate = useNavigate();
   const { login, currentUser } = useAuth();
+
+  
   const [formData, setFormData] = useState({
-    email: '', // Changed from username to email
+    email: '',
     password: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  
 
   useEffect(() => {
     if (currentUser) {
@@ -184,21 +188,39 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
-
-    try {
-      if (!formData.email || !formData.password) { // Check for formData.email
-        throw new Error('Email and password are required');
-      }
-      await login(formData.email, formData.password); // Use formData.email
-      setFormData({ email: '', password: '' });
-      // navigate('/'); // Navigation is now handled by useEffect or by AuthProvider redirecting
-    } catch (err) {
-      console.error('Login error:', err);
-      setError(err.message || 'Failed to log in. Please check your credentials.');
-    } finally {
-      setLoading(false);
+    
+    console.log("Login function executed", formData)
+    let responseData;
+    // FIX SIGN IN 8:11:44
+    await fetch('http://localhost:4000/login',{
+      method: 'POST',
+      headers: {
+        Accept:'application/form-data',
+        'Content-Type':'application/json'
+      },
+      body: JSON.stringify(formData),
+    }).then((response)=> response.json()).then((data)=>responseData=data)
+    if(responseData.success){
+      localStorage.setItem('auth-token', responseData.token);
+      window.location.replace("/");
     }
+    else {
+      alert(responseData.errors)
+    }
+
+    // setLoading(true);
+    // try {
+    //   if (!formData.email || !formData.password) {
+    //     throw new Error('Email and password are required');
+    //   }
+    //   await login(formData.email, formData.password);
+    //   setFormData({ email: '', password: '' });
+    // } catch (err) {
+    //   console.error('Login error:', err);
+    //   setError(err.message || 'Failed to log in. Please check your credentials.');
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   const handleChange = (e) => {
@@ -216,12 +238,12 @@ const LoginPage = () => {
           <Title>Login</Title>
           <Form onSubmit={handleSubmit}>
             <div>
-              <Label htmlFor="email">Email:</Label> {/* Changed from username */}
+              <Label htmlFor="email">Email:</Label>
               <Input
-                type="email" // Changed from text
-                id="email"   // Changed from username
-                name="email"  // Changed from username
-                value={formData.email} // Changed from username
+                type="email" 
+                id="email" 
+                name="email" 
+                value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
                 required

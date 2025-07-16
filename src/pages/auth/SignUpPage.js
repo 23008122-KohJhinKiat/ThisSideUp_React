@@ -1,10 +1,10 @@
-// File: src/pages/auth/SignUpPage.js
-import React, { useState, useEffect } from 'react'; // Ensure useEffect is imported
+
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
-// Styled Components (ensure these are defined or imported if they come from a shared file)
+
 const PageWrapper = styled.div`
   min-height: 100vh;
   display: flex;
@@ -189,6 +189,7 @@ const SignInLink = styled.p`
 const SignUpPage = () => {
   const navigate = useNavigate();
   const { signup, currentUser } = useAuth();
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -212,6 +213,7 @@ const SignUpPage = () => {
     }));
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -223,6 +225,23 @@ const SignUpPage = () => {
         return setError('Name is required');
     }
 
+    console.log("Signup function executed", formData)
+    let responseData;
+    await fetch('http://localhost:4000/signup',{
+      method: 'POST',
+      headers: {
+        Accept:'application/form-data',
+        'Content-Type':'application/json'
+      },
+      body: JSON.stringify(formData),
+    }).then((response)=> response.json()).then((data)=>responseData=data)
+    if(responseData.success){
+      localStorage.setItem('auth-token', responseData.token);
+    }
+    else {
+      alert(responseData.errors)
+    }
+
     setLoading(true);
     try {
       await signup({
@@ -231,7 +250,6 @@ const SignUpPage = () => {
         password: formData.password,
         role: formData.role 
       });
-      // navigate('/'); // Navigation is now handled by useEffect or by AuthProvider redirecting
     } catch (err) {
       setError(err.message || 'Failed to create an account');
     } finally {
@@ -301,7 +319,7 @@ const SignUpPage = () => {
                 required
               />
             </div>
-            <RoleSelector>
+            {/* <RoleSelector>
               <p>Type of user:</p>
               <div>
                 <RoleButton
@@ -319,9 +337,9 @@ const SignUpPage = () => {
                   Admin
                 </RoleButton>
               </div>
-            </RoleSelector>
+            </RoleSelector> */}
             {error && <ErrorMessage>{error}</ErrorMessage>}
-            <SubmitButton type="submit" disabled={loading}>
+            <SubmitButton type="submit"  disabled={loading}>
               {loading ? 'Signing Up...' : 'Sign Up'}
             </SubmitButton>
           </Form>

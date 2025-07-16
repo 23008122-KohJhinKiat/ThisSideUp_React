@@ -121,8 +121,10 @@ function UserDropdown() {
   const dropdownRef = useRef(null); 
 
   const handleLogout = () => {
+    localStorage.removeItem('auth-token');
     logout();
     setIsOpen(false);
+    window.location.replace('/');
   };
 
   useEffect(() => {
@@ -209,11 +211,30 @@ const Navbar = () => {
     setShowMobileProductCategories(false);
   }, [location.pathname]);
 
+  function Logo(){
+    if(currentUser){
+      if (currentUser.role === 'Customer')
+      return (
+        <img src={TSULogo} alt="This Side Up logo" />
+      );
+      else{
+        return(
+          <img src={TSULogoAdmin} alt="This Side Up logo" />
+        );
+      };
+    }
+    else{
+      return(
+          <img src={TSULogo} alt="This Side Up logo" />
+        );
+    }
+  };
+
   return (
     <NavContainer>
       <LogoLink to="/">
-        {/* <img src={TSULogo} alt="This Side Up logo" /> */}
-        {currentUser ? <img src={TSULogoAdmin} alt="This Side Up logo" /> : <img src={TSULogo} alt="This Side Up logo" />}
+        {/* {currentUser ? <img src={TSULogoAdmin} alt="This Side Up logo" /> : <img src={TSULogo} alt="This Side Up logo" />} */}
+        {Logo()}
       </LogoLink>
 
       <DesktopNavLinks>

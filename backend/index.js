@@ -1,4 +1,4 @@
-const port = 3000;
+const port = 4000;
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken')
 const cors = require('cors');
 const path = require('path');
 const multer = require('multer');
-const { request } = require('http');
+
 
 app.use(cors());
 app.use(express.json());
@@ -143,10 +143,10 @@ app.post('/signup', async (req, res)=>{
 })
 
 // Login
-app.post('/signin', async(req, res)=>{
+app.post('/login', async(req, res)=>{
     let user = await Users.findOne({email: req.body.email});
     if(user){
-        const passCompare = request.body.password === user.password;
+        const passCompare = req.body.password === user.password;
         if (passCompare){
             const data = {
                 user: {id:user.id}
@@ -161,7 +161,6 @@ app.post('/signin', async(req, res)=>{
     else{
         res.json({success: false, errors: "Email invalid"})
     }
-    // YOU STOPPED HERE!!!!!!!! 7:48!!!!!!
 })
 
 
