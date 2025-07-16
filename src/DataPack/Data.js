@@ -268,6 +268,26 @@ export const signupAPI = async (userData) => {
     // token: `mock_token_${Date.now()}` // Token not strictly needed if session managed by currentUser
   };
 };
+
+export const deleteAccountAPI = async (userId) => {
+  await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+
+  const userIndex = initialUsers.findIndex(u => u._id === userId);
+
+  if (userIndex === -1) {
+    throw new Error("User not found and could not be deleted.");
+  }
+
+  // Remove the user from the array
+  initialUsers.splice(userIndex, 1);
+  
+  console.log(`User with ID ${userId} has been deleted.`);
+  console.log("Current users:", initialUsers);
+  
+  // In a real app, you would also handle deleting related data like orders, etc.
+  
+  return { success: true, deletedId: userId };
+};
  
 // CUSTOM DESIGNS
 export const saveCustomDesignAPI = async (designData) => {

@@ -1,6 +1,7 @@
 // File: src/contexts/AuthContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { loginAPI, signupAPI } from '../DataPack/Data'; // Mock API
+// --- 1. Import the new deleteAccountAPI function ---
+import { loginAPI, signupAPI, deleteAccountAPI } from '../DataPack/Data'; 
 
 const AuthContext = createContext(null);
 
@@ -18,27 +19,13 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  // const login = async (email, password) => {
-  //   setError(null);
-  //   setLoading(true);
-  //   try {
-  //     const userData = await loginAPI(email, password);
-  //     setCurrentUser(userData);
-  //     localStorage.setItem('currentUser', JSON.stringify(userData));
-  //     setLoading(false);
-  //     return userData;
-  //   } catch (err) {
-  //     setError(err.message || "Failed to login.");
-  //     setLoading(false);
-  //     throw err;
-  //   }
-  // };
+  // const login = ...
 
   const signup = async (userData) => {
     setError(null);
     setLoading(true);
     try {
-      const newUser = await signupAPI(userData); // {name, email, password, role (if employee signup)}
+      const newUser = await signupAPI(userData);
       setCurrentUser(newUser);
       localStorage.setItem('currentUser', JSON.stringify(newUser));
       setLoading(false);
@@ -56,6 +43,28 @@ export const AuthProvider = ({ children }) => {
     // Potentially clear other sensitive context data on logout
   };
 
+  // --- 2. Create the new deleteAccount function ---
+  const deleteAccount = async () => {
+    if (!currentUser) {
+      throw new Error("No user is currently logged in.");
+    }
+    
+    setError(null);
+    setLoading(true);
+    try {
+      await deleteAccountAPI(currentUser._id);
+      // After successful deletion from the "database", log the user out.
+      logout(); 
+      // No need to setLoading(false) here because logout() will trigger a re-render
+      // and the user will be redirected.
+    } catch (err) {
+       setError(err.message || "Failed to delete account.");
+       setLoading(false);
+       throw err;
+    }
+  };
+
+
   const value = {
     currentUser,
     loading,
@@ -63,6 +72,7 @@ export const AuthProvider = ({ children }) => {
     // login,
     signup,
     logout,
+    deleteAccount, // --- 3. Expose the new function through the context ---
     isAuthenticated: !!currentUser,
   };
 

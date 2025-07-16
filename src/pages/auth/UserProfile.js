@@ -2,14 +2,15 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { Link, Navigate } from 'react-router-dom';
+// --- 1. Import useNavigate from react-router-dom ---
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
-// --- Styled Components ---
+// --- Styled Components (with additions) ---
 
 const PageWrapper = styled.div`
   min-height: 100vh;
-  background: var(--gradient-products); /* Using your existing dark gradient */
+  background: var(--gradient-products);
   color: var(--color-text-light, #FFFFFF);
   padding: 48px 24px;
   font-family: 'Instrument Sans', sans-serif;
@@ -20,6 +21,7 @@ const ProfileContainer = styled.main`
   margin: 0 auto;
 `;
 
+// ... (ProfileHeader, ProfileCard, DetailRow, SectionTitle, ActionGrid, ActionCard styled components remain unchanged) ...
 const ProfileHeader = styled.div`
   margin-bottom: 40px;
   h1 {
@@ -133,11 +135,19 @@ const ActionCard = styled(Link)`
   }
 `;
 
-const LogoutButton = styled.button`
-  display: block;
-  width: 100%;
-  max-width: 300px;
+const ActionButtonsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 600px;
   margin: 48px auto 0;
+  flex-wrap: wrap;
+  gap: 20px;
+`;
+
+const LogoutButton = styled.button`
+  flex-grow: 1;
+  max-width: 280px;
   padding: 16px 24px;
   font-size: 1.1rem;
   font-weight: bold;
@@ -149,15 +159,29 @@ const LogoutButton = styled.button`
   transition: background-color 0.2s ease, transform 0.2s ease;
 
   &:hover {
-    background-color: #E87A5E; /* Darker orange */
+    background-color: #E87A5E;
     transform: scale(1.02);
   }
 `;
 
-const UserProfilePage = () => {
-  const { currentUser, loading, logout } = useAuth();
+const DeleteButton = styled(LogoutButton)`
+  background-color: transparent;
+  border: 2px solid var(--color-error-red, #D32F2F);
+  color: var(--color-error-red, #D32F2F);
 
-  // Guard clauses for loading and authentication state
+  &:hover {
+    background-color: var(--color-error-red, #D32F2F);
+    color: #FFFFFF;
+    transform: scale(1.02);
+  }
+`;
+
+
+const UserProfilePage = () => {
+  const { currentUser, loading, logout, deleteAccount } = useAuth();
+  // --- 2. Initialize the navigate function ---
+  const navigate = useNavigate();
+
   if (loading) {
     return (
       <PageWrapper>
@@ -167,16 +191,28 @@ const UserProfilePage = () => {
   }
   
   if (!currentUser) {
-    // Redirect to login page if user is not authenticated
     return <Navigate to="/login" replace />;
   }
 
   const handleLogout = async () => {
     try {
       await logout();
-      // The AuthProvider should handle the redirect on logout
     } catch (error) {
       console.error("Failed to log out", error);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (window.confirm("Are you sure you want to permanently delete your account? This action cannot be undone.")) {
+      try {
+        await deleteAccount();
+        alert("Your account has been successfully deleted.");
+        // --- 3. Programmatically navigate to the homepage ---
+        navigate('/'); 
+      } catch (error) {
+        console.error("Failed to delete account:", error);
+        alert(`Error: ${error.message}`);
+      }
     }
   };
 
@@ -213,9 +249,14 @@ const UserProfilePage = () => {
           </ActionCard>
         </ActionGrid>
 
-        <LogoutButton onClick={handleLogout}>
-          Log Out
-        </LogoutButton>
+        <ActionButtonsContainer>
+          <LogoutButton onClick={handleLogout}>
+            Log Out
+          </LogoutButton>
+          <DeleteButton onClick={handleDeleteAccount}>
+            Delete Account
+          </DeleteButton>
+        </ActionButtonsContainer>
 
       </ProfileContainer>
     </PageWrapper>
