@@ -20,20 +20,21 @@ export const CartProvider = ({ children }) => {
         }
     });
 
+    // The customDesignCounter state is no longer needed.
     const [hydratedCart, setHydratedCart] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [numCustomDesigns, setNumCustomDesigns] = useState(0);    
 
+    // Persist raw cart items to localStorage whenever they change
     useEffect(() => {
         localStorage.setItem('cart', JSON.stringify(cartItems));
     }, [cartItems]);
 
+    // This "hydrating" effect for cart items remains unchanged.
     useEffect(() => {
         const hydrateAndValidateCart = async () => {
             setLoading(true);
             const detailedCart = [];
             const validItems = [];
-            let numCustom = 0;
 
             if (typeof getProductById !== 'function') {
                 setLoading(false);
@@ -53,10 +54,8 @@ export const CartProvider = ({ children }) => {
                 else if (item.type === 'custom') {
                     detailedCart.push({ ...item, isAvailable: true });
                     validItems.push(item);
-                    numCustom++;
                 }
             }
-            setNumCustomDesigns(numCustom);
             setHydratedCart(detailedCart);
 
             if (validItems.length < cartItems.length) {
@@ -69,15 +68,43 @@ export const CartProvider = ({ children }) => {
         hydrateAndValidateCart();
     }, [cartItems, getProductById]);
 
+    // --- MODIFIED: addItemToCart now dynamically calculates the next board number ---
     const addItemToCart = useCallback((itemData, quantity = 1) => {
-        setCartItems(prevItems => {
-            if (itemData.isCustom) {
-                // Custom designs are always unique, add as a new item.
-                const newItem = { customDesign: { ...itemData }, quantity, type: 'custom', _id: itemData._id };
+        if (itemData.isCustom) {
+            // It's a custom design. We calculate the name inside the state updater function
+            // to get the most up-to-date cart state.
+            setCartItems(prevItems => {
+                // 1. Find the highest number currently in the cart.
+                const maxNumberInCart = prevItems.reduce((max, item) => {
+                    if (item.type === 'custom' && item.customDesign?.name) {
+                        // Use regex to find the number in "Custom Skimboard X"
+                        const match = item.customDesign.name.match(/Custom Skimboard (\d+)/);
+                        if (match && match[1]) {
+                            const num = parseInt(match[1], 10);
+                            return Math.max(max, num);
+                        }
+                    }
+                    return max;
+                }, 0); // Start with 0 if cart is empty or has no custom boards.
+
+                // 2. The new number is the highest found + 1.
+                const newNumber = maxNumberInCart + 1;
+                const newName = `Custom Skimboard ${newNumber}`;
+                
+                // 3. Create the final item with the new name and add it to the cart.
+                const finalItemData = { ...itemData, name: newName };
+                const newItem = { 
+                    customDesign: finalItemData, 
+                    quantity, 
+                    type: 'custom', 
+                    _id: finalItemData._id 
+                };
                 return [...prevItems, newItem];
-            } else {
-                // Standard product ID is the itemData itself (string)
-                const productId = itemData;
+            });
+        } else {
+            // Logic for standard products remains unchanged.
+            const productId = itemData;
+            setCartItems(prevItems => {
                 const existingItem = prevItems.find(item => item.productId === productId);
                 if (existingItem) {
                     return prevItems.map(item =>
@@ -87,22 +114,19 @@ export const CartProvider = ({ children }) => {
                     );
                 }
                 return [...prevItems, { productId, quantity }];
-            }
-        });
-    }, []);
-    
-    // --- BUG FIX: This function now correctly identifies both standard and custom items ---
+            });
+        }
+    }, []); // Dependency array is now empty as the logic is self-contained.
+
+    // --- NO CHANGES needed for the functions below ---
     const removeItemFromCart = useCallback((itemIdToRemove) => {
         setCartItems(prevItems => prevItems.filter(item => {
-            // Check standard product 'productId' or custom item '_id'
             const currentItemId = item.productId || item._id; 
             return currentItemId !== itemIdToRemove;
         }));
     }, []);
     
-    // --- BUG FIX: Proactively fixed the same bug here for quantity updates ---
     const updateItemQuantity = useCallback((itemIdToUpdate, newQuantity) => {
-        // Ensure quantity is at least 1
         const finalQuantity = Math.max(1, newQuantity); 
 
         setCartItems(prevItems => 
@@ -116,7 +140,6 @@ export const CartProvider = ({ children }) => {
         );
     }, []);
 
-    // --- BUG FIX: Proactively fixed the same bug here for getting quantity ---
     const getQuantityById = useCallback((idToFind) => {
         const item = cartItems.find(item => {
             const currentItemId = item.productId || item._id;
