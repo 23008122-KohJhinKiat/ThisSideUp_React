@@ -167,7 +167,7 @@ const SignUpLinkButton = styled(Link)`
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { login, currentUser } = useAuth();
+  const { currentUser } = useAuth();
 
   
   const [formData, setFormData] = useState({
@@ -175,7 +175,7 @@ const LoginPage = () => {
     password: ''
   });
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   
 

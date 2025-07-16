@@ -60,8 +60,8 @@ const ProductCard = ({ product }) => {
   }
 
   return (
-    <CardWrapper to={`/product/${product._id}`}> {/* Links to the detail page */}
-      <ProductImage src={product.imageUrl || '/images/placeholder-product.png'} alt={product.name} />
+    <CardWrapper to={`/product/${product.id}`}>
+      <ProductImage src={product.image || '/images/placeholder-product.png'} alt={product.name} />
       <ProductName id='fontProduct'>{product.name}</ProductName>
       <ProductPrice id='fontProduct'>${product.price ? product.price.toFixed(2) : 'N/A'}</ProductPrice>
     </CardWrapper>

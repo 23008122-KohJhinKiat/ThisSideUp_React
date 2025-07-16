@@ -122,7 +122,19 @@ const MessageText = styled.p`
   color: var(--color-neutral-gray, #BDBDBD);
 `;
 
+
+
 const Products = () => {
+
+  const [allProducts, setAllProducts] = useState([]);
+  
+  const fetchInfo = async()=>{
+  await fetch('http://localhost:4000/allproducts').then((res)=>res.json()).then((data)=>{setAllProducts(data)});
+  }
+  useEffect(()=>{
+    fetchInfo();
+  },[])
+
   const { categoryName } = useParams();
   const navigate = useNavigate();
   const { 
@@ -152,12 +164,12 @@ const Products = () => {
     return (
     <PageContainer className="font25">
       <PageWrapper>
-        <MainContent> {/* Wrap main content */}
+        <MainContent>
           <PageHeader>
             <CategorySelectorWrapper>
               <CategoryDisplayButton className="font25" onClick={() => setShowDropdown(!showDropdown)}>
                 {currentCategory === "All" ? "All Products" : currentCategory}
-                <FaChevronDown /> {/* Add icon here */}
+                <FaChevronDown />
               </CategoryDisplayButton>
               {showDropdown && (
                 <CategoryDropdownList>
@@ -184,9 +196,12 @@ const Products = () => {
 
           {!loading && !error && filteredProducts.length > 0 && (
             <ProductGrid>
-              {filteredProducts.map((product) => (
+              {/* {filteredProducts.map((product) => (
                 <ProductCard key={product._id} product={product} />
-              ))}
+              ))} */}
+              {allProducts.map((product, index)=>{
+                return <ProductCard key={index} product={product} />
+              })}
             </ProductGrid>
           )}        </MainContent>
       </PageWrapper>
