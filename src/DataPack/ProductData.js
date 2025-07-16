@@ -184,6 +184,8 @@ export const initialProducts = [
   numRatings: 77,
   likes: 0,
 },
+
+// I STOPPED HERE
 {
   _id: generateId('prod'),
   name: "Dark Blue Boardshorts",
