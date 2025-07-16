@@ -99,6 +99,17 @@ export const deleteProductAPI = async (productId) => {
   return { success: true, deletedId: productId };
 };
 
+export const saveOrderAPI = async (orderData) => {
+  await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+  let items = orderData.items || [];
+  items.map(item => {
+    let product = initialProducts.find(p => p._id === item.productId);
+    if (product) {
+      product.stock = Math.max(0, product.stock - item.quantity); // Reduce stock
+    }
+    return item;
+  });
+}
  
  
 export const initialCustomDesigns = [

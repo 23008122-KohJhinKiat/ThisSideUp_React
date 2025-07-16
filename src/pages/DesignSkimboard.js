@@ -359,7 +359,7 @@ const DesignSkimboard = () => {
         const designToAdd = {
             ...currentDesign,
             _id: generateId('custom_design'),
-            name: currentDesign.name || "Custom Skimboard",
+            name: "Custom Skimboard",
             isCustom: true
         };
         addItemToCart(designToAdd, 1);

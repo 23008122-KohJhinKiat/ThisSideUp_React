@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { countries } from '../DataPack/CountryData';
+import { useAuth } from '../contexts/AuthContext';
+import { saveOrderAPI } from '../DataPack/Data';
 import '../index.css'; // Import the CSS file
 
 // --- SHIPPING CATEGORIES & COSTS ---
@@ -339,7 +341,7 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { cartItems } = useCart(); // Assuming cartItems might be needed if location.state fails
-  const { removeItemsByIds } = useCart();
+  const { clearCart } = useCart();
 
   
 
@@ -389,6 +391,7 @@ const CheckoutPage = () => {
   const itemSubtotal = totalFromCart;
   const orderTotal = itemSubtotal + shippingCost;
   const totalPayment = orderTotal - voucherDiscount;
+  const { currentUser } = useAuth();
 
   const handlePlaceOrder = async () => {
     if (!addressLine1 || !city || !postalCode || !country) {
@@ -415,7 +418,7 @@ const CheckoutPage = () => {
 
     // Prepare order data for the API
     const orderData = {
-      // userId: currentUser?._id, // You'd get this from useAuth() if implemented
+      userId: currentUser?._id, // You'd get this from useAuth() if implemented
       items: selectedItems.map(item => ({ // Format items as needed by your backend
         productId: item.customDesign?._id || item.product?._id,
         name: item.customDesign?.name || item.product?.name,
@@ -434,12 +437,12 @@ const CheckoutPage = () => {
     try {
       // Simulate API call to place order
       console.log("Placing order with data:", orderData); // Log the data being "sent"
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API delay
+      await saveOrderAPI(orderData); // Call your API to save the order
 
-      const purchasedItemIds = selectedItems.map(item => item.product?._id || item.customDesign?._id);
+      
       
       // Call the new function to remove only the purchased items from the cart
-      removeItemsByIds(purchasedItemIds);
+      clearCart();
 
 
       alert("Thank you for your order! You will receive a confirmation email shortly.");

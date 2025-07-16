@@ -12,6 +12,8 @@ const CardWrapper = styled(Link)`
   padding: var(--spacing-m, 16px);
   text-decoration: none;
   display: flex;
+  max-width: 250px;
+  flex:1;
   flex-direction: column;
   gap: var(--spacing-s, 8px);
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
@@ -25,7 +27,7 @@ const CardWrapper = styled(Link)`
 
 const ProductImage = styled.img`
   width: 100%;
-  height: 180px; /* Adjust as needed */
+  max-height: 200px; 
   object-fit: cover;
   border-radius: calc(var(--border-radius, 8px) / 2);
   background-color: var(--color-neutral-gray, #BDBDBD); /* Placeholder for missing images */

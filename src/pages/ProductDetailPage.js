@@ -280,7 +280,8 @@ const SimilarProductsTitle = styled.h2`
 
 const SimilarProductsGrid = styled.div`
   display: flex;
-  gap: var(--spacing-l, 24px);
+  justify-content: start;
+  gap: 8px;
   overflow-x: auto; /* Enables horizontal scrolling */
   padding-bottom: var(--spacing-m, 16px); /* Space for scrollbar if needed */
 
@@ -303,7 +304,7 @@ const ProductDetailPage = () => {
 
   // ... (All other state and useEffect code is unchanged)
   const [product, setProduct] = useState(null);
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(cart?.getQuantityById(id));
   const [similarProducts, setSimilarProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
