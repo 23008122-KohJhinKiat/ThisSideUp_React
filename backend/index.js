@@ -110,7 +110,7 @@ app.get('/allproducts', async (req, res)=>{
 const Users = mongoose.model('Users', {
     name: {type: String},
     email: {type: String, unique: true},
-    role: {type: String, default: 'Customer'},
+    role: {type: String},
     password: {type: String},
     cartData: {type: Object},
     date: {type: Date, default: Date.now},
