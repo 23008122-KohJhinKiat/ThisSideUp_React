@@ -7,9 +7,9 @@ import {
     fetchProductById as fetchProductByIdAPI,
     addProductAPI,
     updateProductAPI,
-    deleteProductAPI, // <-- Import the new delete function
+    deleteProductAPI,
     productCategories
-} from '../DataPack/Data'; // Ensure correct path to your Data.js
+} from '../DataPack/Data';
 
 const ProductContext = createContext(null);
 
@@ -67,16 +67,14 @@ export const ProductProvider = ({ children }) => {
     }
   }, [products]);
 
-  // --- NEW FUNCTION TO HANDLE ADDING PRODUCTS ---
   const addProduct = async (productData) => {
     setLoading(true);
     try {
         const newProduct = await addProductAPI(productData);
-        // Add the new product to the top of the lists to make it visible immediately
         setProducts(prev => [newProduct, ...prev]);
         setFilteredProducts(prev => [newProduct, ...prev]);
         setLoading(false);
-        return newProduct; // Return for navigation
+        return newProduct;
     } catch (err) {
         setError(err.message || "Failed to add product.");
         setLoading(false);
@@ -99,12 +97,10 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-  // --- NEW FUNCTION TO HANDLE DELETION ---
   const deleteProduct = async (productId) => {
     setLoading(true);
     try {
         await deleteProductAPI(productId);
-        // Update state by removing the deleted product
         setProducts(prev => prev.filter(p => p._id !== productId));
         setFilteredProducts(prev => prev.filter(p => p._id !== productId));
         setLoading(false);
@@ -114,6 +110,38 @@ export const ProductProvider = ({ children }) => {
         throw err;
     }
   };
+
+  // --- NEW: Centralized function to handle stock updates on purchase ---
+  const purchaseItems = async (orderItems) => {
+      // Create a map for quick lookups
+      const orderItemsMap = new Map(orderItems.map(item => [item.productId, item.quantity]));
+
+      // Update the products state
+      setProducts(prevProducts => {
+          return prevProducts.map(product => {
+              if (orderItemsMap.has(product._id)) {
+                  const orderedQuantity = orderItemsMap.get(product._id);
+                  const newStock = Math.max(0, product.stock - orderedQuantity);
+                  // Return a new product object to ensure React detects the change
+                  return { ...product, stock: newStock };
+              }
+              return product;
+          });
+      });
+
+      // Also update filteredProducts to reflect the change immediately
+      setFilteredProducts(prevFiltered => {
+          return prevFiltered.map(product => {
+              if (orderItemsMap.has(product._id)) {
+                  const orderedQuantity = orderItemsMap.get(product._id);
+                  const newStock = Math.max(0, product.stock - orderedQuantity);
+                  return { ...product, stock: newStock };
+              }
+              return product;
+          });
+      });
+  };
+
 
   const value = {
     filteredProducts,
@@ -125,7 +153,8 @@ export const ProductProvider = ({ children }) => {
     getProductById,
     addProduct,
     updateProduct,
-    deleteProduct, // <-- Expose the new delete function
+    deleteProduct,
+    purchaseItems, // <-- Expose the new function
   };
 
   return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;

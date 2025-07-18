@@ -20,16 +20,14 @@ export const CartProvider = ({ children }) => {
         }
     });
 
-    // The customDesignCounter state is no longer needed.
     const [hydratedCart, setHydratedCart] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Persist raw cart items to localStorage whenever they change
     useEffect(() => {
         localStorage.setItem('cart', JSON.stringify(cartItems));
     }, [cartItems]);
 
-    // This "hydrating" effect for cart items remains unchanged.
+    // --- MODIFIED: Self-healing logic now fully removes deleted products ---
     useEffect(() => {
         const hydrateAndValidateCart = async () => {
             setLoading(true);
@@ -44,12 +42,11 @@ export const CartProvider = ({ children }) => {
             for (const item of cartItems) {
                 if (item.productId) {
                     const product = await getProductById(item.productId);
-                    if (product) {
+                    if (product) { // Only process items that still exist
                         detailedCart.push({ ...item, product, isAvailable: true });
                         validItems.push(item);
-                    } else {
-                        detailedCart.push({ ...item, product: null, isAvailable: false });
                     }
+                    // If product is null (deleted), we simply do nothing, effectively removing it.
                 }
                 else if (item.type === 'custom') {
                     detailedCart.push({ ...item, isAvailable: true });
@@ -60,7 +57,7 @@ export const CartProvider = ({ children }) => {
 
             if (validItems.length < cartItems.length) {
                 console.log("Cart self-healed: Removed unavailable products.");
-                setCartItems(validItems);
+                setCartItems(validItems); // This syncs the persistent state
             }
             setLoading(false);
         };
@@ -68,16 +65,13 @@ export const CartProvider = ({ children }) => {
         hydrateAndValidateCart();
     }, [cartItems, getProductById]);
 
-    // --- MODIFIED: addItemToCart now dynamically calculates the next board number ---
+    // --- MODIFIED: addItemToCart now SETS the quantity for standard products ---
     const addItemToCart = useCallback((itemData, quantity = 1) => {
         if (itemData.isCustom) {
-            // It's a custom design. We calculate the name inside the state updater function
-            // to get the most up-to-date cart state.
+            // Custom skimboard logic remains unchanged. It creates a new unique item each time.
             setCartItems(prevItems => {
-                // 1. Find the highest number currently in the cart.
                 const maxNumberInCart = prevItems.reduce((max, item) => {
                     if (item.type === 'custom' && item.customDesign?.name) {
-                        // Use regex to find the number in "Custom Skimboard X"
                         const match = item.customDesign.name.match(/Custom Skimboard (\d+)/);
                         if (match && match[1]) {
                             const num = parseInt(match[1], 10);
@@ -85,13 +79,11 @@ export const CartProvider = ({ children }) => {
                         }
                     }
                     return max;
-                }, 0); // Start with 0 if cart is empty or has no custom boards.
+                }, 0);
 
-                // 2. The new number is the highest found + 1.
                 const newNumber = maxNumberInCart + 1;
                 const newName = `Custom Skimboard ${newNumber}`;
                 
-                // 3. Create the final item with the new name and add it to the cart.
                 const finalItemData = { ...itemData, name: newName };
                 const newItem = { 
                     customDesign: finalItemData, 
@@ -102,23 +94,25 @@ export const CartProvider = ({ children }) => {
                 return [...prevItems, newItem];
             });
         } else {
-            // Logic for standard products remains unchanged.
-            const productId = itemData;
+            // Standard product logic now SETS the quantity.
+            const productId = itemData; // itemData is the product ID string
             setCartItems(prevItems => {
                 const existingItem = prevItems.find(item => item.productId === productId);
                 if (existingItem) {
+                    // If item exists, update its quantity to the new value.
                     return prevItems.map(item =>
                         item.productId === productId
-                            ? { ...item, quantity: item.quantity + quantity }
+                            ? { ...item, quantity: quantity }
                             : item
                     );
                 }
+                // If it's a new item, add it to the cart.
                 return [...prevItems, { productId, quantity }];
             });
         }
-    }, []); // Dependency array is now empty as the logic is self-contained.
+    }, []);
 
-    // --- NO CHANGES needed for the functions below ---
+    // --- The rest of the functions are correct and unchanged ---
     const removeItemFromCart = useCallback((itemIdToRemove) => {
         setCartItems(prevItems => prevItems.filter(item => {
             const currentItemId = item.productId || item._id; 

@@ -1,4 +1,4 @@
-
+// File: src/pages/AddAndEdit/Add.js
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -104,7 +104,7 @@ const SubmitButton = styled.button`
   &:disabled { background-color: #ccc; cursor: not-allowed; }
 `;
 const ErrorMessage = styled.p`
-  color: var(--color-error, #FF6B6B);
+  color: var(--color-error-red, #FF6B6B);
   background-color: rgba(0,0,0,0.2);
   padding: 8px;
   border-radius: 4px;
@@ -113,18 +113,12 @@ const ErrorMessage = styled.p`
 
 const AddProductPage = () => {
     const navigate = useNavigate();
-
     const { addProduct, loading } = useProducts();
-
-    const [image, setImage] = useState(false);
-    const imageHandler = (e) => {
-        setImage(e.target.files[0]);
-    }
 
     const [productDetails, setProductDetails] = useState({
         name: '',
         description: '',
-        image: '',
+        imageUrl: '', // Changed from 'image' to 'imageUrl' to match product model
         category: '',
         price: '',
         stock: '',
@@ -138,46 +132,46 @@ const AddProductPage = () => {
         setProductDetails({...productDetails, [e.target.name]:e.target.value});
     };
 
-    // const handleImageUpload = (e) => {
-    //     const file = e.target.files[0];
-    //     if (file) {
-    //         const reader = new FileReader();
-    //         reader.onloadend = () => {
-    //             setProductDetails(prev => ({ ...prev, image: reader.result }));
-    //         };
-    //         reader.readAsDataURL(file);
-    //     }
-    // };
+    // --- NEW: Correct image handler that saves a data URL ---
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                // Set the base64 data URL to the imageUrl field
+                setProductDetails(prev => ({ ...prev, imageUrl: reader.result }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
     
+    // --- NEW: Replaced backend-specific logic with context logic ---
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(productDetails);
-        let responseData;
-        let product = productDetails;
-        let formData = new FormData();
-        formData.append('product', image);
-        await fetch('http://localhost:4000/upload', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-            },
-            body: formData,
-        }).then((resp)=> resp.json()).then((data)=>{responseData=data});
+        setError('');
 
-        if(responseData.success){
-            product.image = responseData.image_url;
-            console.log(product);
-            await fetch('http://localhost:4000/addproduct',{
-                method:'POST',
-                headers:{Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body:JSON.stringify(product),
-            }).then((resp)=>resp.json()).then((data)=>{
-                data.success?alert("Product Added"):alert("Failed")
-            })
+        // Basic client-side validation
+        if (!productDetails.name || !productDetails.price || !productDetails.category || !productDetails.stock) {
+            setError("Please fill out all required fields.");
+            return;
         }
-        window.location.replace("/products");
+        if (!productDetails.imageUrl) {
+            setError("Please upload a product image.");
+            return;
+        }
+
+        try {
+            // Call the context function which handles the API and state updates
+            const newProduct = await addProduct(productDetails);
+            
+            // On success, navigate to the new product's detail page
+            alert('Product added successfully!');
+            navigate(`/product/${newProduct._id}`);
+
+        } catch (err) {
+            setError(err.message || 'Failed to add product.');
+            console.error(err);
+        }
     };
 
     return (
@@ -189,7 +183,7 @@ const AddProductPage = () => {
             <ProductContentWrapper>
                 <ImageColumn>
                     <MainProductImage 
-                        src={image ? URL.createObjectURL(image) : '/placeholder.png'} 
+                        src={productDetails.imageUrl || '/placeholder.png'} 
                         alt="Product image preview" 
                     />
                     
@@ -199,12 +193,13 @@ const AddProductPage = () => {
                     <HiddenFileInput 
                         id="imageUpload"
                         type="file"
-                        onChange={imageHandler}
+                        accept="image/*"
+                        onChange={handleImageUpload}
                     />
                 </ImageColumn>
 
                 <DetailsColumn>
-                    <Form>
+                    <Form onSubmit={handleSubmit}>
                         <Label htmlFor="name">Product Name</Label>
                         <Input type="text" name="name" id="name" value={productDetails.name} placeholder="Enter product name..." onChange={handleChange} required />
                         
@@ -227,12 +222,10 @@ const AddProductPage = () => {
 
                         <Label htmlFor="tags">Tags (comma-separated)</Label>
                         <Input type="text" name="tags" id="tags" value={productDetails.tags} onChange={handleChange} placeholder="e.g., skimboard, pro, carbon" />
-                        
-                        {/* --- REMOVED: Rating and NumRatings inputs --- */}
                        
                         {error && <ErrorMessage>{error}</ErrorMessage>}
 
-                        <SubmitButton onClick={handleSubmit}  disabled={loading}>
+                        <SubmitButton type="submit" disabled={loading}>
                             {loading ? 'Adding Product...' : 'Add Product'}
                         </SubmitButton>
                     </Form>

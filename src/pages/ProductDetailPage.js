@@ -293,6 +293,17 @@ const SimilarProductsGrid = styled.div`
   scrollbar-width: none;  /* Firefox */
 `;
 
+const SoldOutMessage = styled.div`
+    color: var(--color-error-red, #ff6b6b);
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 1rem;
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 8px;
+    margin-top: 1rem;
+`;
+
 // --- REACT COMPONENT ---
 
 const ProductDetailPage = () => {
@@ -304,7 +315,7 @@ const ProductDetailPage = () => {
 
   // ... (All other state and useEffect code is unchanged)
   const [product, setProduct] = useState(null);
-  const [quantity, setQuantity] = useState(cart?.getQuantityById(id));
+  const [quantity, setQuantity] = useState(1); 
   const [similarProducts, setSimilarProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -372,16 +383,12 @@ const ProductDetailPage = () => {
     setQuantity(prev => (prev > 1 ? prev - 1 : 1));
   };
 
+  // --- MODIFIED: Now sets the quantity directly in the cart ---
   const handleAddToCart = () => {
     if (product) {
-      if (cart?.addItemToCart) {
-        cart.addItemToCart(product._id, quantity);
-        setCartMessage(`Added to cart.`);
-        setTimeout(() => setCartMessage(''), 3000);
-      } else {
-        setCartMessage('Cart functionality is currently unavailable');
-        setTimeout(() => setCartMessage(''), 3000);
-      }
+      cart.addItemToCart(product._id, quantity);
+      setCartMessage(`${quantity} × ${product.name} added to cart.`);
+      setTimeout(() => setCartMessage(''), 3000);
     }
   };
 
@@ -495,7 +502,6 @@ const ProductDetailPage = () => {
   return (
     <div className="product-detail-page">
       <PageWrapper>
-        {/* --- THIS IS THE LINE TO CHANGE --- */}
         <BackButton onClick={() => navigate('/products')}>
           <FaArrowLeft />
         </BackButton>
@@ -551,19 +557,24 @@ const ProductDetailPage = () => {
               <InfoValue>{product.shoppingGuarantee || 'Standard buyer protection.'}</InfoValue>
             </InfoRow>
 
-            <QuantityControl>
-              <InfoLabel>Quantity:</InfoLabel>
-              <QuantityButton onClick={handleDecrementQuantity} disabled={quantity <= 1}> -
-              </QuantityButton>
-              <QuantityDisplay>{quantity}</QuantityDisplay>
-              <QuantityButton onClick={handleIncrementQuantity} disabled={product.stock <=0 || quantity >= product.stock}> +
-              </QuantityButton>
-              {product.stock <= 0 && <span style={{color: 'var(--color-error-red)', marginLeft: '10px', fontSize: 'var(--font-size-small)'}}>Out of stock</span>}
-              {product.stock > 0 && <span style={{fontSize: 'var(--font-size-small)', marginLeft: '10px', color: 'var(--color-neutral-gray-light)'}}>{product.stock} left</span>}
-            </QuantityControl>
-            
+            {/* --- MODIFIED: Conditionally render quantity controls or sold out message --- */}
+            {product.stock > 0 ? (
+                <QuantityControl>
+                    <InfoLabel>Quantity:</InfoLabel>
+                    <QuantityButton onClick={handleDecrementQuantity} disabled={quantity <= 1}>-</QuantityButton>
+                    <QuantityDisplay>{quantity}</QuantityDisplay>
+                    <QuantityButton onClick={handleIncrementQuantity} disabled={quantity >= product.stock}>+</QuantityButton>
+                    <span style={{fontSize: 'var(--font-size-small)', marginLeft: '10px', color: 'var(--color-neutral-gray-light)'}}>
+                        {product.stock} left
+                    </span>
+                </QuantityControl>
+            ) : (
+                <SoldOutMessage>Product Sold Out</SoldOutMessage>
+            )}
+
             <ActionButtonsContainer>
               <AddToCartButton onClick={handleAddToCart} disabled={product.stock <= 0}>
+
                 <FaShoppingCart /> Add to cart
               </AddToCartButton>
               <BuyNowButton onClick={handleBuyNow} disabled={product.stock <= 0}>
