@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaChevronDown } from 'react-icons/fa';
-import { useProducts } from '../contexts/ProductContext'; 
 import ProductCard from './ProductCard'; 
 import '../index.css';
 
@@ -122,46 +121,78 @@ const MessageText = styled.p`
   color: var(--color-neutral-gray, #BDBDBD);
 `;
 
-const Products = () => {
-  const { categoryName } = useParams();
-  const navigate = useNavigate();
-  const { 
-    filteredProducts, 
-    loading, 
-    error, 
-    categories, 
-    currentCategory, 
-    filterAndSortProducts 
-  } = useProducts();
 
+const productCategories = [
+   'All',
+   'Skimboards',
+   'T-Shirts',
+   'Boardshorts',
+   'Accessories',  
+   'Jackets',
+ ];
+
+
+
+const Products = () => {
+  const [allProducts, setAllProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
 
+  const { categoryName } = useParams();
+  const navigate = useNavigate();
+
+  const fetchInfo = async () => {
+    try {
+      const res = await fetch('http://localhost:4000/allproducts');
+      const data = await res.json();
+      setAllProducts(data);
+
+      setLoading(false);
+    } catch (err) {
+      setError('Failed to fetch products.');
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const targetCategory = categoryName || 'All';
-    filterAndSortProducts(targetCategory); 
-  }, [categoryName, filterAndSortProducts]);
+    fetchInfo();
+  }, []);
+
+  useEffect(() => {
+    if (categoryName && categoryName !== 'All') {
+      const filtered = allProducts.filter(p => p.category === categoryName);
+      setFilteredProducts(filtered);
+    } else {
+      setFilteredProducts(allProducts);
+    }
+  }, [categoryName, allProducts]);
 
   const handleCategorySelect = (category) => {
     setShowDropdown(false);
-    if (category === "All") {
+    if (category === 'All') {
       navigate('/products');
     } else {
       navigate(`/products/category/${encodeURIComponent(category)}`);
     }
   };
-    return (
+
+  const currentCategory = categoryName || 'All';
+
+  return (
     <PageContainer className="font25">
       <PageWrapper>
-        <MainContent> {/* Wrap main content */}
+        <MainContent>
           <PageHeader>
             <CategorySelectorWrapper>
               <CategoryDisplayButton className="font25" onClick={() => setShowDropdown(!showDropdown)}>
                 {currentCategory === "All" ? "All Products" : currentCategory}
-                <FaChevronDown /> {/* Add icon here */}
+                <FaChevronDown />
               </CategoryDisplayButton>
               {showDropdown && (
                 <CategoryDropdownList>
-                  {categories.map((cat) => (
+                  {productCategories.map((cat) => (
                     <CategoryDropdownItem 
                       key={cat} 
                       onClick={() => handleCategorySelect(cat)}
@@ -172,23 +203,22 @@ const Products = () => {
                 </CategoryDropdownList>
               )}
             </CategorySelectorWrapper>
-
           </PageHeader>
 
           {loading && <MessageText>Loading products...</MessageText>}
           {error && <MessageText>Error: {error}</MessageText>}
-          
           {!loading && !error && filteredProducts.length === 0 && (
             <MessageText>No products found in this category.</MessageText>
           )}
 
           {!loading && !error && filteredProducts.length > 0 && (
             <ProductGrid>
-              {filteredProducts.map((product) => (
-                <ProductCard key={product._id} product={product} />
+              {filteredProducts.map((product, index) => (
+                <ProductCard key={index} product={product} />
               ))}
             </ProductGrid>
-          )}        </MainContent>
+          )}
+        </MainContent>
       </PageWrapper>
     </PageContainer>
   );

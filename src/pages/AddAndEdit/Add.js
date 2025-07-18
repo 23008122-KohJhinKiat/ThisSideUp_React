@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaArrowLeft, FaUpload } from 'react-icons/fa';
-import { useProducts } from '../../contexts/ProductContext';
 import { productCategories } from '../../DataPack/Data';
 
 
@@ -113,7 +112,13 @@ const ErrorMessage = styled.p`
 
 const AddProductPage = () => {
     const navigate = useNavigate();
+
     const { addProduct, loading } = useProducts();
+
+    const [image, setImage] = useState(false);
+    const imageHandler = (e) => {
+        setImage(e.target.files[0]);
+    }
 
     const [productDetails, setProductDetails] = useState({
         name: '',
@@ -124,7 +129,7 @@ const AddProductPage = () => {
         stock: '',
         tags: '',
     });
-    const [error, setError] = useState('');
+    const [error] = useState('');
 
     const categoriesForForm = productCategories.filter(cat => cat !== 'All');
 
@@ -225,7 +230,7 @@ const AddProductPage = () => {
                        
                         {error && <ErrorMessage>{error}</ErrorMessage>}
 
-                        <SubmitButton type="submit" disabled={loading}>
+                        <SubmitButton onClick={handleSubmit}  disabled={loading}>
                             {loading ? 'Adding Product...' : 'Add Product'}
                         </SubmitButton>
                     </Form>

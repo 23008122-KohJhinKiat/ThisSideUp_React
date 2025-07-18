@@ -279,7 +279,7 @@ const SignUpPage = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="Enter your name"
+                placeholder="Enter name"
                 required
               />
             </div>
@@ -291,7 +291,7 @@ const SignUpPage = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="Enter your email"
+                placeholder="Enter email"
                 required
               />
             </div>
@@ -303,7 +303,7 @@ const SignUpPage = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="Create a password"
+                placeholder="Create password"
                 required
               />
             </div>
@@ -315,12 +315,12 @@ const SignUpPage = () => {
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                placeholder="Confirm your password"
+                placeholder="Confirm password"
                 required
               />
             </div>
-            {/* <RoleSelector>
-              <p>Type of user:</p>
+            <RoleSelector>
+              <p>User Type:</p>
               <div>
                 <RoleButton
                   type="button"
@@ -337,7 +337,7 @@ const SignUpPage = () => {
                   Admin
                 </RoleButton>
               </div>
-            </RoleSelector> */}
+            </RoleSelector>
             {error && <ErrorMessage>{error}</ErrorMessage>}
             <SubmitButton type="submit"  disabled={loading}>
               {loading ? 'Signing Up...' : 'Sign Up'}
