@@ -122,12 +122,19 @@ const MessageText = styled.p`
 `;
 
 
+const productCategories = [
+   'All',
+   'Skimboards',
+   'T-Shirts',
+   'Boardshorts',
+   'Accessories',  
+   'Jackets',
+ ];
 
 
 
 const Products = () => {
   const [allProducts, setAllProducts] = useState([]);
-  const [categories, setCategories] = useState(['All']);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -136,16 +143,12 @@ const Products = () => {
   const { categoryName } = useParams();
   const navigate = useNavigate();
 
-  // Fetch all products
   const fetchInfo = async () => {
     try {
       const res = await fetch('http://localhost:4000/allproducts');
       const data = await res.json();
       setAllProducts(data);
 
-      // Extract unique categories
-      const uniqueCategories = Array.from(new Set(data.map(p => p.category))).sort().reverse();
-      setCategories(['All', ...uniqueCategories]);
       setLoading(false);
     } catch (err) {
       setError('Failed to fetch products.');
@@ -157,7 +160,6 @@ const Products = () => {
     fetchInfo();
   }, []);
 
-  // Filter products by categoryName param
   useEffect(() => {
     if (categoryName && categoryName !== 'All') {
       const filtered = allProducts.filter(p => p.category === categoryName);
@@ -190,7 +192,7 @@ const Products = () => {
               </CategoryDisplayButton>
               {showDropdown && (
                 <CategoryDropdownList>
-                  {categories.map((cat) => (
+                  {productCategories.map((cat) => (
                     <CategoryDropdownItem 
                       key={cat} 
                       onClick={() => handleCategorySelect(cat)}

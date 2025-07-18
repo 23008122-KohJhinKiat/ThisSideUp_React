@@ -246,7 +246,8 @@ const Navbar = () => {
             Products
           </StyledNavLink>
           <ProductsDropdownDesktop show={showDesktopProductsDropdown}>
-            <DropdownTitleDesktop>Shop by Category</DropdownTitleDesktop>
+            {/* <DropdownTitleDesktop>Shop by Category</DropdownTitleDesktop> */}
+            {currentUser === 'Customer' ? <DropdownTitleDesktop>Shop by Category</DropdownTitleDesktop>:<DropdownTitleDesktop>View by Category</DropdownTitleDesktop>}
             <DropdownGridDesktop>
               {productCategories.map((category) => (
                 <CategoryLinkDesktop key={category.name} to={category.path}>
