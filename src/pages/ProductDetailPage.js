@@ -620,13 +620,13 @@ const ProductDetailPage = () => {
 
             <ActionButtonsContainer>         
               
-              {(!currentUser || currentUser === 'Customer') && (
+              {(!currentUser || currentUser.role === 'Customer') && (
                 <AddToCartButton onClick={handleAddToCart} disabled={product.stock <= 0}>
                   <FaShoppingCart /> Add to cart
                 </AddToCartButton>
               )}
               
-              {(!currentUser || currentUser === 'Customer') && (
+              {(!currentUser || currentUser.role === 'Customer') && (
                 <BuyNowButton onClick={handleBuyNow} disabled={product.stock <= 0}>
                 Buy Now
               </BuyNowButton>
