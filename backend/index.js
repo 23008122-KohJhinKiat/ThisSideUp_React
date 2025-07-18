@@ -261,16 +261,26 @@ const fetchUser = async(req, res, next)=>{
 
 // Add to Cart
 app.post('/addtocart', fetchUser, async (req, res) => {
-    const { id, quantity } = req.body;
-    const numericId = Number(id);
+    const { itemId, quantity } = req.body;
+    console.log(req.body, req.user);
 
-    if (isNaN(numericId)) return res.status(400).send("Invalid product ID");
+    try {
+        let userData = await Users.findOne({ _id: req.user.id });
 
-    let user = await Users.findOne({ _id: req.user.id });
-    user.cartData[numericId] = (user.cartData[numericId] || 0) + quantity;
+        const currentQty = userData.cartData[itemId] || 0;
 
-    await user.save();
-    res.send("Added to cart");
+        userData.cartData[itemId] = currentQty + quantity;
+
+        await Users.findOneAndUpdate(
+            { _id: req.user.id },
+            { cartData: userData.cartData }
+        );
+
+        res.send("Added");
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error adding to cart");
+    }
 });
 
 // Remove from Cart
