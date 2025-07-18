@@ -1,4 +1,4 @@
-// File: src/pages/ProductDetailPage.js
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -13,9 +13,8 @@ import { useCart } from '../contexts/CartContext';
 import ProductCard from './ProductCard';
 import { useProducts } from '../contexts/ProductContext';
 import { useAuth } from '../contexts/AuthContext';
-// import Products from './Products'; // <-- This import is no longer needed
 
-// --- STYLED COMPONENTS (No changes needed here) ---
+
 
 const PageWrapper = styled.div`
   background-color: var(--color-background-dark, #121212); /* Very dark background */
@@ -335,27 +334,29 @@ const ProductDetailPage = () => {
       setLoading(true);
       setError(null);
       try {
-        const fetchedProduct = await getProductById(id);
-        if (fetchedProduct) {
-          setProduct(fetchedProduct);
-          // Initialize likes from product data
-          setDisplayLikes(fetchedProduct.likes !== undefined ? fetchedProduct.likes : 0);
+        const res = await fetch(`http://localhost:4000/products/${id}`);
+        const data = await res.json();
+        
+        if (data) {
+          setProduct(data);
 
-          // Check localStorage if current user has liked this product
-          if (currentUser && fetchedProduct._id) {
-            const likedStatus = localStorage.getItem(`liked_${currentUser._id}_${fetchedProduct._id}`);
+          setDisplayLikes(data.likes !== undefined ? data.likes : 0);
+
+
+          if (currentUser && data.id) {
+            const likedStatus = localStorage.getItem(`liked_${currentUser.id}_${data.id}`);
             if (likedStatus === 'true') {
               setIsLikedByCurrentUser(true);
             } else {
-              setIsLikedByCurrentUser(false); // Ensure it's explicitly false if not found or not 'true'
+              setIsLikedByCurrentUser(false); 
             }
           } else {
-            setIsLikedByCurrentUser(false); // No user or product ID, so cannot be liked by current user
+            setIsLikedByCurrentUser(false); 
           }
           
           if (Array.isArray(filteredProducts) && filteredProducts.length > 0) {
             const related = filteredProducts
-              .filter(p => p.category === fetchedProduct.category && p._id !== fetchedProduct._id)
+              .filter(p => p.category === data.category && p.id !== data.id)
               .slice(0, 5);
             setSimilarProducts(related);
           }
@@ -383,10 +384,10 @@ const ProductDetailPage = () => {
     setQuantity(prev => (prev > 1 ? prev - 1 : 1));
   };
 
-  // --- MODIFIED: Now sets the quantity directly in the cart ---
+
   const handleAddToCart = () => {
     if (product) {
-      cart.addItemToCart(product._id, quantity);
+      cart.addItemToCart(product.id, quantity);
       setCartMessage(`${quantity} × ${product.name} added to cart.`);
       setTimeout(() => setCartMessage(''), 3000);
     }
@@ -395,7 +396,7 @@ const ProductDetailPage = () => {
   const handleBuyNow = () => {
     if (product) {
       if (cart?.addItemToCart) {
-        cart.addItemToCart(product._id, quantity);
+        cart.addItemToCart(product.id, quantity);
         navigate('/checkout');
       } else {
         setCartMessage('Cart functionality is currently unavailable');
@@ -412,14 +413,14 @@ const ProductDetailPage = () => {
       setTimeout(() => setCartMessage(''), 3000);
       return;
     }
-    if (!product || !product._id) {
+    if (!product || !product.id) {
       console.error("Product data or ID is missing for like action");
       setCartMessage("Cannot like product at this time");
       setTimeout(() => setCartMessage(''), 3000);
       return;
     }
 
-    const localStorageKey = `liked_${currentUser._id}_${product._id}`;
+    const localStorageKey = `liked_${currentUser.id}_${product.id}`;
 
     if (isLikedByCurrentUser) {
       // Unliking
@@ -448,8 +449,6 @@ const ProductDetailPage = () => {
           setCartMessage('Could not share product.');
       });
     } else if (product) {
-      // Fallback for browsers that don't support navigator.share
-      // You could copy to clipboard or show a share dialog
       navigator.clipboard.writeText(window.location.href)
         .then(() => setCartMessage('Link copied to clipboard!'))
         .catch(() => setCartMessage('Could not copy link.'));
@@ -462,7 +461,7 @@ const ProductDetailPage = () => {
   const renderStars = (rating) => {
     const stars = [];
     const numRating = parseFloat(rating);
-    if (isNaN(numRating)) return null; // Handle cases where rating might not be a number
+    if (isNaN(numRating)) return null;
 
     for (let i = 0; i < 5; i++) {
       stars.push(
@@ -475,7 +474,6 @@ const ProductDetailPage = () => {
     return stars;
   };
 
-  // Helper function to safely render HTML (use with caution, ensure source is trusted)
   const createMarkup = (htmlString) => {
     return { __html: htmlString };
   };
@@ -508,7 +506,7 @@ const ProductDetailPage = () => {
 
         <ProductContentWrapper>
           <ImageColumn>
-            <MainProductImage src={product.imageUrl || '/placeholder.png'} alt={product.name} />
+            <MainProductImage src={product.image || '/placeholder.png'} alt={product.name} />
             <SocialActions>
               <BaseSocialButton onClick={handleShare}>
                 <FaShareAlt /> Share
@@ -557,7 +555,6 @@ const ProductDetailPage = () => {
               <InfoValue>{product.shoppingGuarantee || 'Standard buyer protection.'}</InfoValue>
             </InfoRow>
 
-            {/* --- MODIFIED: Conditionally render quantity controls or sold out message --- */}
             {product.stock > 0 ? (
                 <QuantityControl>
                     <InfoLabel>Quantity:</InfoLabel>
@@ -572,16 +569,22 @@ const ProductDetailPage = () => {
                 <SoldOutMessage>Product Sold Out</SoldOutMessage>
             )}
 
-            <ActionButtonsContainer>
-              <AddToCartButton onClick={handleAddToCart} disabled={product.stock <= 0}>
-
-                <FaShoppingCart /> Add to cart
-              </AddToCartButton>
-              <BuyNowButton onClick={handleBuyNow} disabled={product.stock <= 0}>
+            <ActionButtonsContainer>         
+              
+              {(!currentUser || currentUser === 'Customer') && (
+                <AddToCartButton onClick={handleAddToCart} disabled={product.stock <= 0}>
+                  <FaShoppingCart /> Add to cart
+                </AddToCartButton>
+              )}
+              
+              {(!currentUser || currentUser === 'Customer') && (
+                <BuyNowButton onClick={handleBuyNow} disabled={product.stock <= 0}>
                 Buy Now
               </BuyNowButton>
+              )}
+
               {currentUser && currentUser.role === 'Admin' && (
-                  <BuyNowButton onClick={() => navigate(`/edit/${product._id}`)}>
+                  <BuyNowButton onClick={() => navigate(`/edit/${product.id}`)}>
                       Edit Product
                   </BuyNowButton>
               )}
@@ -607,7 +610,7 @@ const ProductDetailPage = () => {
             <SimilarProductsTitle>Similar Products</SimilarProductsTitle>
             <SimilarProductsGrid>
               {similarProducts.map(sp => (
-                <ProductCard key={sp._id} product={sp} />
+                <ProductCard key={sp.id} product={sp} />
               ))}
             </SimilarProductsGrid>
           </SimilarProductsSection>

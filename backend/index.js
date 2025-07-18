@@ -106,6 +106,17 @@ app.get('/allproducts', async (req, res)=>{
     res.send(products);
 })
 
+// Getting One Product
+app.get('/products/:id', async (req, res)=>{
+    const numericId = parseInt(req.params.id, 10);
+    let product = await Product.findOne({ id: numericId});
+    if(!product){
+        return res.status(404).send({message:'Product not found'})
+    }
+    console.log(`Product with ID fetched`);
+    res.send(product);
+})
+
 // User Model
 const Users = mongoose.model('Users', {
     name: {type: String},
