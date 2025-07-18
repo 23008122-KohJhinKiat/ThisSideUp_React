@@ -117,6 +117,43 @@ app.get('/products/:id', async (req, res)=>{
     res.send(product);
 })
 
+// Liking a Product
+app.patch('/products/:id/like', async (req, res) => {
+  try {
+    const updated = await Product.findOneAndUpdate(
+      { id: parseInt(req.params.id, 10) },
+      { $inc: { likes: 1 } },
+      { new: true }
+    );
+    if (!updated) return res.status(404).send({ message: "Product not found" });
+    res.send(updated);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+});
+
+// Unliking a product
+app.patch('/products/:id/unlike', async (req, res) => {
+  try {
+    const updated = await Product.findOneAndUpdate(
+      { id: parseInt(req.params.id, 10) },
+      { $inc: { likes: -1 } },
+      { new: true }
+    );
+    if (!updated) return res.status(404).send({ message: "Product not found" });
+
+    if (updated.likes < 0) {
+      updated.likes = 0;
+      await updated.save();
+    }
+
+    res.send(updated);
+  } catch (err) {
+    console.error("Error unliking product:", err);
+    res.status(500).send({ message: err.message });
+  }
+});
+
 // User Model
 const Users = mongoose.model('Users', {
     name: {type: String},

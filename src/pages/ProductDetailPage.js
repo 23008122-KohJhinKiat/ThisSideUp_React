@@ -407,7 +407,7 @@ const ProductDetailPage = () => {
 
   
 
-  const handleLike = () => {
+  const handleLike = async () => {
     if (!currentUser) {
       setCartMessage("Please log in to like products");
       setTimeout(() => setCartMessage(''), 3000);
@@ -419,21 +419,54 @@ const ProductDetailPage = () => {
       setTimeout(() => setCartMessage(''), 3000);
       return;
     }
-
     const localStorageKey = `liked_${currentUser.id}_${product.id}`;
 
-    if (isLikedByCurrentUser) {
-      // Unliking
-      setDisplayLikes(prevLikes => Math.max(0, prevLikes - 1));
+  if (isLikedByCurrentUser) {
+    setDisplayLikes(prevLikes => Math.max(0, prevLikes - 1));
+    setIsLikedByCurrentUser(false);
+    localStorage.removeItem(localStorageKey);
+  } else {
+    try {
+      const res = await fetch(`http://localhost:4000/products/${product.id}/like`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      if (res.ok) {
+        const updatedProduct = await res.json();
+        setDisplayLikes(updatedProduct.likes);
+        setIsLikedByCurrentUser(true);
+        localStorage.setItem(localStorageKey, 'true');
+      } else {
+        throw new Error('Failed to like product');
+      }
+    } catch (err) {
+      console.error("Error liking product:", err);
+      setCartMessage("Error liking product");
+    }
+  }
+    setTimeout(() => setCartMessage(''), 2000);
+    try {
+    const res = await fetch(`http://localhost:4000/products/${product.id}/unlike`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+
+    if (res.ok) {
+      const updatedProduct = await res.json();
+      setDisplayLikes(updatedProduct.likes);
       setIsLikedByCurrentUser(false);
       localStorage.removeItem(localStorageKey);
     } else {
-      // Liking
-      setDisplayLikes(prevLikes => prevLikes + 1);
-      setIsLikedByCurrentUser(true);
-      localStorage.setItem(localStorageKey, 'true');
+      throw new Error('Failed to unlike product');
     }
-    setTimeout(() => setCartMessage(''), 2000);
+  } catch (err) {
+    console.error("Error unliking product:", err);
+    setCartMessage("Error unliking product");
+  }
   };
 
   const handleShare = () => {
