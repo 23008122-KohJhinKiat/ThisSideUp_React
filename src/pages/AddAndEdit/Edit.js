@@ -124,12 +124,13 @@ const EditProductPage = () => {
     const [error, setError] = useState('');
 
     useEffect(() => {
+        
         const fetchProductData = async () => {
+            const res = await fetch(`http://localhost:4000/products/${id}`);
+            const data = await res.json();
             try {
-                const productData = await getProductById(id);
-                if (productData) {
-                    const tagsAsString = Array.isArray(productData.tags) ? productData.tags.join(', ') : '';
-                    setFormData({ ...productData, tags: tagsAsString });
+                if (data) {
+                    setFormData(data);
                 } else {
                     setError("Product not found.");
                 }
@@ -152,7 +153,7 @@ const EditProductPage = () => {
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                setFormData(prev => ({ ...prev, imageUrl: reader.result }));
+                setFormData(prev => ({ ...prev, image: reader.result }));
             };
             reader.readAsDataURL(file);
         }
@@ -174,21 +175,7 @@ const EditProductPage = () => {
         }
     };
 
-     // --- CORRECT DELETE HANDLER WITH NAVIGATION ---
-    const handleDelete = async () => {
-        // Show a confirmation dialog to prevent accidental deletion
-        if (window.confirm('Are you sure you want to permanently delete this product? This action cannot be undone.')) {
-            setError('');
-            try {
-                await deleteProduct(id);
-                alert('Product deleted successfully!');
-                // Navigate to the main products page after deletion
-                navigate('/products'); 
-            } catch (err) {
-                setError(err.message || 'Failed to delete product.');
-            }
-        }
-    };
+
 
     if (!formData) {
         return <PageWrapper><div>Loading product data...</div></PageWrapper>;
@@ -201,7 +188,7 @@ const EditProductPage = () => {
             </BackButton>
             <ProductContentWrapper>
                 <ImageColumn>
-                    <MainProductImage src={formData.imageUrl || '/placeholder.png'} alt="Product image preview" />
+                    <MainProductImage src={formData.image || '/placeholder.png'} alt="Product image preview" />
                     <UploadButton type="button" onClick={() => document.getElementById('imageUpload').click()}>
                         <FaUpload /> Change Image
                     </UploadButton>
@@ -228,8 +215,8 @@ const EditProductPage = () => {
                         <Label htmlFor="stock">Stock Quantity</Label>
                         <Input type="number" name="stock" id="stock" value={formData.stock} onChange={handleChange} min="0" required />
 
-                        <Label htmlFor="tags">Tags (comma-separated)</Label>
-                        <Input type="text" name="tags" id="tags" value={formData.tags} onChange={handleChange} placeholder="e.g., skimboard, pro, carbon" />
+                        {/* <Label htmlFor="tags">Tags (comma-separated)</Label>
+                        <Input type="text" name="tags" id="tags" value={formData.tags} onChange={handleChange} placeholder="e.g., skimboard, pro, carbon" /> */}
                                              
 
                         {error && <ErrorMessage>{error}</ErrorMessage>}
@@ -237,12 +224,6 @@ const EditProductPage = () => {
                         <SubmitButton type="submit" disabled={loading}>
                             {loading ? 'Saving Changes...' : 'Save Changes'}
                         </SubmitButton>
-                        
-                         {/* --- CORRECTED DELETE BUTTON --- */}
-                        <DeleteButton type="button" disabled={loading} onClick={handleDelete}>
-                            <FaTrash />
-                            {loading ? 'Deleting...' : 'Delete Product'}
-                        </DeleteButton>
                     </Form>
                 </DetailsColumn>
             </ProductContentWrapper>

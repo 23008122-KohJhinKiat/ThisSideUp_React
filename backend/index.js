@@ -89,6 +89,31 @@ app.post('/addproduct', async (req, res) => {
     })
 })
 
+// Editing Product
+app.post('/updateproduct/:id', async (req, res) => {
+  try {
+    const productId = parseInt(req.params.id, 10);
+    const updatedProduct = await Product.findOneAndUpdate(
+      { id: productId },
+      { name: req.body.name},
+      { description: req.body.description },
+      { image: req.body.image },
+      { category: req.body.category },
+      { price: req.body.price},
+      { new: true }
+    );
+
+    if (!updatedProduct) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    res.json({ success: true, product: updatedProduct });
+  } catch (err) {
+    console.error('Error updating product:', err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 // Deleting Products
 app.post('/deleteproduct', async (req, res)=>{
     await Product.findOneAndDelete({id: req.body.id});

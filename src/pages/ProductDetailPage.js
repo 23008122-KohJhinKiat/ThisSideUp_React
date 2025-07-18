@@ -8,6 +8,7 @@ import {
   FaHeart,
   FaShoppingCart,
   FaStar,
+  FaTrash,
 } from 'react-icons/fa';
 import { useCart } from '../contexts/CartContext';
 import ProductCard from './ProductCard';
@@ -246,6 +247,14 @@ const BaseActionButton = styled.button`
   }
 `;
 
+const DeleteButton = styled(BaseActionButton)`
+  background-color: var(--color-error-red, #D32F2F);
+  color: white;
+
+  &:hover { background-color: #B71C1C; transform: translateY(-2px); }
+  &:disabled { background-color: #ccc; cursor: not-allowed; }
+`;
+
 const AddToCartButton = styled(BaseActionButton)`
   background-color: var(--color-primary-purple-dark, #4B0082); /* Darker purple */
   color: var(--color-text-light, #FFFFFF);
@@ -422,6 +431,7 @@ const ProductDetailPage = () => {
     const localStorageKey = `liked_${currentUser.id}_${product.id}`;
 
   if (isLikedByCurrentUser) {
+    // Already liked – just handle frontend toggle
     setDisplayLikes(prevLikes => Math.max(0, prevLikes - 1));
     setIsLikedByCurrentUser(false);
     localStorage.removeItem(localStorageKey);
@@ -447,26 +457,6 @@ const ProductDetailPage = () => {
     }
   }
     setTimeout(() => setCartMessage(''), 2000);
-    try {
-    const res = await fetch(`http://localhost:4000/products/${product.id}/unlike`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    });
-
-    if (res.ok) {
-      const updatedProduct = await res.json();
-      setDisplayLikes(updatedProduct.likes);
-      setIsLikedByCurrentUser(false);
-      localStorage.removeItem(localStorageKey);
-    } else {
-      throw new Error('Failed to unlike product');
-    }
-  } catch (err) {
-    console.error("Error unliking product:", err);
-    setCartMessage("Error unliking product");
-  }
   };
 
   const handleShare = () => {
@@ -528,6 +518,32 @@ const ProductDetailPage = () => {
     /\$(\d+\.\d{2})/g,
     '<span class="highlight">$$$1</span>'
   ) || 'Standard shipping available';
+
+  const handleDelete = async () => {
+  if (window.confirm('Are you sure you want to permanently delete this product? This action cannot be undone.')) {
+    setError('');
+    try {
+      const res = await fetch('http://localhost:4000/deleteproduct', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id }),  // assuming `id` is in scope
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        alert('Product deleted successfully!');
+        navigate('/products');
+      } else {
+        setError('Failed to delete product.');
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to delete product.');
+    }
+  }
+};
 
 
   return (
@@ -620,6 +636,12 @@ const ProductDetailPage = () => {
                   <BuyNowButton onClick={() => navigate(`/edit/${product.id}`)}>
                       Edit Product
                   </BuyNowButton>
+              )}
+              {currentUser && currentUser.role === 'Admin' && (
+                <DeleteButton type="button" disabled={loading} onClick={handleDelete}>
+                    <FaTrash />
+                    {loading ? 'Deleting...' : 'Delete Product'}
+                    </DeleteButton>
               )}
             </ActionButtonsContainer>
             
