@@ -302,10 +302,12 @@ app.get('/getcart', fetchUser, async (req, res) => {
         const productIds = Object.keys(cartData).map(id => Number(id));
         const products = await Product.find({ id: { $in: productIds } });
 
-        const fullCart = products.map(prod => ({
-            product: prod,
-            quantity: cartData[prod.id] || 0
-        }));
+        const fullCart = products
+    .map(prod => ({
+        product: prod,
+        quantity: cartData[prod.id] || 0
+    }))
+    .filter(entry => entry.quantity > 0);
 
         res.json(fullCart);
     } catch (err) {
