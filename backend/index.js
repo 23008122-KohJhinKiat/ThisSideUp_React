@@ -243,6 +243,81 @@ app.post('/login', async(req, res)=>{
     }
 })
 
+// Fetch User
+const fetchUser = async(req, res, next)=>{
+    const token = req.header('auth-token');
+    if(!token){
+        res.status(401).send({errors:"Please authenticate using valid token"})
+    }
+    else{
+        try{
+            const data = jwt.verify(token, 'secret_ecom');
+            req.user = data.user;
+            next();
+        } catch(error){
+        res.status(401).send({ errors:"Please authenticate using a valid tokenS"})
+    } 
+}}
+
+// Add to Cart
+app.post('/addtocart', fetchUser, async (req, res) => {
+    const { id, quantity } = req.body;
+    const numericId = Number(id);
+
+    if (isNaN(numericId)) return res.status(400).send("Invalid product ID");
+
+    let user = await Users.findOne({ _id: req.user.id });
+    user.cartData[numericId] = (user.cartData[numericId] || 0) + quantity;
+
+    await user.save();
+    res.send("Added to cart");
+});
+
+// Remove from Cart
+app.post('/removefromcart', fetchUser, async(req, res)=>{
+    (console.log("Removed", req.body.itemId))
+    let userData = await Users.findOne({_id:req.user.id});
+    if(userData.cartData[req.body.itemId] > 0)
+    userData.cartData[req.body.itemId]-=1;
+    await Users.findOneAndUpdate({_id: req.user.id},{cartData:userData.cartData});
+    res.send("Removed")
+})
+
+// Fetch Cart
+app.get('/getcart', fetchUser, async (req, res) => {
+    try {
+        const user = await Users.findOne({ _id: req.user.id });
+        const cartData = user.cartData || {};
+
+        const productIds = Object.keys(cartData).map(id => Number(id));
+        const products = await Product.find({ id: { $in: productIds } });
+
+        const fullCart = products.map(prod => ({
+            product: prod,
+            quantity: cartData[prod.id] || 0
+        }));
+
+        res.json(fullCart);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Failed to fetch cart");
+    }
+});
+
+// Clear Cart
+app.post('/clearcart', fetchUser, async (req, res) => {
+    try {
+        await Users.findOneAndUpdate(
+            { _id: req.user.id },
+            { cartData: {} }
+        );
+        res.send("Cart cleared");
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Failed to clear cart");
+    }
+});
+
 app.listen(port, (error) => {
     if (!error){
         console.log("Server running on Port " +port)

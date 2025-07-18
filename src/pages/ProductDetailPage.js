@@ -394,13 +394,36 @@ const ProductDetailPage = () => {
   };
 
 
-  const handleAddToCart = () => {
-    if (product) {
-      cart.addItemToCart(product.id, quantity);
-      setCartMessage(`${quantity} × ${product.name} added to cart.`);
+
+const handleAddToCart = async () => {
+  if (product) {
+    try {
+      const token = localStorage.getItem('auth-token');
+      const res = await fetch('http://localhost:4000/addtocart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'auth-token': token,
+        },
+        body: JSON.stringify({ itemId: product.id, quantity })
+      });
+
+      const data = await res.text();
+
+      if (res.ok) {
+        setCartMessage(`${quantity} of ${product.name} added to cart`);
+        setTimeout(() => setCartMessage(''), 3000);
+      } else {
+        setCartMessage(`Error: ${data}`);
+        setTimeout(() => setCartMessage(''), 3000);
+      }
+    } catch (error) {
+      console.error('Add to cart failed:', error);
+      setCartMessage('Error: Failed to add item to cart.');
       setTimeout(() => setCartMessage(''), 3000);
     }
-  };
+  }
+};
 
   const handleBuyNow = () => {
     if (product) {

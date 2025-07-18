@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { FaArrowLeft, FaUpload, FaTrash } from 'react-icons/fa';
+import { FaArrowLeft, FaUpload,} from 'react-icons/fa';
 import { useProducts } from '../../contexts/ProductContext';
 import { productCategories } from '../../DataPack/Data';
 
@@ -93,21 +93,7 @@ const SubmitButton = styled.button`
   &:hover { background-color: var(--color-secondary-peach-dark); transform: translateY(-2px); }
   &:disabled { background-color: #ccc; cursor: not-allowed; }
 `;
-const DeleteButton = styled.button`
-  background-color: var(--color-error-red, #D32F2F);
-  color: white;
-  padding: 14px; border: none; border-radius: 8px;
-  font-size: 1.1rem; font-weight: bold; cursor: pointer;
-  margin-top: 10px;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
 
-  &:hover { background-color: #B71C1C; transform: translateY(-2px); }
-  &:disabled { background-color: #ccc; cursor: not-allowed; }
-`;
 const ErrorMessage = styled.p`
   color: var(--color-error, #FF6B6B);
   background-color: rgba(0,0,0,0.2);
@@ -118,7 +104,7 @@ const ErrorMessage = styled.p`
 const EditProductPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { getProductById, updateProduct, deleteProduct, loading } = useProducts();
+    const { getProductById, updateProduct, loading } = useProducts();
 
     const [formData, setFormData] = useState(null);
     const [error, setError] = useState('');

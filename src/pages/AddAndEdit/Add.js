@@ -112,7 +112,7 @@ const ErrorMessage = styled.p`
 const AddProductPage = () => {
     const navigate = useNavigate();
 
-    const { addProduct, loading } = useProducts();
+    const {loading } = useProducts();
 
     const [image, setImage] = useState(false);
     const imageHandler = (e) => {
@@ -128,7 +128,7 @@ const AddProductPage = () => {
         stock: '',
         tags: '',
     });
-    const [error, setError] = useState('');
+    const [error,] = useState('');
 
     const categoriesForForm = productCategories.filter(cat => cat !== 'All');
 
