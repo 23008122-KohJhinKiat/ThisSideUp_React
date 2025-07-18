@@ -687,9 +687,9 @@ const handleAddToCart = async () => {
           <SimilarProductsSection>
             <SimilarProductsTitle>Similar Products</SimilarProductsTitle>
             <SimilarProductsGrid>
-              {similarProducts.map(sp => (
-                <ProductCard key={sp.id} product={sp} />
-              ))}
+              {similarProducts.map((product) => (
+                <ProductCard key={product.id} product={{ ...product, image: product.imageUrl }} />
+                ))}
             </SimilarProductsGrid>
           </SimilarProductsSection>
         )}

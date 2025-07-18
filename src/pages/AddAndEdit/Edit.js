@@ -104,7 +104,22 @@ const ErrorMessage = styled.p`
 const EditProductPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { getProductById, updateProduct, loading } = useProducts();
+    const { getProductById, loading } = useProducts();
+
+    async function updateProduct(id, data) {
+        const res = await fetch(`http://localhost:4000/updateproduct/${id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+
+  if (!res.ok) {
+    const errData = await res.json();
+    throw new Error(errData.message || 'Failed to update product');
+  }
+
+  return await res.json();
+}
 
     const [formData, setFormData] = useState(null);
     const [error, setError] = useState('');
@@ -148,7 +163,7 @@ const EditProductPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        if (!formData.imageUrl) {
+        if (!formData.image) {
             setError('Please ensure there is a product image.');
             return;
         }

@@ -94,14 +94,17 @@ app.post('/updateproduct/:id', async (req, res) => {
   try {
     const productId = parseInt(req.params.id, 10);
     const updatedProduct = await Product.findOneAndUpdate(
-      { id: productId },
-      { name: req.body.name},
-      { description: req.body.description },
-      { image: req.body.image },
-      { category: req.body.category },
-      { price: req.body.price},
-      { new: true }
-    );
+        { id: productId },
+        {
+            name: req.body.name,
+            description: req.body.description,
+            image: req.body.image,
+            category: req.body.category,
+            price: req.body.price,
+            stock: req.body.stock,
+            },
+        { new: true }
+        );
 
     if (!updatedProduct) {
       return res.status(404).json({ success: false, message: 'Product not found' });
@@ -318,6 +321,7 @@ app.get('/getcart', fetchUser, async (req, res) => {
 
 // Clear Cart
 app.post('/clearcart', fetchUser, async (req, res) => {
+    console.log("Cart cleared")
     try {
         await Users.findOneAndUpdate(
             { _id: req.user.id },
