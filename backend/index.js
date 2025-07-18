@@ -243,7 +243,6 @@ app.post('/login', async(req, res)=>{
     }
 })
 
-
 app.listen(port, (error) => {
     if (!error){
         console.log("Server running on Port " +port)
