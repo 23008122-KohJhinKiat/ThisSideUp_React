@@ -79,7 +79,9 @@ const ProductsDropdownDesktop = styled.div` position: absolute; top: 100%; left:
 const DropdownGridDesktop = styled.div` display: grid; grid-template-columns: 1fr; gap: 0.25rem;`;
 const CategoryLinkDesktop = styled(Link)` color: #000000; text-decoration: none; padding: 0.6rem 1rem; border-radius: 6px; transition: all 0.2s ease; font-size: 0.9rem; font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif; display: block; &:hover { background: #f0f0f0; color: #333; }`;
 const DropdownTitleDesktop = styled.h3` color: #333; font-size: 0.9rem; margin: 0 0 0.8rem 0; padding: 0 0.5rem 0.5rem; font-weight: 600; font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif; border-bottom: 1px solid #eee; text-transform: uppercase; letter-spacing: 0.5px;`;
-const SearchBarContainer = styled.div` display: flex; align-items: center; position: relative; input { padding: 8px 30px 8px 12px; border-radius: 4px; border: 1px solid #555; background-color: white; color: black; min-width: 150px; @media (max-width: 480px) { min-width: 100px; font-size: 0.9rem; } }`;
+const SearchBarContainer = styled.div
+` display: flex; align-items: center; position: relative; 
+ input { padding: 8px 30px 8px 12px; border-radius: 4px; border: 1px solid #555; background-color: white; color: black; min-width: 150px; margin-top: 50px; @media (max-width: 480px) { min-width: 100px; font-size: 0.9rem; height: 50px;} }`;
 const CloseSearchIcon = styled.img` position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; cursor: pointer;`;
 const UserDropdownContainer = styled.div` position: relative; `;
 const UserDropdownMenuStyled = styled.div` position: absolute; top: calc(100% + 20px); right: 0; background-color: #222222; box-shadow: 0 4px 12px rgba(0,0,0,0.2); width: 220px; border-radius: 8px; overflow: hidden; z-index: 1010; display: flex; flex-direction: column; border: 1px solid #333;`;

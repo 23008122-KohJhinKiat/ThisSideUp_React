@@ -5,6 +5,7 @@ import styled from 'styled-components';
 // --- 1. Import useNavigate from react-router-dom ---
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useCart } from '../../contexts/CartContext';
 
 // --- Styled Components (with additions) ---
 
@@ -179,7 +180,8 @@ const DeleteButton = styled(LogoutButton)`
 
 const UserProfilePage = () => {
   const { currentUser, loading, logout, deleteAccount } = useAuth();
-  // --- 2. Initialize the navigate function ---
+  // --- 2. Get clearCart function ---
+  const { clearCart } = useCart();
   const navigate = useNavigate();
 
   if (loading) {
@@ -194,9 +196,11 @@ const UserProfilePage = () => {
     return <Navigate to="/login" replace />;
   }
 
-  const handleLogout = async () => {
+   const handleLogout = async () => {
     try {
-      await logout();
+      clearCart(); // Clear the cart first
+      await logout(); // Then log the user out
+      // Navigation will happen automatically as currentUser becomes null
     } catch (error) {
       console.error("Failed to log out", error);
     }
@@ -206,8 +210,10 @@ const UserProfilePage = () => {
     if (window.confirm("Are you sure you want to permanently delete your account? This action cannot be undone.")) {
       try {
         await deleteAccount();
+        // The deleteAccount function in AuthContext already calls logout(),
+        // so we just need to clear cart here as well.
+        clearCart(); 
         alert("Your account has been successfully deleted.");
-        // --- 3. Programmatically navigate to the homepage ---
         navigate('/'); 
       } catch (error) {
         console.error("Failed to delete account:", error);

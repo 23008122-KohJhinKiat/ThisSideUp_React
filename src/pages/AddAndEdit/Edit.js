@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { FaArrowLeft, FaUpload,} from 'react-icons/fa';
+import { FaArrowLeft, FaUpload, FaTrash} from 'react-icons/fa';
 import { useProducts } from '../../contexts/ProductContext';
 import { productCategories } from '../../DataPack/Data';
 
@@ -94,6 +94,12 @@ const SubmitButton = styled.button`
   &:disabled { background-color: #ccc; cursor: not-allowed; }
 `;
 
+const DeleteButton = styled.button`
+  background-color: var(--color-error-red, #D32F2F); color: white; padding: 14px; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 10px; transition: background-color 0.2s ease, transform 0.1s ease; display: flex; align-items: center; justify-content: center; gap: 8px;
+  &:hover { background-color: #B71C1C; transform: translateY(-2px); }
+  &:disabled { background-color: #ccc; cursor: not-allowed; }
+`;
+
 const ErrorMessage = styled.p`
   color: var(--color-error, #FF6B6B);
   background-color: rgba(0,0,0,0.2);
@@ -104,34 +110,21 @@ const ErrorMessage = styled.p`
 const EditProductPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { getProductById, loading } = useProducts();
-
-    async function updateProduct(id, data) {
-        const res = await fetch(`http://localhost:4000/updateproduct/${id}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-        });
-
-  if (!res.ok) {
-    const errData = await res.json();
-    throw new Error(errData.message || 'Failed to update product');
-  }
-
-  return await res.json();
-}
+    // --- MODIFIED: Use context functions ---
+    const { getProductById, updateProduct, deleteProduct, loading } = useProducts();
 
     const [formData, setFormData] = useState(null);
     const [error, setError] = useState('');
 
+    // --- MODIFIED: Fetches data using the context ---
     useEffect(() => {
-        
         const fetchProductData = async () => {
-            const res = await fetch(`http://localhost:4000/products/${id}`);
-            const data = await res.json();
             try {
-                if (data) {
-                    setFormData(data);
+                const productData = await getProductById(id);
+                if (productData) {
+                    const tagsAsString = Array.isArray(productData.tags) ? productData.tags.join(', ') : '';
+                    // Use imageUrl to match the data model
+                    setFormData({ ...productData, tags: tagsAsString, imageUrl: productData.imageUrl });
                 } else {
                     setError("Product not found.");
                 }
@@ -154,16 +147,17 @@ const EditProductPage = () => {
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                setFormData(prev => ({ ...prev, image: reader.result }));
+                setFormData(prev => ({ ...prev, imageUrl: reader.result }));
             };
             reader.readAsDataURL(file);
         }
     };
     
+    // --- MODIFIED: Uses context `updateProduct` function ---
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        if (!formData.image) {
+        if (!formData.imageUrl) {
             setError('Please ensure there is a product image.');
             return;
         }
@@ -176,7 +170,19 @@ const EditProductPage = () => {
         }
     };
 
-
+    // --- MODIFIED: Uses context `deleteProduct` function ---
+    const handleDelete = async () => {
+        if (window.confirm('Are you sure you want to permanently delete this product? This action cannot be undone.')) {
+            setError('');
+            try {
+                await deleteProduct(id);
+                alert('Product deleted successfully!');
+                navigate('/products'); 
+            } catch (err) {
+                setError(err.message || 'Failed to delete product.');
+            }
+        }
+    };
 
     if (!formData) {
         return <PageWrapper><div>Loading product data...</div></PageWrapper>;
@@ -184,12 +190,10 @@ const EditProductPage = () => {
 
     return (
         <PageWrapper>
-            <BackButton onClick={() => navigate(-1)}>
-                <FaArrowLeft />
-            </BackButton>
+            <BackButton onClick={() => navigate(-1)}><FaArrowLeft /></BackButton>
             <ProductContentWrapper>
                 <ImageColumn>
-                    <MainProductImage src={formData.image || '/placeholder.png'} alt="Product image preview" />
+                    <MainProductImage src={formData.imageUrl || '/placeholder.png'} alt="Product image preview" />
                     <UploadButton type="button" onClick={() => document.getElementById('imageUpload').click()}>
                         <FaUpload /> Change Image
                     </UploadButton>
@@ -199,32 +203,26 @@ const EditProductPage = () => {
                     <Form onSubmit={handleSubmit}>
                         <Label htmlFor="name">Product Name</Label>
                         <Input type="text" name="name" id="name" value={formData.name} onChange={handleChange} required />
-                        
                         <Label htmlFor="description">Description</Label>
                         <TextArea name="description" id="description" value={formData.description} onChange={handleChange} required />
-                        
                         <Label htmlFor="category">Category</Label>
                         <Select name="category" id="category" value={formData.category} onChange={handleChange} required>
-                            {categoriesForForm.map(cat => (
-                                <option key={cat} value={cat}>{cat}</option>
-                            ))}
+                            {categoriesForForm.map(cat => ( <option key={cat} value={cat}>{cat}</option> ))}
                         </Select>
-                        
                         <Label htmlFor="price">Price</Label>
                         <Input type="number" name="price" id="price" value={formData.price} onChange={handleChange} step="0.01" min="0" required />
-                        
                         <Label htmlFor="stock">Stock Quantity</Label>
                         <Input type="number" name="stock" id="stock" value={formData.stock} onChange={handleChange} min="0" required />
-
-                        {/* <Label htmlFor="tags">Tags (comma-separated)</Label>
-                        <Input type="text" name="tags" id="tags" value={formData.tags} onChange={handleChange} placeholder="e.g., skimboard, pro, carbon" /> */}
-                                             
-
+                        <Label htmlFor="tags">Tags (comma-separated)</Label>
+                        <Input type="text" name="tags" id="tags" value={formData.tags} onChange={handleChange} placeholder="e.g., skimboard, pro, carbon" />
                         {error && <ErrorMessage>{error}</ErrorMessage>}
-
                         <SubmitButton type="submit" disabled={loading}>
                             {loading ? 'Saving Changes...' : 'Save Changes'}
                         </SubmitButton>
+                        <DeleteButton type="button" disabled={loading} onClick={handleDelete}>
+                            <FaTrash />
+                            {loading ? 'Deleting...' : 'Delete Product'}
+                        </DeleteButton>
                     </Form>
                 </DetailsColumn>
             </ProductContentWrapper>

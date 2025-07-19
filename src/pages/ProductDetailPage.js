@@ -321,8 +321,8 @@ const ProductDetailPage = () => {
   const { getProductById, filteredProducts, loading: contextLoading, error: contextError } = useProducts();
   const { currentUser } = useAuth();
 
-  // ... (All other state and useEffect code is unchanged)
   const [product, setProduct] = useState(null);
+  // --- MODIFIED: Default quantity is now 1 ---
   const [quantity, setQuantity] = useState(1); 
   const [similarProducts, setSimilarProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -343,29 +343,19 @@ const ProductDetailPage = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`http://localhost:4000/products/${id}`);
-        const data = await res.json();
-        
-        if (data) {
-          setProduct(data);
-
-          setDisplayLikes(data.likes !== undefined ? data.likes : 0);
-
-
-          if (currentUser && data.id) {
-            const likedStatus = localStorage.getItem(`liked_${currentUser.id}_${data.id}`);
-            if (likedStatus === 'true') {
-              setIsLikedByCurrentUser(true);
-            } else {
-              setIsLikedByCurrentUser(false); 
-            }
+        const fetchedProduct = await getProductById(id);
+        if (fetchedProduct) {
+          setProduct(fetchedProduct);
+          setDisplayLikes(fetchedProduct.likes !== undefined ? fetchedProduct.likes : 0);
+          if (currentUser && fetchedProduct._id) {
+            const likedStatus = localStorage.getItem(`liked_${currentUser._id}_${fetchedProduct._id}`);
+            setIsLikedByCurrentUser(likedStatus === 'true');
           } else {
-            setIsLikedByCurrentUser(false); 
+            setIsLikedByCurrentUser(false);
           }
-          
           if (Array.isArray(filteredProducts) && filteredProducts.length > 0) {
             const related = filteredProducts
-              .filter(p => p.category === data.category && p.id !== data.id)
+              .filter(p => p.category === fetchedProduct.category && p._id !== fetchedProduct._id)
               .slice(0, 5);
             setSimilarProducts(related);
           }
@@ -379,7 +369,6 @@ const ProductDetailPage = () => {
         setLoading(false);
       }
     };
-
     loadProductDetails();
   }, [id, getProductById, filteredProducts, currentUser]);
 
@@ -395,40 +384,19 @@ const ProductDetailPage = () => {
 
 
 
-const handleAddToCart = async () => {
-  if (product) {
-    try {
-      const token = localStorage.getItem('auth-token');
-      const res = await fetch('http://localhost:4000/addtocart', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'auth-token': token,
-        },
-        body: JSON.stringify({ itemId: product.id, quantity })
-      });
-
-      const data = await res.text();
-
-      if (res.ok) {
-        setCartMessage(`${quantity} of ${product.name} added to cart`);
-        setTimeout(() => setCartMessage(''), 3000);
-      } else {
-        setCartMessage(`Error: ${data}`);
-        setTimeout(() => setCartMessage(''), 3000);
-      }
-    } catch (error) {
-      console.error('Add to cart failed:', error);
-      setCartMessage('Error: Failed to add item to cart.');
+ // --- MODIFIED: Now sets the quantity directly in the cart ---
+  const handleAddToCart = () => {
+    if (product) {
+      cart.addItemToCart(product._id, quantity);
+      setCartMessage(`${quantity} × ${product.name} added to cart.`);
       setTimeout(() => setCartMessage(''), 3000);
     }
-  }
-};
+  };
 
   const handleBuyNow = () => {
     if (product) {
       if (cart?.addItemToCart) {
-        cart.addItemToCart(product.id, quantity);
+        cart.addItemToCart(product._id, quantity);
         navigate('/checkout');
       } else {
         setCartMessage('Cart functionality is currently unavailable');
@@ -578,7 +546,7 @@ const handleAddToCart = async () => {
 
         <ProductContentWrapper>
           <ImageColumn>
-            <MainProductImage src={product.image || '/placeholder.png'} alt={product.name} />
+            <MainProductImage src={product.imageUrl || '/placeholder.png'} alt={product.name} />
             <SocialActions>
               <BaseSocialButton onClick={handleShare}>
                 <FaShareAlt /> Share

@@ -303,7 +303,6 @@ input {
   font-size: 1rem; /* 16px default */
   font-family: 'Instrument Sans', sans-serif;
   color: #FFFFFF;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis; /* For long names */
   line-height: 1.4; /* Improve readability */
