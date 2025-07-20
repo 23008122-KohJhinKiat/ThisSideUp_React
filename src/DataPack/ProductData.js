@@ -489,7 +489,7 @@ export const initialProducts = [
 {
   _id: generateId('prod'),
   name: "Blue Beach Necklace",
-  description: "Cool and breezy summer shirt with This Side Up's logo. Lightweight and stylish for beach outings.",
+  description: "Hollow ball necklace with blue water and sand inside to replicate the beach's appearance.",
   imageUrl: "/Product Photos/beachsandnecklace.jpg",
   category: "Accessories",
   tags: ["jewelry", "necklace"],
