@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import ProductCard from './ProductCard'; 
 import styled from 'styled-components';
 import { useSearchParams } from 'react-router-dom';
@@ -34,11 +35,29 @@ const ProductGrid = styled.div`
 `;
 
 
-const Search = () => {
-  const [searchQuery, setSearchQuery]  = useSearchParams();
-  const query = searchQuery.get('q') || '';
+const Search =() => {
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchParams, setSearchQuery] = useSearchParams();
+  const query = searchParams.get('q') || '';
 
-  const filteredProducts = initialProducts
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch('http://localhost:4000/allproducts');
+        const data = await res.json();
+        setProducts(data);
+      } catch (err) {
+        console.error('Failed to fetch products:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const filteredProducts = products
     .filter(p => p.name.toLowerCase().includes(query.toLowerCase()))
     .sort((a, b) => a.name.localeCompare(b.name));
 
@@ -59,7 +78,7 @@ const Search = () => {
       )}
       <ProductGrid>
         {filteredProducts.map(p => (
-          <ProductCard key={p._id} product={p} />
+          <ProductCard key={p.id} product={p} />
         ))}
       </ProductGrid>
     </Wrapper>
