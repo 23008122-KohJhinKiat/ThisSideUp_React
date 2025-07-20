@@ -320,8 +320,8 @@ const ProductDetailPage = () => {
   const cart = useCart();
   const { getProductById, filteredProducts, loading: contextLoading, error: contextError } = useProducts();
   const { currentUser } = useAuth();
+  const [selectedSize, setSelectedSize] = useState('M');
 
-  // ... (All other state and useEffect code is unchanged)
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1); 
   const [similarProducts, setSimilarProducts] = useState([]);
@@ -363,12 +363,23 @@ const ProductDetailPage = () => {
             setIsLikedByCurrentUser(false); 
           }
           
-          if (Array.isArray(filteredProducts) && filteredProducts.length > 0) {
-            const related = filteredProducts
+          // if (Array.isArray(filteredProducts) && filteredProducts.length > 0) {
+          //   const related = filteredProducts
+          //     .filter(p => p.category === data.category && p.id !== data.id)
+          //     .slice(0, 5);
+          //   setSimilarProducts(related);
+          // }
+          const allRes = await fetch('http://localhost:4000/allproducts');
+          const allProducts = await allRes.json();
+
+          if (Array.isArray(allProducts) && allProducts.length > 0) {
+            const related = allProducts
               .filter(p => p.category === data.category && p.id !== data.id)
               .slice(0, 5);
             setSimilarProducts(related);
-          }
+        } else {
+          setSimilarProducts([]);
+        }
         } else {
           setError(`Product with ID ${id} not found.`);
         }
@@ -381,7 +392,7 @@ const ProductDetailPage = () => {
     };
 
     loadProductDetails();
-  }, [id, getProductById, filteredProducts, currentUser]);
+  }, [id, filteredProducts, currentUser]);
 
   const handleIncrementQuantity = () => {
     if (product && quantity < product.stock) {
@@ -405,7 +416,7 @@ const handleAddToCart = async () => {
           'Content-Type': 'application/json',
           'auth-token': token,
         },
-        body: JSON.stringify({ itemId: product.id, quantity })
+        body: JSON.stringify({ itemId: product.id, quantity, size: selectedSize, })
       });
 
       const data = await res.text();
@@ -454,7 +465,7 @@ const handleAddToCart = async () => {
     const localStorageKey = `liked_${currentUser.id}_${product.id}`;
 
   if (isLikedByCurrentUser) {
-    // Already liked – just handle frontend toggle
+
     setDisplayLikes(prevLikes => Math.max(0, prevLikes - 1));
     setIsLikedByCurrentUser(false);
     localStorage.removeItem(localStorageKey);
@@ -551,7 +562,7 @@ const handleAddToCart = async () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ id }),  // assuming `id` is in scope
+        body: JSON.stringify({ id }),
       });
 
       const data = await res.json();
@@ -627,6 +638,49 @@ const handleAddToCart = async () => {
               <InfoValue>{product.shoppingGuarantee || 'Standard buyer protection.'}</InfoValue>
             </InfoRow>
 
+            <InfoRow>
+              <InfoLabel>Size:</InfoLabel>
+              {(product.category === 'Boardshorts' || product.category === 'T-Shirts' || product.category === 'Jackets') ? 
+              <InfoValue>
+                <select
+                value={selectedSize}
+                onChange={(e) => setSelectedSize(e.target.value)}
+                style={{
+                  padding: '6px 10px',
+                  fontSize: '14px',
+                  borderRadius: '4px',
+                  border: '1px solid #ccc',
+                  backgroundColor: '#fff',
+                  color: '#000'
+                }}
+                >
+                  <option value="S">S</option>
+                  <option value="M">M</option>
+                  <option value="L">L</option>
+                  <option value="XL">XL</option>
+                  </select>
+                </InfoValue>: ''}
+                {product.category === 'Skimboards' ? 
+              <InfoValue>
+                <select
+                value={selectedSize}
+                onChange={(e) => setSelectedSize(e.target.value)}
+                style={{
+                  padding: '6px 10px',
+                  fontSize: '14px',
+                  borderRadius: '4px',
+                  border: '1px solid #ccc',
+                  backgroundColor: '#fff',
+                  color: '#000'
+                }}
+                >
+                  <option value="S">50 inch</option>
+                  <option value="M">52 inch</option>
+                  <option value="L">54 inch</option>
+                  </select>
+                </InfoValue>: ''}
+            </InfoRow>
+
             {product.stock > 0 ? (
                 <QuantityControl>
                     <InfoLabel>Quantity:</InfoLabel>
@@ -687,8 +741,8 @@ const handleAddToCart = async () => {
           <SimilarProductsSection>
             <SimilarProductsTitle>Similar Products</SimilarProductsTitle>
             <SimilarProductsGrid>
-              {similarProducts.map((product) => (
-                <ProductCard key={product.id} product={{ ...product, image: product.imageUrl }} />
+              {similarProducts.map((similarProduct) => (
+                <ProductCard key={similarProduct.id} product={{ ...similarProduct, image: similarProduct.image }} />
                 ))}
             </SimilarProductsGrid>
           </SimilarProductsSection>
