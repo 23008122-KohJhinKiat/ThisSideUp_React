@@ -104,6 +104,12 @@ const CheckoutPage = () => {
   const { cartItems, clearCart } = useCart();
   const { currentUser } = useAuth();
   const { purchaseItems } = useProducts(); 
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    addressL1: '',
+    country: 'city'
+  })
   
   const itemsFromState = location.state?.itemsForCheckout || [];
   const selectedItems = itemsFromState.length > 0 ? itemsFromState : cartItems.filter(item => item.selected);
@@ -112,13 +118,13 @@ const CheckoutPage = () => {
     return acc + (itemPrice * (item.quantity || 1));
   }, 0);
 
-  const [addressLine1, setAddressLine1] = useState('');
+  const [addressL1, setAddressL1] = useState('');
+  const [products] = useState('');
   const [city, setCity] = useState('');
   const [stateProv, setStateProv] = useState(''); 
   const [postalCode, setPostalCode] = useState('');
   const [country, setCountry] = useState('SG'); // Default country
   const [shippingCost, setShippingCost] = useState(getShippingCostForCountry('SG'));
-  const [voucherDiscount] = useState(0.00);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('PayNow');
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
@@ -134,64 +140,57 @@ const CheckoutPage = () => {
 
   const itemSubtotal = totalFromCart;
   const orderTotal = itemSubtotal + shippingCost;
-  const totalPayment = orderTotal - voucherDiscount;
+  const totalPayment = orderTotal;
 
   // --- CORRECTED: This function now saves the order and updates stock correctly ---
   const handlePlaceOrder = async () => {
-    if (!addressLine1 || !city || !postalCode || !country) {
-      alert("Please fill in all required address fields, including country.");
-      return;
-    }
-    if (selectedItems.length === 0) {
-        alert("Your cart is empty or no items were selected for checkout.");
-        navigate('/shoppingCart');
-        return;
-    }
+  try {
+    const orderItems = selectedItems.map(item => {
+      const productData = item.customDesign || item.product;
+      if (!productData) return null;
+      return {
+        productId: productData.id,
+        name: productData.name,
+        price: productData.price,
+        quantity: item.quantity,
+      };
+    }).filter(Boolean);
 
-    setIsPlacingOrder(true);
-    const selectedCountryName = countries.find(c => c.code === country)?.name || country;
-    
-    let constructedAddress = `${addressLine1}, ${city}`;
-    if (stateProv) constructedAddress += `, ${stateProv}`;
-    constructedAddress += ` ${postalCode}, ${selectedCountryName}`;
-    
-    const orderItemsPayload = selectedItems.map(item => ({
-      productId: item.customDesign?._id || item.product?._id,
-      name: item.customDesign?.name || item.product?.name,
-      quantity: item.quantity,
-      price: item.customDesign?.price || item.product?.price,
-    }));
-    
-    const orderDataForAPI = {
-      userId: currentUser?._id,
-      items: orderItemsPayload,
-      totalPrice: totalPayment,
-      shippingAddress: constructedAddress,
-      paymentMethod: selectedPaymentMethod,
-      shippingCost: shippingCost,
-      subtotal: itemSubtotal,
-      voucherDiscount: voucherDiscount,
+    const orderData = {
+      items: orderItems,
+      amount: totalPayment,
+      addressL1: addressL1,
+      country,
+      city,
+      stateProv,
+      postalCode,
+      payMethod: selectedPaymentMethod
     };
 
-    try {
-      // Step 1: Save the order details to the mock database.
-      await createOrderAPI(orderDataForAPI);
+    const res = await fetch('http://localhost:4000/placeorder', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token': localStorage.getItem('auth-token'),
+      },
+      body: JSON.stringify(orderData)
+    });
 
-      // Step 2: Update the product stock in the reactive context.
-      await purchaseItems(orderItemsPayload);
+    const data = await res.json();
 
-      // Step 3: Clear the user's cart.
+    if (data.success) {
       clearCart();
-
-      alert("Thank you for your order! You will receive a confirmation email shortly.");
+      alert("Order placed successfully!");
       navigate('/');
-    } catch (error) {
-      console.error("Error placing order:", error);
-      alert("There was an error processing your order. Please try again.");
-    } finally {
-      setIsPlacingOrder(false);
+    } else {
+      alert("Failed to place order. Please try again.");
     }
-  };
+  } catch (err) {
+    console.error(err);
+    alert("An error occurred while placing your order.");
+  }
+  console.log('Current user token:', currentUser?.token);
+};
 
   const currentCartItems = selectedItems; 
 
@@ -212,11 +211,14 @@ const CheckoutPage = () => {
         <CheckoutTitle>Checkout</CheckoutTitle>
 
         <Section>
-          <SectionTitle>Delivery Address</SectionTitle>
+          
           <AddressForm>
+            <SectionTitle style={{marginBottom:'0px'}}>Name:</SectionTitle>
+            <div style={{color: '#ffffffff', fontSize:'20px'}}>{currentUser.name}</div>
+            <SectionTitle>Delivery Address</SectionTitle> 
             <FormRow>
               <FormLabel htmlFor="addressLine1">Address Line 1*</FormLabel>
-              <FormInput type="text" id="addressLine1" value={addressLine1} onChange={(e) => setAddressLine1(e.target.value)} placeholder="Street address, P.O. box" required />
+              <FormInput type="text" id="addressL1" value={addressL1} onChange={(e) => setAddressL1(e.target.value)} placeholder="Street address, P.O. box" required />
             </FormRow>
             <FormRow>
               <FormLabel htmlFor="country">Country*</FormLabel>
@@ -262,7 +264,7 @@ const CheckoutPage = () => {
                 return (
                   <tr key={itemId || `temp-${Math.random() * 10000}`}>
                     <td className="product-name">
-                      <img src={productDetails.imageUrl || '/images/placeholder-product.png'} alt={productDetails.name || 'Product'} className="product-image" />
+                      <img src={productDetails.image || '/images/placeholder-product.png'} alt={productDetails.name || 'Product'} className="product-image" />
                       <span className="product-name-text">{productDetails.name || 'Unnamed Product'}</span>
                     </td>
                     <td className="unit-price">${itemPrice.toFixed(2)}</td>
@@ -287,12 +289,12 @@ const CheckoutPage = () => {
           </SummaryRow>
         </Section>
 
-        <Section>
+        {/* <Section>
           <SummaryRow>
             <SectionTitle style={{ marginBottom: 0 }}>Vouchers</SectionTitle>
             <SelectVoucherButton onClick={() => alert('Voucher selection UI to be implemented.')}>Select Voucher</SelectVoucherButton>
           </SummaryRow>
-        </Section>
+        </Section> */}
 
         <Section>
           <SectionTitle>Payment Method</SectionTitle>
@@ -311,10 +313,6 @@ const CheckoutPage = () => {
             <SummaryRow>
               <span>Shipping Subtotal</span>
               <span>${shippingCost.toFixed(2)}</span>
-            </SummaryRow>
-            <SummaryRow>
-              <span>Voucher Discount</span>
-              <span>-${voucherDiscount.toFixed(2)}</span>
             </SummaryRow>
             <SummaryRow className="total-payment">
               <span>Total Payment</span>

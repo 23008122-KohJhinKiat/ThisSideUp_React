@@ -37,7 +37,7 @@ app.post("/upload", upload.single('product'), (req, res)=>{
         success:1, 
         image_url: `http://localhost:${port}/images/${req.file.filename}`
     })
-})
+});
 
 // Schema for Creating Products
 const Product = mongoose.model("Product", {
@@ -87,7 +87,7 @@ app.post('/addproduct', async (req, res) => {
         success: true,
         name: req.body.name
     })
-})
+});
 
 // Editing Product
 app.post('/updateproduct/:id', async (req, res) => {
@@ -125,14 +125,14 @@ app.post('/deleteproduct', async (req, res)=>{
         success:true,
         name:req.body.name
     })
-})
+});
 
 // Getting All Products
 app.get('/allproducts', async (req, res)=>{
     let products = await Product.find({});
     console.log("All products fetched");
     res.send(products);
-})
+});
 
 // Getting One Product
 app.get('/products/:id', async (req, res)=>{
@@ -143,7 +143,7 @@ app.get('/products/:id', async (req, res)=>{
     }
     console.log(`Product with ID fetched`);
     res.send(product);
-})
+});
 
 // Liking a Product
 app.patch('/products/:id/like', async (req, res) => {
@@ -244,23 +244,33 @@ app.post('/login', async(req, res)=>{
     else{
         res.json({success: false, errors: "Email invalid"})
     }
-})
+});
 
 // Fetch User
-const fetchUser = async(req, res, next)=>{
-    const token = req.header('auth-token');
-    if(!token){
-        res.status(401).send({errors:"Please authenticate using valid token"})
+const fetchUser = async (req, res, next) => {
+  const token = req.header('auth-token');
+  if (!token) {
+    return res.status(401).send({ errors: "Please authenticate using valid token" });
+  }
+
+  try {
+    const data = jwt.verify(token, 'secret_ecom');
+    const user = await Users.findById(data.user.id);
+    if (!user) {
+      return res.status(401).send({ errors: "User not found" });
     }
-    else{
-        try{
-            const data = jwt.verify(token, 'secret_ecom');
-            req.user = data.user;
-            next();
-        } catch(error){
-        res.status(401).send({ errors:"Please authenticate using a valid tokenS"})
-    } 
-}}
+
+    req.user = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    };
+    
+    next();
+  } catch (error) {
+    res.status(401).send({ errors: "Please authenticate using a valid token" });
+  }
+};
 
 // Add to Cart
 app.post('/addtocart', fetchUser, async (req, res) => {
@@ -294,7 +304,7 @@ app.post('/removefromcart', fetchUser, async(req, res)=>{
     userData.cartData[req.body.itemId]-=1;
     await Users.findOneAndUpdate({_id: req.user.id},{cartData:userData.cartData});
     res.send("Removed")
-})
+});
 
 // Fetch Cart
 app.get('/getcart', fetchUser, async (req, res) => {
@@ -333,6 +343,79 @@ app.post('/clearcart', fetchUser, async (req, res) => {
         res.status(500).send("Failed to clear cart");
     }
 });
+
+// Order Schema
+const orderSchema = mongoose.Schema({
+    userId: {type: String, required: true},
+    name: {type: String, required: true},
+    items: {type: Array, required: true},
+    amount: {type: Number, required: true},
+    addressL1: {type: String, required: true},
+    country: {type: String, required: true},
+    city: {type: String, required: true},
+    stateProv: {type: String, required: true},
+    postalCode: {type: String, required: true},
+    payMethod: {type: String, required: true},
+    status: {type: String, required: true, default: 'Order Placed'},
+    date: {type: Date, default: Date.now}
+});
+
+const Order = mongoose.model("Order", orderSchema);
+
+app.post('/placeorder', fetchUser, async (req, res) => {
+  try {
+    const {
+      items,
+      amount,
+      addressL1,
+      country,
+      city,
+      stateProv,
+      postalCode,
+      payMethod
+    } = req.body;
+
+    const newOrder = new Order({
+      userId: req.user.id,
+      name: req.user.name,
+      items,
+      amount,
+      addressL1,
+      country,
+      city,
+      stateProv,
+      postalCode,
+      payMethod,
+      status: 'Order Placed',
+    });
+
+    await newOrder.save();
+
+    for (const item of items) {
+      await Product.findOneAndUpdate(
+        {id: item.productId},
+        { $inc: { stock: -item.quantity } },
+        { new: true }
+      );
+    }
+
+    res.json({ success: true, message: "Order placed successfully!" });
+  } catch (err) {
+    console.error("Error placing order:", err);
+    res.status(500).json({ success: false, message: "Failed to place order" });
+  }
+});
+
+// All Orders for Admin Panel
+app.post('/orderList', async(req, res)=>{
+
+})
+
+
+// Update Order Status
+// const updateStatus = async(req, res)=>{
+
+// }
 
 app.listen(port, (error) => {
     if (!error){

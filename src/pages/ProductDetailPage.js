@@ -629,7 +629,6 @@ const handleAddToCart = async () => {
               <InfoLabel></InfoLabel>
               <InfoValue>
                 <span style={{fontSize: 'var(--font-size-small, 12px)', color: 'var(--color-neutral-gray, #BDBDBD)'}}>
-                  {product.shippingVoucher || 'Check for shipping vouchers at checkout.'}
                 </span>
               </InfoValue>
             </InfoRow>
