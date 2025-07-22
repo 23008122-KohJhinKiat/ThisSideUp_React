@@ -230,6 +230,7 @@ app.post('/login', async(req, res)=>{
             const token = jwt.sign(data, 'secret_ecom');
             res.json({success: true, token,
             user: {
+                id: user.id,
                 name: user.name,
                 email: user.email,
                 role: user.role,

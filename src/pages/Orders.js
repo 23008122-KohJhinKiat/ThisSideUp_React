@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import '../index.css';
+import { useAuth } from '../contexts/AuthContext';
 
 
 const PageWrapper = styled.div`
@@ -61,6 +62,7 @@ const OrderTable = styled.table`
 
 const OrdersPage = () => {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const [orders, setOrders] = useState([]);
   const [setError] = useState(null);
 
@@ -84,10 +86,12 @@ const OrdersPage = () => {
     <PageWrapper>
       <ProfileContainer>
         <ProfileHeader>
-          <h1>Orders</h1>
+          {currentUser.role === 'Admin' ? <h1>Orders</h1>:''}
+          {currentUser.role === 'Customer' ? <h1>My Orders</h1>:''}
         </ProfileHeader>
 
-        <OrderTable>
+        {currentUser.role === 'Admin' ? (
+          <OrderTable>
           <thead>
             <tr style={{fontSize:'20px'}}>
               <th>Order ID</th>
@@ -107,6 +111,34 @@ const OrdersPage = () => {
                   ))}
           </tbody>
         </OrderTable>
+        ) : ''}
+
+        {currentUser.role === 'Customer' ? (
+          <OrderTable>
+            <thead>
+              <tr style={{fontSize:'20px'}}>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Payment Method</th>
+                <th>Order Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders
+              .filter(order => order.userId === currentUser.id).map((order) => (
+              <tr
+              key={order._id}
+              onClick={() => navigate(`/orders/${order._id}`)}
+              style={{ cursor: 'pointer' }}>
+                <td style={{ color: '#f88366ff', fontWeight: 'bold' }}>{order._id}</td>
+                <td>{order.name}</td>
+                <td>{order.payMethod}</td>
+                <td>{order.status}</td>
+              </tr>
+              ))}
+            </tbody>
+          </OrderTable>
+        ) : ''}
       </ProfileContainer>
     </PageWrapper>
   );

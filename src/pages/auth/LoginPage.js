@@ -1,10 +1,9 @@
-// File: src/pages/auth/LoginPage.js
+
 import React, { useState, useEffect } from 'react'; // Added useEffect
 import styled from 'styled-components';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
-// Styled Components (ensure these are defined or imported if they come from a shared file)
 const PageWrapper = styled.div`
   min-height: 100vh;
   display: flex;
@@ -203,25 +202,12 @@ const LoginPage = () => {
     if(responseData.success){
       localStorage.setItem('auth-token', responseData.token);
       localStorage.setItem('currentUser', JSON.stringify(responseData.user));
+      localStorage.setItem('userId', responseData.user.id);
       window.location.replace("/");
     }
     else {
       alert(responseData.errors)
     }
-
-    // setLoading(true);
-    // try {
-    //   if (!formData.email || !formData.password) {
-    //     throw new Error('Email and password are required');
-    //   }
-    //   await login(formData.email, formData.password);
-    //   setFormData({ email: '', password: '' });
-    // } catch (err) {
-    //   console.error('Login error:', err);
-    //   setError(err.message || 'Failed to log in. Please check your credentials.');
-    // } finally {
-    //   setLoading(false);
-    // }
   };
 
   const handleChange = (e) => {

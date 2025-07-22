@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, } from 'react-icons/fa';
+import { useAuth } from '../contexts/AuthContext';
 import '../index.css';
 
 
@@ -156,6 +157,7 @@ const SubmitButton = styled.button`
 const OrderDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const [order, setOrder] = useState(null);
   const [error, setError] = useState(null);
   const [status, setStatus] = useState('')
@@ -252,6 +254,10 @@ const handleSubmit = async (e) => {
           </DetailRow>
         </ProfileCard>
 
+        <ProfileHeader style={{marginBottom:'10px'}}>
+          <h1 style={{fontSize:'40px'}}>Item List</h1>
+        </ProfileHeader>
+
         <OrderTable>
           <thead>
             <tr style={{fontSize:'20px'}}>
@@ -267,7 +273,7 @@ const handleSubmit = async (e) => {
                       <td>{item.productId}</td>
                       <td>{item.name}</td>
                       <td>{item.quantity}</td>
-                      <td>{item.price}</td>
+                      <td>${item.price}</td>
                     </tr>
                   ))}
                   <tr>
@@ -279,7 +285,8 @@ const handleSubmit = async (e) => {
           </tbody>
         </OrderTable>
         
-        <ProfileCard>
+        {currentUser.role === 'Admin' ? (
+          <ProfileCard>
             <form onSubmit={handleSubmit}>
               <DetailRow style={{ justifyContent:'space-between'}}>
                 <label for="selectStatus" style={{fontSize: '20px', fontWeight:'bold'}}>Order Status:</label>
@@ -303,6 +310,18 @@ const handleSubmit = async (e) => {
             </SubmitButton>
             </form>
         </ProfileCard>
+        ) : ''}
+
+        {currentUser.role === 'Customer' ? (
+          <ProfileCard>
+            <form onSubmit={handleSubmit}>
+            
+              <SubmitButton type="submit" disabled={status === order.status}>
+              Update Status
+            </SubmitButton>
+            </form>
+        </ProfileCard>
+        ) : ''}
       </ProfileContainer>
     </PageWrapper>
   );

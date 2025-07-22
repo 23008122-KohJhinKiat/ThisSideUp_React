@@ -153,10 +153,9 @@ function UserDropdown() {
                 My Profile
               </UserDropdownLink>
               
-              {/* --- FIX: Conditional Admin Link in Dropdown --- */}
-              {currentUser.role === 'Admin' && (
-                <UserDropdownLink to="/add" onClick={() => setIsOpen(false)}>
-                  Add Product
+              {currentUser.role === 'Customer' && (
+                <UserDropdownLink to="/orders" onClick={() => setIsOpen(false)}>
+                  My Orders
                 </UserDropdownLink>
               )}
 
@@ -267,7 +266,6 @@ const Navbar = () => {
           </NavItemDesktop>
         )}
         
-        {/* Show 'Add Product' only to Admins */}
         {currentUser && currentUser.role === 'Admin' && (
           <NavItemDesktop>
             <StyledNavLink to="/add" className={location.pathname === '/add' ? 'active' : ''}>
@@ -354,7 +352,6 @@ const Navbar = () => {
             </MobileNavItem>
           )}
           
-          {/* Show 'Add Product' only to Admins */}
           {currentUser && currentUser.role === 'Admin' && (
             <MobileNavItem>
               <MobileStyledNavLink 
