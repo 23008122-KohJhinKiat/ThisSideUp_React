@@ -1,7 +1,7 @@
 // File: src/App.js
 
-import React, { Suspense, lazy } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { Suspense, lazy, useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { ProductProvider } from './contexts/ProductContext'; 
 import { DesignProvider } from './contexts/DesignContext';
 import { AuthProvider } from './contexts/AuthContext'; 
@@ -30,14 +30,26 @@ const OrderDetails = lazy(() => import('./pages/OrdersDetails'));
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsConditionsPage = lazy(() => import('./pages/Terms&Conditions'));
 
+function ScrollToTop(){
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+}
+
 function App() {
+  
+
   return (    
+    
     <AuthProvider> 
       <ProductProvider>
         <CartProvider> 
           <DesignProvider>
             <Navbar />
             <Suspense fallback={<div style={{textAlign: 'center', marginTop: '50px', color: 'black'}}>Loading Page...</div>}>
+             <ScrollToTop />
               <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<HomePage />} />
