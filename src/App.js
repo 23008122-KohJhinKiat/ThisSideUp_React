@@ -25,7 +25,8 @@ const UserProfilePage = lazy(() => import('./pages/auth/UserProfile'));
 const Search = lazy(() => import('./pages/Search'));
 const AddProductPage = lazy(() => import('./pages/AddAndEdit/Add'));
 const EditProductPage = lazy(() => import('./pages/AddAndEdit/Edit'));
-
+const OrdersPage = lazy(() => import('./pages/Orders'));
+const OrderDetails = lazy(() => import('./pages/OrdersDetails'));
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsConditionsPage = lazy(() => import('./pages/Terms&Conditions'));
 
@@ -50,6 +51,8 @@ function App() {
                 <Route path="/search" element={<Search />} />
                 <Route path="/privacypolicy" element={<PrivacyPolicyPage />} />
                 <Route path="/termsconditions" element={<TermsConditionsPage />} />
+                {/* <Route path="/orders" element={<OrdersPage />} /> */}
+                
 
                 {/* --- CUSTOMER-ONLY ROUTE --- */}
                 <Route 
@@ -67,6 +70,22 @@ function App() {
                   element={
                     <ProtectedRoute allowedRoles={['Admin', 'Customer']}>
                       <UserProfilePage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/orders" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Admin', 'Customer']}>
+                      <OrdersPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/orders/:id" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Admin', 'Customer']}>
+                      <OrderDetails />
                     </ProtectedRoute>
                   } 
                 />

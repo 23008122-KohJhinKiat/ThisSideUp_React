@@ -194,7 +194,6 @@ const Navbar = () => {
     { name: 'Board Shorts', path: '/products/category/Boardshorts' },
     { name: 'Accessories', path: '/products/category/Accessories' },
     { name: 'Jackets', path: '/products/category/Jackets' }
-    // NOTE: Removed "Beach Bags" as it was likely a typo and not in your other files.
   ];
 
   const closeMobileMenuAndNavigate = (path) => {
@@ -260,8 +259,6 @@ const Navbar = () => {
           </ProductsDropdownDesktop>
         </NavItemDesktop>
         
-        {/* --- FIX: Role-based navigation for Desktop --- */}
-        {/* Show 'Customise' only to Customers */}
         {currentUser && currentUser.role === 'Customer' && (
           <NavItemDesktop>
             <StyledNavLink to="/design-skimboard" className={location.pathname === '/design-skimboard' ? 'active' : ''}>
@@ -278,12 +275,23 @@ const Navbar = () => {
             </StyledNavLink>
           </NavItemDesktop>
         )}
+        {currentUser && currentUser.role === 'Admin' && (
+          <NavItemDesktop>
+            <StyledNavLink to="/orders" className={location.pathname === '/orders' ? 'active' : ''}>
+              Orders
+            </StyledNavLink>
+          </NavItemDesktop>
+        )}
 
-        <NavItemDesktop>
-          <StyledNavLink to="/about" className={location.pathname === '/about' ? 'active' : ''}>
+        {(!currentUser || currentUser.role === 'Customer') && (
+          <NavItemDesktop>
+            <StyledNavLink to="/about" className={location.pathname === '/about' ? 'active' : ''}>
             About
           </StyledNavLink>
         </NavItemDesktop>
+        )}
+
+        
         <NavItemDesktop>
           <StyledNavLink to="/faq" className={location.pathname === '/faq' ? 'active' : ''}>
             FAQ

@@ -353,7 +353,7 @@ const orderSchema = mongoose.Schema({
     addressL1: {type: String, required: true},
     country: {type: String, required: true},
     city: {type: String, required: true},
-    stateProv: {type: String, required: true},
+    stateProv: {type: String, required: false},
     postalCode: {type: String, required: true},
     payMethod: {type: String, required: true},
     status: {type: String, required: true, default: 'Order Placed'},
@@ -406,16 +406,60 @@ app.post('/placeorder', fetchUser, async (req, res) => {
   }
 });
 
-// All Orders for Admin Panel
-app.post('/orderList', async(req, res)=>{
+// Fetch Orders
+app.get('/orders', async (req, res) => {
+  try {
+    const orders = await Order.find({});
+    res.json(orders);
+    console.log('Orders fetched')                  
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch orders" });
+  }
+});
 
-})
+// Fetch One Order
+app.get('/orders/:id', async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).send({ message: 'Order not found' });
+    }
+    console.log(`Order with ID ${order.id} fetched`);
+    res.send(order);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: 'Server error' });
+  }
+});
 
 
 // Update Order Status
-// const updateStatus = async(req, res)=>{
+app.post('/updatestatus/:id', async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const { status } = req.body;
 
-// }
+    if (!status) {
+      return res.status(400).json({ success: false, message: 'Status is required' });
+    }
+
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      { status },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    res.json({ success: true, message: 'Order status updated successfully', order: updatedOrder });
+  } catch (err) {
+    console.error('Error updating order status:', err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
 
 app.listen(port, (error) => {
     if (!error){

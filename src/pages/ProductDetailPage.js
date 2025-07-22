@@ -318,7 +318,7 @@ const ProductDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const cart = useCart();
-  const { getProductById, filteredProducts, loading: contextLoading, error: contextError } = useProducts();
+  const { filteredProducts, loading: contextLoading, error: contextError } = useProducts();
   const { currentUser } = useAuth();
   const [selectedSize, setSelectedSize] = useState('M');
 
@@ -363,12 +363,6 @@ const ProductDetailPage = () => {
             setIsLikedByCurrentUser(false); 
           }
           
-          // if (Array.isArray(filteredProducts) && filteredProducts.length > 0) {
-          //   const related = filteredProducts
-          //     .filter(p => p.category === data.category && p.id !== data.id)
-          //     .slice(0, 5);
-          //   setSimilarProducts(related);
-          // }
           const allRes = await fetch('http://localhost:4000/allproducts');
           const allProducts = await allRes.json();
 
