@@ -110,36 +110,6 @@ const DetailRow = styled.div`
 `;
 
 
-const LogoutButton = styled.button`
-  flex-grow: 1;
-  max-width: 280px;
-  padding: 16px 24px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: #FFFFFF;
-  background-color: var(--color-accent-orange);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-
-  &:hover {
-    background-color: #E87A5E;
-    transform: scale(1.02);
-  }
-`;
-
-const DeleteButton = styled(LogoutButton)`
-  background-color: transparent;
-  border: 2px solid var(--color-error-red, #D32F2F);
-  color: var(--color-error-red, #D32F2F);
-
-  &:hover {
-    background-color: var(--color-error-red, #D32F2F);
-    color: #FFFFFF;
-    transform: scale(1.02);
-  }
-`;
 
 const SubmitButton = styled.button`
   background-color: var(--color-secondary-peach);
@@ -207,14 +177,17 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   setError('');
   try {
-    await updateStatus(id, { status });
-    alert('Order status updated!');
+    await updateStatus(id, {
+      status: currentUser.role === 'Customer' ? 'Order Completed' : status,
+    });
+    alert('Order is complete!');
   } catch (err) {
     setError(err.message || 'Failed to update status.');
   }
   navigate(`/orders`);
   window.scrollTo(0, 0);
 };
+
 
   return (
     <PageWrapper>
@@ -316,8 +289,8 @@ const handleSubmit = async (e) => {
           <ProfileCard>
             <form onSubmit={handleSubmit}>
             
-              <SubmitButton type="submit" disabled={status === order.status}>
-              Update Status
+              <SubmitButton type="submit" disabled={status !== 'Delivered'}>
+              Order Received
             </SubmitButton>
             </form>
         </ProfileCard>

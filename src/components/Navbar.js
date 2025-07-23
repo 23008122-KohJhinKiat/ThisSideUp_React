@@ -281,6 +281,14 @@ const Navbar = () => {
           </NavItemDesktop>
         )}
 
+        {currentUser && currentUser.role === 'Admin' && (
+          <NavItemDesktop>
+            <StyledNavLink to="/users" className={location.pathname === '/users' ? 'active' : ''}>
+              Users
+            </StyledNavLink>
+          </NavItemDesktop>
+        )}
+
         {(!currentUser || currentUser.role === 'Customer') && (
           <NavItemDesktop>
             <StyledNavLink to="/about" className={location.pathname === '/about' ? 'active' : ''}>
@@ -289,12 +297,16 @@ const Navbar = () => {
         </NavItemDesktop>
         )}
 
-        
-        <NavItemDesktop>
+        {(!currentUser || currentUser.role === 'Customer') && (
+          <NavItemDesktop>
           <StyledNavLink to="/faq" className={location.pathname === '/faq' ? 'active' : ''}>
             FAQ
           </StyledNavLink>
         </NavItemDesktop>
+        )}
+
+        
+        
       </DesktopNavLinks>
 
       <NavRightSection>
