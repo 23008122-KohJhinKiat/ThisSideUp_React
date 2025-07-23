@@ -94,13 +94,13 @@ const AccentHighlight = styled.span`
 
 // Main Component
 const AboutPage = () => {
-  const backgroundImage = "AbootHD.jpg"; // Ensure this image is in the public folder
+  const backgroundImage = "AbootHD.jpg";
 
   return (
     <AboutPageWrapper>
       <AboutHeroSection bgImage={backgroundImage}>
         <TextOverlayBox>
-          <PageTitle> {/* Removed id and inline style, font size handled by styled-component */}
+          <PageTitle>
             <AccentHighlight>About Us</AccentHighlight>
           </PageTitle>
           <AboutText className='about'>
@@ -128,7 +128,6 @@ const AboutPage = () => {
           </AboutText>
         </TextOverlayBox>
       </AboutHeroSection>
-      {/* <Footer /> Uncomment if you have a Footer component */}
     </AboutPageWrapper>
   );
 };
