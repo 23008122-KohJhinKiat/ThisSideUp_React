@@ -122,6 +122,17 @@ const SubmitButton = styled.button`
   &:disabled { background-color: #ccc; cursor: not-allowed; }
 `;
 
+const CancelOrderButton = styled.button`
+  background-color: var(--color-error-red, #D32F2F);
+  color: white;
+  &:hover { background-color: #B71C1C; transform: translateY(-2px); }
+  &:disabled { background-color: #ccc; cursor: not-allowed; }
+  padding: 14px; border: none; border-radius: 8px;
+  font-size: 1.1rem; font-weight: bold; cursor: pointer;
+  margin-top: 20px; /* Added more margin-top */
+  transition: background-color 0.2s ease, transform 0.1s ease;
+`;
+
 
 
 const OrderDetails = () => {
@@ -296,6 +307,10 @@ const handleSubmit = async (e) => {
               <SubmitButton type="submit" disabled={status !== 'Delivered'}>
               Order Received
             </SubmitButton>
+
+            <CancelOrderButton type="submit" disabled={status !== 'Delivered'}>
+              Cancel order
+            </CancelOrderButton>
             </form>
         </ProfileCard>
         ) : ''}
