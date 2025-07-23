@@ -27,6 +27,7 @@ const AddProductPage = lazy(() => import('./pages/AddAndEdit/Add'));
 const EditProductPage = lazy(() => import('./pages/AddAndEdit/Edit'));
 const OrdersPage = lazy(() => import('./pages/Orders'));
 const OrderDetails = lazy(() => import('./pages/OrdersDetails'));
+const UsersList = lazy(() => import('./pages/Users'));
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsConditionsPage = lazy(() => import('./pages/Terms&Conditions'));
 
@@ -127,6 +128,11 @@ function App() {
                 <Route path="/edit/:id" element={
                     <ProtectedRoute allowedRoles={['Admin']}>
                       <EditProductPage />
+                    </ProtectedRoute>
+                } />
+                <Route path="/users" element={
+                    <ProtectedRoute allowedRoles={['Admin']}>
+                      <UsersList />
                     </ProtectedRoute>
                 } />
 

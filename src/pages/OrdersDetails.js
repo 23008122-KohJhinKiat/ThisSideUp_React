@@ -199,6 +199,21 @@ const handleSubmit = async (e) => {
   window.scrollTo(0, 0);
 };
 
+const cancelOrder = async (e) => {
+  e.preventDefault();
+  setError('');
+  try {
+    await updateStatus(id, {
+      status: 'Order Cancelled',
+    });
+    alert('Order cancelled successfully.');
+  } catch (err) {
+    setError(err.message || 'Failed to cancel order.');
+  }
+  navigate(`/orders`);
+  window.scrollTo(0, 0);
+};
+
 
   return (
     <PageWrapper>
@@ -301,17 +316,29 @@ const handleSubmit = async (e) => {
         ) : ''}
 
         {currentUser.role === 'Customer' ? (
-          <ProfileCard>
-            <form onSubmit={handleSubmit}>
-            
-              <SubmitButton type="submit" disabled={status !== 'Delivered'}>
-              Order Received
-            </SubmitButton>
-
-            <CancelOrderButton type="submit" disabled={status !== 'Delivered'}>
-              Cancel order
-            </CancelOrderButton>
-            </form>
+          <ProfileCard >
+            <form style={{display:'flex', justifyContent:'space-between'}}>
+              <CancelOrderButton
+              type="button"
+              onClick={cancelOrder}
+              disabled={
+                order.status === 'Processing' ||
+                order.status === 'Out for Delivery' ||
+                order.status === 'Delivered' ||
+                order.status === 'Order Completed' ||
+                order.status === 'Order Cancelled'
+              }
+              >
+                Cancel Order
+              </CancelOrderButton>
+              <SubmitButton
+              type="button"
+              onClick={handleSubmit}
+              disabled={order.status !== 'Delivered'}
+              >
+                Order Received
+              </SubmitButton>
+          </form>
         </ProfileCard>
         ) : ''}
       </ProfileContainer>

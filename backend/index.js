@@ -273,6 +273,17 @@ const fetchUser = async (req, res, next) => {
   }
 };
 
+// Fetch All Users
+app.get('/users', async (req, res) => {
+  try {
+    const users = await Users.find({}, '-password -__v');
+    res.json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch users" });
+  }
+});
+
 // Delete Account
 app.delete('/deleteaccount', fetchUser, async (req, res) => {
   try {
