@@ -156,7 +156,7 @@ const OrderDetails = () => {
 
   useEffect(() => {
     fetchInfo();
-  }, []);
+  });
 
   useEffect(() => {
   if (order) {
@@ -205,7 +205,7 @@ const cancelOrder = async (e) => {
 
   const confirmed = window.confirm('Are you sure you want to cancel your order?');
   if (!confirmed) return;
-  
+
   try {
     await updateStatus(id, {
       status: 'Order Cancelled',

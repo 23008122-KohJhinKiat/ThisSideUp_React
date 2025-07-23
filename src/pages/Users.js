@@ -99,7 +99,7 @@ const UsersList = () => {
 
 useEffect(() => {
   fetchInfo();
-}, []);
+});
 
   return (
     <PageWrapper>

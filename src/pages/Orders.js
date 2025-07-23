@@ -79,7 +79,7 @@ const OrdersPage = () => {
   
     useEffect(() => {
       fetchInfo();
-    }, []);
+    });
   
 
   return (
