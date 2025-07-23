@@ -202,6 +202,10 @@ const handleSubmit = async (e) => {
 const cancelOrder = async (e) => {
   e.preventDefault();
   setError('');
+
+  const confirmed = window.confirm('Are you sure you want to cancel your order?');
+  if (!confirmed) return;
+  
   try {
     await updateStatus(id, {
       status: 'Order Cancelled',
