@@ -311,12 +311,16 @@ const Navbar = () => {
 
       <NavRightSection>
         <IconsGroup>
-          <SearchBar />
-          <Link to={currentUser ? "/shoppingCart" : "/login"}>
+          {!currentUser || currentUser.role === 'Customer' ? (
+            <SearchBar />
+          ) : ''}
+          {!currentUser || currentUser.role === 'Customer' ? (
+            <Link to={currentUser ? "/shoppingCart" : "/login"}>
             <NavIcon>
                 <img src={CartIconImg} alt='Cart icon'/>
             </NavIcon>
           </Link>
+          ) : ''}
           <UserDropdown />
         </IconsGroup>
         

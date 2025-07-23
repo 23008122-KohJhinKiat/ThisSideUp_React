@@ -179,7 +179,7 @@ const DeleteButton = styled(LogoutButton)`
 
 
 const UserProfilePage = () => {
-  const { currentUser, loading, logout, deleteAccount } = useAuth();
+  const { currentUser, loading, logout } = useAuth();
   // --- 2. Get clearCart function ---
   const { clearCart } = useCart();
   const navigate = useNavigate();
