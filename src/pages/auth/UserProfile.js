@@ -207,20 +207,30 @@ const UserProfilePage = () => {
   };
 
   const handleDeleteAccount = async () => {
-    if (window.confirm("Are you sure you want to permanently delete your account? This action cannot be undone.")) {
-      try {
-        await deleteAccount();
-        // The deleteAccount function in AuthContext already calls logout(),
-        // so we just need to clear cart here as well.
-        clearCart(); 
-        alert("Your account has been successfully deleted.");
-        navigate('/'); 
-      } catch (error) {
-        console.error("Failed to delete account:", error);
-        alert(`Error: ${error.message}`);
-      }
-    }
-  };
+  const token = localStorage.getItem('auth-token');
+
+  const response = await fetch('http://localhost:4000/deleteaccount', {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'auth-token': token,
+    },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to delete account");
+  }
+
+  alert("Your account has been successfully deleted.");
+  navigate('/'); 
+
+  
+
+  logout();
+};
+
 
   return (
     <PageWrapper>

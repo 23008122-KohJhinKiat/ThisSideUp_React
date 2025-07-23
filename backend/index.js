@@ -273,6 +273,24 @@ const fetchUser = async (req, res, next) => {
   }
 };
 
+// Delete Account
+app.delete('/deleteaccount', fetchUser, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const deletedUser = await Users.findByIdAndDelete(userId);
+    if (!deletedUser) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    await Order.deleteMany({ userId });
+
+    res.json({ success: true, message: "Account and orders deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting account:", error);
+    res.status(500).json({ success: false, message: "Failed to delete account" });
+  }
+});
+
 // Add to Cart
 app.post('/addtocart', fetchUser, async (req, res) => {
     const { itemId, quantity } = req.body;
