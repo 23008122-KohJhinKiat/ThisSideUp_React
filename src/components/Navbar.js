@@ -350,8 +350,6 @@ const Navbar = () => {
             )}
           </MobileNavItem>
 
-          {/* --- FIX: Role-based navigation for Mobile --- */}
-          {/* Show 'Customise' only to Customers */}
           {currentUser && currentUser.role === 'Customer' && (
             <MobileNavItem>
               <MobileStyledNavLink 
@@ -376,7 +374,32 @@ const Navbar = () => {
             </MobileNavItem>
           )}
 
-          <MobileNavItem>
+          {currentUser && currentUser.role === 'Admin' && (
+            <MobileNavItem>
+              <MobileStyledNavLink 
+                to="/orders" 
+                className={location.pathname === '/orders' ? 'active' : ''}
+                onClick={(e) => { e.preventDefault(); closeMobileMenuAndNavigate('/orders'); }}
+              >
+                Orders
+              </MobileStyledNavLink>
+            </MobileNavItem>
+          )}
+
+          {currentUser && currentUser.role === 'Admin' && (
+            <MobileNavItem>
+              <MobileStyledNavLink 
+                to="/users" 
+                className={location.pathname === '/users' ? 'active' : ''}
+                onClick={(e) => { e.preventDefault(); closeMobileMenuAndNavigate('/users'); }}
+              >
+                Users
+              </MobileStyledNavLink>
+            </MobileNavItem>
+          )}
+
+          {currentUser && currentUser.role === 'Customer' && (
+            <MobileNavItem>
             <MobileStyledNavLink 
               to="/about" 
               className={location.pathname === '/about' ? 'active' : ''}
@@ -385,7 +408,10 @@ const Navbar = () => {
               About
             </MobileStyledNavLink>
           </MobileNavItem>
-          <MobileNavItem>
+          )}
+
+          {currentUser && currentUser.role === 'Customer' && (
+            <MobileNavItem>
             <MobileStyledNavLink 
               to="/faq" 
               className={location.pathname === '/faq' ? 'active' : ''}
@@ -394,6 +420,9 @@ const Navbar = () => {
               FAQ
             </MobileStyledNavLink>
           </MobileNavItem>
+          )}
+          
+          
       </MobileNavMenu>
     </NavContainer>
   );

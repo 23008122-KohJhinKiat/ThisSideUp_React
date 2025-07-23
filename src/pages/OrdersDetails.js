@@ -206,8 +206,8 @@ const handleSubmit = async (e) => {
             <span>{order._id}</span>
           </DetailRow>
           <DetailRow>
-            <strong>Status</strong>
-            <span>{order.status}</span>
+            <strong>Order Date</strong>
+            <span>{new Date(order.date).toLocaleDateString('en-GB')}</span>
           </DetailRow>
           <DetailRow>
             <strong>Customer</strong>
@@ -224,6 +224,10 @@ const handleSubmit = async (e) => {
           <DetailRow>
             <strong>Address</strong>
             <span>{order.addressL1}, {order.city}, {order.stateProv}</span>
+          </DetailRow>
+          <DetailRow>
+            <strong>Status</strong>
+            <span>{order.status}</span>
           </DetailRow>
         </ProfileCard>
 
