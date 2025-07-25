@@ -209,7 +209,8 @@ const UserProfilePage = () => {
   const handleDeleteAccount = async () => {
   const token = localStorage.getItem('auth-token');
 
-  const response = await fetch('http://localhost:4000/deleteaccount', {
+  // const response = await fetch('http://localhost:4000/deleteaccount', {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/deleteaccount`,{
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

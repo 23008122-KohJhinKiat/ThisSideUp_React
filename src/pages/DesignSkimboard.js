@@ -4,8 +4,6 @@ import html2canvas from 'html2canvas';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useDesign } from '../contexts/DesignContext';
-import { useCart } from '../contexts/CartContext';
-import { generateId } from '../DataPack/Data';
 import { SketchPicker } from 'react-color';
 import { GradientPicker } from 'react-linear-gradient-picker';
 import '../index.css';
@@ -267,7 +265,6 @@ const DesignSkimboard = () => {
         resetDesign: resetContextDesign,
         initialDesignState
     } = useDesign();
-    const { addItemToCart } = useCart();
     const [palette, setPalette] = useState(
         currentDesign.gradientDetails.stops || initialDesignState.gradientDetails.stops
     );
@@ -356,7 +353,8 @@ const DesignSkimboard = () => {
         const formData = new FormData();
         formData.append('product', blob, 'custom_skimboard.png');
 
-        const uploadRes = await fetch('http://localhost:4000/upload', {
+        // const uploadRes = await fetch('http://localhost:4000/upload', {
+        const uploadRes = await fetch(`${process.env.REACT_APP_API_URL}/upload`,{
             method: 'POST',
             body: formData
         });
@@ -387,7 +385,8 @@ const DesignSkimboard = () => {
         const imageUrl = await handleDecalUpload();
 
         // First: Add the custom board to the database
-        const response = await fetch('http://localhost:4000/addcustomboard', {
+        // const response = await fetch('http://localhost:4000/addcustomboard', {
+        const response = fetch(`${process.env.REACT_APP_API_URL}/addcustomboard`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -405,10 +404,11 @@ const DesignSkimboard = () => {
             return;
         }
 
-        const newBoardId = data.board.id; // this must match your Board schema's "id" field
+        const newBoardId = data.board.id;
 
-        // Second: Add that board to the cart
-        const cartResponse = await fetch('http://localhost:4000/addtocart', {
+
+        // const cartResponse = await fetch('http://localhost:4000/addtocart', {
+        const cartResponse = await fetch(`${process.env.REACT_APP_API_URL}/addtocart`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

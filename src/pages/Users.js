@@ -79,7 +79,8 @@ const UsersList = () => {
   try {
     const token = localStorage.getItem('auth-token');
 
-    const res = await fetch('http://localhost:4000/users', {
+    // const res = await fetch('http://localhost:4000/users', {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/users`,{
       headers: {
         'auth-token': token,
       },

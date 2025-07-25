@@ -68,7 +68,8 @@ const OrdersPage = () => {
 
   const fetchInfo = async () => {
       try {
-        const res = await fetch('http://localhost:4000/orders');
+        // const res = await fetch('http://localhost:4000/orders');
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/orders`);
         const data = await res.json();
         setOrders(data);
   

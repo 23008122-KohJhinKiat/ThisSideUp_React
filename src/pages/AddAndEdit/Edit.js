@@ -107,7 +107,8 @@ const EditProductPage = () => {
     const { getProductById, loading } = useProducts();
 
     async function updateProduct(id, data) {
-        const res = await fetch(`http://localhost:4000/updateproduct/${id}`, {
+        // const res = await fetch(`http://localhost:4000/updateproduct/${id}`, {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/updateproduct/${id}`,{
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
@@ -127,7 +128,8 @@ const EditProductPage = () => {
     useEffect(() => {
         
         const fetchProductData = async () => {
-            const res = await fetch(`http://localhost:4000/products/${id}`);
+            // const res = await fetch(`http://localhost:4000/products/${id}`);
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/products/${id}`);
             const data = await res.json();
             try {
                 if (data) {

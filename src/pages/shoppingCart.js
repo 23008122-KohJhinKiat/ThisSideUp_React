@@ -64,7 +64,8 @@ const ActualShoppingCartPage = () => {
     useEffect(() => {
         const fetchCart = async () => {
             try {
-                const res = await fetch('http://localhost:4000/getcart', {
+                // const res = await fetch('http://localhost:4000/getcart', {
+                const res = await fetch(`${process.env.REACT_APP_API_URL}/getcart`,{
                     headers: {
                         'auth-token': localStorage.getItem('auth-token'),
                     },
@@ -108,7 +109,8 @@ const ActualShoppingCartPage = () => {
     // Quantity update handler
     const updateItemQuantity = async (itemId, newQty) => {
         try {
-            const res = await fetch('http://localhost:4000/addtocart', {
+            // const res = await fetch('http://localhost:4000/addtocart', {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/addtocart`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -133,7 +135,8 @@ const ActualShoppingCartPage = () => {
     // Remove handler
     const removeItemFromCart = async (itemId) => {
         try {
-            const res = await fetch('http://localhost:4000/removefromcart', {
+            // const res = await fetch('http://localhost:4000/removefromcart', {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/removefromcart`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

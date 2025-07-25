@@ -343,7 +343,8 @@ const ProductDetailPage = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`http://localhost:4000/products/${id}`);
+        // const res = await fetch(`http://localhost:4000/products/${id}`);
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/products/${id}`);
         const data = await res.json();
         
         if (data) {
@@ -404,7 +405,9 @@ const handleAddToCart = async () => {
   if (product) {
     try {
       const token = localStorage.getItem('auth-token');
-      const res = await fetch('http://localhost:4000/addtocart', {
+      
+      // const res = await fetch('http://localhost:4000/addtocart', {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/addtocart`,{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -465,7 +468,8 @@ const handleAddToCart = async () => {
     localStorage.removeItem(localStorageKey);
   } else {
     try {
-      const res = await fetch(`http://localhost:4000/products/${product.id}/like`, {
+      // const res = await fetch(`http://localhost:4000/products/${product.id}/like`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/${product.id}/like`,{
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -551,7 +555,8 @@ const handleAddToCart = async () => {
   if (window.confirm('Are you sure you want to permanently delete this product? This action cannot be undone.')) {
     setError('');
     try {
-      const res = await fetch('http://localhost:4000/deleteproduct', {
+      // const res = await fetch('http://localhost:4000/deleteproduct', {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/deleteproduct`,{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

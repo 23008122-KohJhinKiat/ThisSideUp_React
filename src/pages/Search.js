@@ -3,7 +3,6 @@ import ProductCard from './ProductCard';
 import styled from 'styled-components';
 import { useSearchParams } from 'react-router-dom';
 import '../index.css';
-import { initialProducts } from '../DataPack/ProductData';
 
 const Wrapper = styled.div`
 padding: 2rem;
@@ -37,14 +36,15 @@ const ProductGrid = styled.div`
 
 const Search =() => {
   const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [ setIsLoading] = useState(true);
   const [searchParams, setSearchQuery] = useSearchParams();
   const query = searchParams.get('q') || '';
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch('http://localhost:4000/allproducts');
+        // const res = await fetch('http://localhost:4000/allproducts');
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/allproducts`)
         const data = await res.json();
         setProducts(data);
       } catch (err) {
@@ -55,7 +55,7 @@ const Search =() => {
     };
 
     fetchData();
-  }, []);
+  });
 
   const filteredProducts = products
     .filter(p => p.name.toLowerCase().includes(query.toLowerCase()))

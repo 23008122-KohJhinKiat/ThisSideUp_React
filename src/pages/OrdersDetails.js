@@ -145,7 +145,8 @@ const OrderDetails = () => {
 
   const fetchInfo = async () => {
     try {
-      const res = await fetch(`http://localhost:4000/orders/${id}`);
+      // const res = await fetch(`http://localhost:4000/orders/${id}`);
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/orders/${id}`);
       if (!res.ok) throw new Error('Failed to fetch order');
       const data = await res.json();
       setOrder(data);
@@ -172,7 +173,8 @@ const OrderDetails = () => {
 };
 
 async function updateStatus(id, data) {
-        const res = await fetch(`http://localhost:4000/updatestatus/${id}`, {
+        // const res = await fetch(`http://localhost:4000/updatestatus/${id}`, {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/updatestatus/${id}`,{
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),

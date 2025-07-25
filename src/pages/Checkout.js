@@ -6,8 +6,7 @@ import { useCart } from '../contexts/CartContext';
 import { countries } from '../DataPack/CountryData';
 import { useAuth } from '../contexts/AuthContext';
 // --- MODIFIED: Import createOrderAPI instead of the old saveOrderAPI ---
-import { createOrderAPI } from '../DataPack/Data';
-import { useProducts } from '../contexts/ProductContext';
+
 import '../index.css'; // Import the CSS file
 
 // --- SHIPPING CATEGORIES & COSTS (Unchanged) ---
@@ -73,10 +72,7 @@ const SummaryRow = styled.div`
   &:not(:last-child) { border-bottom: 1px solid #35354d; }
   &.order-total { font-weight: bold; font-size: clamp(1rem, 3vw, 1.25rem); color: #C86B98; margin-top: var(--spacing-s, 8px); }
 `;
-const SelectVoucherButton = styled.button`
-  color: #C86B98; background: none; border: none; font-size: clamp(0.9rem, 2.5vw, 1rem); font-weight: 500; cursor: pointer; text-decoration: underline;
-  &:hover { color: #fff; }
-`;
+
 const PaymentButton = styled.button`
   flex-grow: 1; padding: var(--spacing-s, 10px); border-radius: var(--border-radius-m, 8px); font-size: clamp(0.9rem, 2.5vw, 1rem); font-weight: 500; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease; border: 2px solid transparent;
   background-color: ${props => props.active ? '#C86B98' : '#181824'}; color: ${props => props.active ? '#181824' : '#C86B98'}; border-color: ${props => props.active ? '#fff' : '#35354d'};
@@ -103,13 +99,8 @@ const CheckoutPage = () => {
   const location = useLocation();
   const { cartItems, clearCart } = useCart();
   const { currentUser } = useAuth();
-  const { purchaseItems } = useProducts(); 
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    addressL1: '',
-    country: 'city'
-  })
+
+
   
   const itemsFromState = location.state?.itemsForCheckout || [];
   const selectedItems = itemsFromState.length > 0 ? itemsFromState : cartItems.filter(item => item.selected);
@@ -119,14 +110,13 @@ const CheckoutPage = () => {
   }, 0);
 
   const [addressL1, setAddressL1] = useState('');
-  const [products] = useState('');
   const [city, setCity] = useState('');
   const [stateProv, setStateProv] = useState(''); 
   const [postalCode, setPostalCode] = useState('');
   const [country, setCountry] = useState('SG'); // Default country
   const [shippingCost, setShippingCost] = useState(getShippingCostForCountry('SG'));
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('PayNow');
-  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [isPlacingOrder] = useState(false);
 
   useEffect(() => {
     if (selectedItems.length === 0 && !isPlacingOrder) {

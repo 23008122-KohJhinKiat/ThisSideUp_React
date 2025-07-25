@@ -154,7 +154,8 @@ const AddProductPage = () => {
         let product = productDetails;
         let formData = new FormData();
         formData.append('product', image);
-        await fetch('http://localhost:4000/upload', {
+        // await fetch('http://localhost:4000/upload', {
+        await fetch(`${process.env.REACT_APP_API_URL}/upload`,{
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -165,7 +166,8 @@ const AddProductPage = () => {
         if(responseData.success){
             product.image = responseData.image_url;
             console.log(product);
-            await fetch('http://localhost:4000/addproduct',{
+            // await fetch('http://localhost:4000/addproduct',{
+            await fetch(`${process.env.REACT_APP_API_URL}/addproduct`,{
                 method:'POST',
                 headers:{Accept: 'application/json',
                 'Content-Type': 'application/json',

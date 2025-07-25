@@ -227,7 +227,9 @@ const SignUpPage = () => {
 
     console.log("Signup function executed", formData)
     let responseData;
-    await fetch('http://localhost:4000/signup',{
+
+    // await fetch('http://localhost:4000/signup',{
+    await fetch(`${process.env.REACT_APP_API_URL}/signup`,{
       method: 'POST',
       headers: {
         Accept:'application/form-data',
