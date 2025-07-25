@@ -364,7 +364,8 @@ const ProductDetailPage = () => {
             setIsLikedByCurrentUser(false); 
           }
           
-          const allRes = await fetch('http://localhost:4000/allproducts');
+          // const allRes = await fetch('http://localhost:4000/allproducts');
+          const allRes = await fetch(`${process.env.REACT_APP_API_URL}/allproducts`);
           const allProducts = await allRes.json();
 
           if (Array.isArray(allProducts) && allProducts.length > 0) {
