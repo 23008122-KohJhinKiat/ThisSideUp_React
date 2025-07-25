@@ -10,7 +10,7 @@ const multer = require('multer');
 
 // app.use(cors());
 app.use(cors({
-  origin: 'https://thissideup-react.onrender.com',
+  origin: 'https://thissideup-gules.vercel.app',
   credentials: true // if you're using cookies or auth
 }));
 app.use(express.json());
