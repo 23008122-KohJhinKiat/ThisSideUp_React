@@ -145,7 +145,8 @@ const Products = () => {
 
   const fetchInfo = async () => {
     try {
-      const res = await fetch('http://localhost:4000/allproducts');
+      // const res = await fetch('http://localhost:4000/allproducts');
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/allproducts`);
       const data = await res.json();
       setAllProducts(data);
 

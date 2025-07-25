@@ -160,7 +160,9 @@ const ActualShoppingCartPage = () => {
         if (!window.confirm("Are you sure you want to clear your cart?")) return;
 
         try {
-            const res = await fetch('http://localhost:4000/clearcart', {
+            // const res = await fetch('http://localhost:4000/clearcart', {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/clearcart`,{
+                
                 method: 'POST',
                 headers: {
                     'auth-token': localStorage.getItem('auth-token'),

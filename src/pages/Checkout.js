@@ -168,7 +168,8 @@ const CheckoutPage = () => {
       payMethod: selectedPaymentMethod
     };
 
-    const res = await fetch('http://localhost:4000/placeorder', {
+    // const res = await fetch('http://localhost:4000/placeorder', {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/placeorder`,{
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
