@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../index.css';
 
 const CartItem = ({ cartEntry, onQuantityChange, onSelect, onRemove, isSelected }) => {
-    const itemData = cartEntry.product || cartEntry.customDesign;
+    const itemData = cartEntry.product || cartEntry.board;
 
     if (!itemData) return null;
 
@@ -61,7 +61,6 @@ const ActualShoppingCartPage = () => {
     const [selectedItemsMap, setSelectedItemsMap] = useState({});
     const [totalPriceOfSelected, setTotalPriceOfSelected] = useState(0);
 
-    // Fetch cart on mount
     useEffect(() => {
         const fetchCart = async () => {
             try {
@@ -79,7 +78,7 @@ const ActualShoppingCartPage = () => {
                 // Select all items by default
                 const initialSelected = {};
                 data.forEach(entry => {
-                    const id = entry.product?.id || entry.customDesign?.id;
+                    const id = entry.product?.id || entry.board?.id;
                     if (id) initialSelected[id] = true;
                 });
                 setSelectedItemsMap(initialSelected);
@@ -92,10 +91,10 @@ const ActualShoppingCartPage = () => {
         fetchCart();
     }, []);
 
-    // Recalculate total when selection or cart changes
+    // Recalculate total when selection/cart changes
     useEffect(() => {
         const newTotal = cartItems.reduce((sum, cartEntry) => {
-            const itemData = cartEntry.product || cartEntry.customDesign;
+            const itemData = cartEntry.product || cartEntry.board;
             const itemId = itemData?.id;
             if (itemData?.price && selectedItemsMap[itemId]) {
                 return sum + itemData.price * cartEntry.quantity;
@@ -122,7 +121,7 @@ const ActualShoppingCartPage = () => {
 
             setCartItems(prev =>
                 prev.map(entry => {
-                    const id = entry.product?.id || entry.customDesign?.id;
+                    const id = entry.product?.id || entry.board?.id;
                     return id === itemId ? { ...entry, quantity: newQty } : entry;
                 })
             );
@@ -147,7 +146,7 @@ const ActualShoppingCartPage = () => {
 
             setCartItems(prev =>
                 prev.map(entry => {
-                    const id = entry.product?.id || entry.customDesign?.id;
+                    const id = entry.product?.id || entry.board?.id;
                     return id === itemId ? { ...entry, quantity: entry.quantity - 1 } : entry;
                 }).filter(entry => entry.quantity > 0)
             );
@@ -186,7 +185,7 @@ const ActualShoppingCartPage = () => {
 
     const handleActualCheckout = () => {
         const itemsToPass = cartItems.filter(entry => {
-            const id = entry.product?.id || entry.customDesign?.id;
+            const id = entry.product?.id || entry.board?.id;
             return selectedItemsMap[id];
         });
 
@@ -216,7 +215,7 @@ const ActualShoppingCartPage = () => {
                     {cartItems.length > 0 ? (
                         <div className="cart-items-grid">
                             {cartItems.map(cartEntry => {
-                                const itemData = cartEntry.product || cartEntry.customDesign;
+                                const itemData = cartEntry.product || cartEntry.board;
                                 if (!itemData) return null;
                                 const itemId = itemData.id;
                                 return (

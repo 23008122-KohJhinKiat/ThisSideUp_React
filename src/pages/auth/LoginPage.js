@@ -190,8 +190,9 @@ const LoginPage = () => {
     
     console.log("Login function executed", formData)
     let responseData;
-    // FIX SIGN IN 8:11:44
-    await fetch('http://localhost:4000/login',{
+
+    await fetch(`http://localhost:4000/login`,{
+      // await fetch(`${process.env.REACT_APP_API_URL}/login`,{
       method: 'POST',
       headers: {
         Accept:'application/form-data',

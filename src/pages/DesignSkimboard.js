@@ -1,5 +1,6 @@
 // File: src/pages/DesignSkimboard.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import html2canvas from 'html2canvas';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useDesign } from '../contexts/DesignContext';
@@ -258,6 +259,7 @@ const ResetButton = styled.button` background: transparent; color: #FFDAB9; bord
 const DesignSkimboard = () => {
     // The entire logic of your component remains UNCHANGED.
     // ... all your hooks, state, and functions ...
+    const previewRef = useRef();
     const navigate = useNavigate();
     const {
         currentDesign,
@@ -318,33 +320,57 @@ const DesignSkimboard = () => {
     }
     const decalUrl = currentDesign.decal.url;
     const decalName = currentDesign.decal.name;
-    const handleDecalUpload = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = async () => {
-                try {
-                    const originalDataUrl = reader.result;
-                    const croppedDataUrl = await cropImageToSquare(originalDataUrl);
-                    const updatePayload = {
-                        decal: { ...currentDesign.decal, url: croppedDataUrl, name: file.name },
-                        isDecalEnabled: true,
-                        isTextEnabled: false,
-                        isTextAndDecalEnabled: false,
-                    };
-                    if (feature === 'textAndDecal') {
-                        updatePayload.isTextAndDecalEnabled = true;
-                        updatePayload.isDecalEnabled = false;
-                    }
-                    updateDesign(updatePayload);
-                } catch (error) {
-                    console.error("Error cropping image:", error);
-                    alert("Could not process the image. Please try another one.");
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+    // const handleDecalUpload = (event) => {
+    //     const file = event.target.files[0];
+    //     if (file) {
+    //         const reader = new FileReader();
+    //         reader.onloadend = async () => {
+    //             try {
+    //                 const originalDataUrl = reader.result;
+    //                 const croppedDataUrl = await cropImageToSquare(originalDataUrl);
+    //                 const updatePayload = {
+    //                     decal: { ...currentDesign.decal, url: croppedDataUrl, name: file.name },
+    //                     isDecalEnabled: true,
+    //                     isTextEnabled: false,
+    //                     isTextAndDecalEnabled: false,
+    //                 };
+    //                 if (feature === 'textAndDecal') {
+    //                     updatePayload.isTextAndDecalEnabled = true;
+    //                     updatePayload.isDecalEnabled = false;
+    //                 }
+    //                 updateDesign(updatePayload);
+    //             } catch (error) {
+    //                 console.error("Error cropping image:", error);
+    //                 alert("Could not process the image. Please try another one.");
+    //             }
+    //         };
+    //         reader.readAsDataURL(file);
+    //     }
+    // };
+
+    const handleDecalUpload = async () => {
+    try {
+        const canvas = await html2canvas(previewRef.current);
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+
+        const formData = new FormData();
+        formData.append('product', blob, 'custom_skimboard.png');
+
+        const uploadRes = await fetch('http://localhost:4000/upload', {
+            method: 'POST',
+            body: formData
+        });
+
+        const uploadData = await uploadRes.json();
+        if (!uploadData.success) throw new Error("Upload failed");
+
+        return uploadData.image_url; // URL to send to your /addcustomboard endpoint
+    } catch (error) {
+        console.error("Image export/upload error:", error);
+        throw error;
+    }
+};
+
     function getGradientString(type, angle, stopsArray) {
         const sortedStops = [...stopsArray].sort((a, b) => parseFloat(a.offset) - parseFloat(b.offset));
         const stopsString = sortedStops
@@ -355,17 +381,58 @@ const DesignSkimboard = () => {
             : `radial-gradient(circle, ${stopsString})`;
     }
     const previewBg = colorMode === 'solid' ? solidColor : getGradientString(gradientType, gradientAngle, palette);
-    const handleAddToCart = () => {
-        const designToAdd = {
-            ...currentDesign,
-            _id: generateId('custom_design'),
-            name: "Custom Skimboard",
-            isCustom: true
-        };
-        addItemToCart(designToAdd, 1);
+
+    const handleAddToCart = async () => {
+    try {
+        const imageUrl = await handleDecalUpload();
+
+        // First: Add the custom board to the database
+        const response = await fetch('http://localhost:4000/addcustomboard', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'auth-token': localStorage.getItem('auth-token')
+            },
+            body: JSON.stringify({
+                image: imageUrl
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            alert(data.message || 'Failed to add custom skimboard.');
+            return;
+        }
+
+        const newBoardId = data.board.id; // this must match your Board schema's "id" field
+
+        // Second: Add that board to the cart
+        const cartResponse = await fetch('http://localhost:4000/addtocart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'auth-token': localStorage.getItem('auth-token')
+            },
+            body: JSON.stringify({
+                itemId: newBoardId,
+                quantity: 1
+            })
+        });
+
+        if (!cartResponse.ok) {
+            alert('Board added but failed to add to cart.');
+            return;
+        }
+
         alert('Custom skimboard added to cart!');
         navigate('/shoppingCart');
-    };
+
+    } catch (error) {
+        console.error('Error adding skimboard:', error);
+        alert('An error occurred. Please try again.');
+    }
+};
     const handleResetDesign = () => {
         resetContextDesign();
         setPalette(initialDesignState.gradientDetails.stops);
@@ -375,7 +442,7 @@ const DesignSkimboard = () => {
     <div className="design-page">
       <PageWrapper>
         <Layout>
-          <PreviewArea >
+          <PreviewArea ref={previewRef}>
             <h1 style={{ textAlign: 'center', color: 'rgb(131, 57, 143)', fontSize: 36, textShadow: '-2px 2px 2px rgba(0, 0, 0, 0.30)' }}>
               Customise Your Skimboard
             </h1>

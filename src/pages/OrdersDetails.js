@@ -114,7 +114,7 @@ const DetailRow = styled.div`
 const SubmitButton = styled.button`
   background-color: var(--color-secondary-peach);
   color: #181824;
-  padding: 14px; border: none; border-radius: 8px;
+  padding: 10px; border: none; border-radius: 8px;
   font-size: 1.1rem; font-weight: bold; cursor: pointer;
   margin-top: 20px; /* Added more margin-top */
   transition: background-color 0.2s ease, transform 0.1s ease;
@@ -269,7 +269,8 @@ const cancelOrder = async (e) => {
           <thead>
             <tr style={{fontSize:'20px'}}>
               <th>Product ID</th>
-              <th>Customer</th>
+              <th>Product Image</th>
+              <th>Product Name</th>
               <th>Quantity</th>
               <th>Price</th>
             </tr>
@@ -278,12 +279,16 @@ const cancelOrder = async (e) => {
             {order.items.map((item) => (
                     <tr>
                       <td>{item.productId}</td>
+                      <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                        <img src={item.image} alt={item.name}  style={{ height: '50px', display: 'block', margin: '0 auto' }}/>
+                      </td>
                       <td>{item.name}</td>
                       <td>{item.quantity}</td>
                       <td>${item.price}</td>
                     </tr>
                   ))}
                   <tr>
+                      <td className="no-border"></td>
                       <td className="no-border"></td>
                       <td className="no-border"></td>
                       <td className="no-border"></td>
@@ -312,9 +317,11 @@ const cancelOrder = async (e) => {
                  ))}
               </select>
               </DetailRow>
-              <SubmitButton type="submit" disabled={status === order.status}>
-              Update Status
-            </SubmitButton>
+              <DetailRow style={{justifyContent: 'flex-end'}}>
+                <SubmitButton type="submit" disabled={status === order.status}>
+                  Update Status
+                </SubmitButton>
+              </DetailRow>
             </form>
         </ProfileCard>
         ) : ''}

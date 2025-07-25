@@ -142,7 +142,7 @@ const CheckoutPage = () => {
   const orderTotal = itemSubtotal + shippingCost;
   const totalPayment = orderTotal;
 
-  // --- CORRECTED: This function now saves the order and updates stock correctly ---
+
   const handlePlaceOrder = async () => {
   try {
     const orderItems = selectedItems.map(item => {
@@ -151,6 +151,7 @@ const CheckoutPage = () => {
       return {
         productId: productData.id,
         name: productData.name,
+        image: productData.image,
         price: productData.price,
         quantity: item.quantity,
       };

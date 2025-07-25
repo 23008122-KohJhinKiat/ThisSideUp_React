@@ -491,6 +491,44 @@ app.post('/updatestatus/:id', async (req, res) => {
   }
 });
 
+// Schema for Custom Boards
+const Board = mongoose.model("Board", {
+    id: {
+        type: Number,
+        required: true
+    },
+    name: { type: String, default: 'Custom Skimboard' },
+    userId: {type: String, required: true},
+    image: String,
+    price: { type: Number, required: 200 },
+    quantity: { type: Number, default: 1}
+
+})
+
+app.post('/addcustomboard', fetchUser, async (req, res) => {
+    try {
+        let boards = await Board.find({});
+        let id = boards.length > 0 ? boards.slice(-1)[0].id + 1 : 1;
+
+        const newBoard = new Board({
+            id: id,
+            name: req.user.name + "'s Custom Skimboard ",
+            userId: req.user.id,
+            image: req.body.image,
+            price: 200,
+            quantity: 1
+        });
+
+        await newBoard.save();
+
+        res.json({ success: true, board: newBoard });
+    } catch (error) {
+        console.error("Error adding custom board:", error);
+        res.status(500).json({ success: false, message: "Failed to add custom board" });
+    }
+});
+
+
 app.listen(port, (error) => {
     if (!error){
         console.log("Server running on Port " +port)
